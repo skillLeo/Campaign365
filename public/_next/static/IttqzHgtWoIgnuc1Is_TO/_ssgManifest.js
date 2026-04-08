@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fcampaigns\u002F[id]","\u002Fcanvassing\u002Flists\u002F[id]","\u002Fevents\u002F[id]","\u002Fsuper\u002Ftenants\u002F[id]","\u002Fsurveys\u002F[id]\u002Fresults","\u002Fvoters\u002F[id]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
