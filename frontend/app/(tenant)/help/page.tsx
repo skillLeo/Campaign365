@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Phone, Play, HelpCircle, MessageCircle, ChevronDown, ChevronRight, Search, ExternalLink, Mail, Clock } from 'lucide-react';
+import { Phone, Play, HelpCircle, MessageCircle, ChevronDown, ChevronRight, Search, ExternalLink, Mail, Clock, X } from 'lucide-react';
 
 const FAQS = [
   { q: 'How do I reset my password?', a: 'SKNLP Dashboard password has been reset by the Canvass App. We\'ve sent your new login credentials to your registered email. If you don\'t receive them, please contact IT support at support@sknlp.org.' },
@@ -50,26 +50,26 @@ export default function HelpPage() {
   };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Help &amp; Support Center</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Dashboard › Help &amp; Support</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.02em' }}>Help &amp; Support Center</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">Dashboard › Help &amp; Support</p>
         </div>
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="relative w-full sm:w-60">
+          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none w-full sm:w-60"
+            className="w-full bg-white border border-slate-200 rounded-lg sm:rounded-xl pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
             placeholder="Search help topics..."
           />
         </div>
       </div>
 
-      {/* Support Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {/* Support Cards - Responsive */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           {
             title: 'Contact SKNLP IT Support',
@@ -109,15 +109,16 @@ export default function HelpPage() {
             onClick: () => setChatOpen(true),
           },
         ].map((card, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-5 flex flex-col">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ backgroundColor: card.bg }}>
-              <card.icon size={20} style={{ color: card.color }} />
+          <div key={i} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 flex flex-col hover:shadow-md transition-shadow">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-3" style={{ backgroundColor: card.bg }}>
+              <card.icon size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: card.color }} />
             </div>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>{card.title}</p>
-            <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6, flex: 1, marginBottom: 12 }}>{card.desc}</p>
+            <p className="text-xs sm:text-sm font-bold text-slate-800 mb-2">{card.title}</p>
+            <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed flex-1 mb-3">{card.desc}</p>
             <button
               onClick={'onClick' in card ? (card as any).onClick : undefined}
-              style={{ width: '100%', backgroundColor: card.actionBg, color: 'white', border: 'none', borderRadius: 8, padding: '9px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
+              className="w-full rounded-lg text-white font-semibold transition-all hover:opacity-90 py-2 text-[11px] sm:text-xs"
+              style={{ backgroundColor: card.actionBg }}
             >
               {card.action}
             </button>
@@ -125,48 +126,48 @@ export default function HelpPage() {
         ))}
       </div>
 
-      {/* Call Support CTA */}
-      <div style={{ background: 'linear-gradient(135deg, #E30613, #991B1B)', borderRadius: 16, padding: '20px 24px', marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div className="flex items-center gap-4">
-          <div style={{ width: 44, height: 44, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Phone size={20} style={{ color: 'white' }} />
+      {/* Call Support CTA - Responsive */}
+      <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ background: 'linear-gradient(135deg, #E30613, #991B1B)' }}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+            <Phone size={18} className="sm:w-[20px] sm:h-[20px]" style={{ color: 'white' }} />
           </div>
           <div>
-            <p style={{ color: 'white', fontWeight: 800, fontSize: 16 }}>Call Support Hotline</p>
-            <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, marginTop: 2 }}>Available Monday–Friday 8 AM–8 PM · Election Day: 24 hours</p>
+            <p className="text-white font-bold text-sm sm:text-base">Call Support Hotline</p>
+            <p className="text-white/75 text-[11px] sm:text-xs mt-0.5">Available Monday–Friday 8 AM–8 PM · Election Day: 24 hours</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div style={{ textAlign: 'right' }}>
-            <p style={{ color: 'white', fontWeight: 800, fontSize: 18 }}>+1-869-XXX-XXXX</p>
-            <div className="flex items-center justify-end gap-1.5 mt-1">
-              <Clock size={12} style={{ color: 'rgba(255,255,255,0.6)' }} />
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Average response: &lt;5 min</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div>
+            <p className="text-white font-bold text-base sm:text-lg">+1-869-XXX-XXXX</p>
+            <div className="flex items-center gap-1 mt-0.5">
+              <Clock size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: 'rgba(255,255,255,0.6)' }} />
+              <span className="text-[10px] sm:text-xs text-white/60">Average response: &lt;5 min</span>
             </div>
           </div>
-          <button style={{ backgroundColor: 'white', color: SKNLP_RED, border: 'none', borderRadius: 10, padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+          <button className="bg-white rounded-lg px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold transition-all hover:bg-slate-100" style={{ color: SKNLP_RED }}>
             Call Now
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-5">
         {/* FAQ Accordion */}
-        <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Frequently Asked Questions</h2>
-          <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <div className="flex-1">
+          <h2 className="text-sm sm:text-base font-bold text-slate-800 mb-3">Frequently Asked Questions</h2>
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
             {filteredFAQs.map((faq, i) => (
-              <div key={i} style={{ borderBottom: i < filteredFAQs.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
+              <div key={i} className="border-b border-slate-50 last:border-0">
                 <button
                   onClick={() => setOpenFAQ(openFAQ === i ? null : i)}
-                  style={{ width: '100%', textAlign: 'left', padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
+                  className="w-full text-left px-4 py-3 sm:py-3.5 bg-transparent border-none cursor-pointer flex items-center justify-between gap-2 hover:bg-slate-50 transition-colors"
                 >
-                  <span style={{ fontSize: 13, fontWeight: 500, color: '#0F172A', lineHeight: 1.5 }}>{faq.q}</span>
-                  {openFAQ === i ? <ChevronDown size={14} style={{ color: SKNLP_RED, flexShrink: 0 }} /> : <ChevronRight size={14} style={{ color: '#94A3B8', flexShrink: 0 }} />}
+                  <span className="text-[11px] sm:text-xs font-medium text-slate-800 leading-relaxed pr-2">{faq.q}</span>
+                  {openFAQ === i ? <ChevronDown size={13} className="flex-shrink-0" style={{ color: SKNLP_RED }} /> : <ChevronRight size={13} className="flex-shrink-0" style={{ color: '#94A3B8' }} />}
                 </button>
                 {openFAQ === i && (
-                  <div style={{ padding: '0 20px 14px', backgroundColor: '#FAFAFA' }}>
-                    <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.7 }}>{faq.a}</p>
+                  <div className="px-4 pb-3 pt-0 bg-slate-50">
+                    <p className="text-[11px] sm:text-xs text-slate-600 leading-relaxed">{faq.a}</p>
                   </div>
                 )}
               </div>
@@ -175,79 +176,86 @@ export default function HelpPage() {
         </div>
 
         {/* Training Videos */}
-        <div>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Training Videos</h2>
-          <div className="space-y-3">
+        <div className="flex-1">
+          <h2 className="text-sm sm:text-base font-bold text-slate-800 mb-3">Training Videos</h2>
+          <div className="space-y-2.5">
             {TRAINING_VIDEOS.slice(0, 6).map((v, i) => (
-              <div key={i} className="bg-white rounded-xl border border-slate-100 p-4 flex items-center gap-4 cursor-pointer hover:shadow-sm transition-shadow">
-                <div style={{ width: 40, height: 40, backgroundColor: '#F8FAFC', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, flexShrink: 0 }}>
+              <div key={i} className="bg-white rounded-xl border border-slate-100 p-3 flex items-center gap-3 cursor-pointer hover:shadow-md transition-shadow">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-lg flex-shrink-0" style={{ backgroundColor: '#F8FAFC' }}>
                   {v.thumb}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{v.title}</p>
-                  <div className="flex items-center gap-2">
-                    <span style={{ fontSize: 11, color: '#94A3B8' }}>{v.duration}</span>
-                    <span style={{ fontSize: 10, backgroundColor: '#F1F5F9', color: '#475569', padding: '1px 6px', borderRadius: 4, fontWeight: 500 }}>{v.category}</span>
+                  <p className="text-[11px] sm:text-xs font-semibold text-slate-800 truncate">{v.title}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                    <span className="text-[10px] sm:text-xs text-slate-400">{v.duration}</span>
+                    <span className="text-[9px] sm:text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded whitespace-nowrap">{v.category}</span>
                   </div>
                 </div>
-                <button style={{ background: SKNLP_RED, border: 'none', borderRadius: 8, padding: '7px 10px', cursor: 'pointer', color: 'white', flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-                  <Play size={13} />
+                <button className="rounded-lg p-1.5 sm:p-2 flex-shrink-0 transition-all hover:opacity-90" style={{ background: SKNLP_RED, border: 'none', cursor: 'pointer', color: 'white' }}>
+                  <Play size={12} className="sm:w-[13px] sm:h-[13px]" />
                 </button>
               </div>
             ))}
           </div>
-          <button style={{ marginTop: 12, width: '100%', background: '#F1F5F9', border: 'none', borderRadius: 10, padding: '10px', fontSize: 13, fontWeight: 600, color: '#475569', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-            View All {TRAINING_VIDEOS.length} Training Videos <ExternalLink size={13} />
+          <button className="w-full mt-3 rounded-lg py-2 text-xs sm:text-sm font-semibold transition-all hover:bg-slate-200 flex items-center justify-center gap-1" style={{ background: '#F1F5F9', color: '#475569', border: 'none', cursor: 'pointer' }}>
+            View All {TRAINING_VIDEOS.length} Training Videos <ExternalLink size={12} className="sm:w-[13px] sm:h-[13px]" />
           </button>
         </div>
       </div>
 
-      {/* Live Chat Modal */}
+      {/* Live Chat Modal - Responsive */}
       {chatOpen && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, width: 340, backgroundColor: 'white', borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.2)', border: '1px solid #E2E8F0', zIndex: 1000, overflow: 'hidden' }}>
-          <div style={{ backgroundColor: SKNLP_RED, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div className="flex items-center gap-3">
-              <div style={{ width: 32, height: 32, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MessageCircle size={15} style={{ color: 'white' }} />
-              </div>
-              <div>
-                <p style={{ color: 'white', fontWeight: 700, fontSize: 13 }}>Live Chat — Campaign 365</p>
-                <div className="flex items-center gap-1.5"><div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#4ADE80' }} /><span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 11 }}>Online</span></div>
-              </div>
-            </div>
-            <button onClick={() => setChatOpen(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}>×</button>
-          </div>
-          <div style={{ height: 220, overflowY: 'auto', padding: '12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {chatHistory.map((msg, i) => (
-              <div key={i} style={{ display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                <div style={{ maxWidth: '80%', backgroundColor: msg.role === 'user' ? SKNLP_RED : '#F1F5F9', color: msg.role === 'user' ? 'white' : '#0F172A', borderRadius: msg.role === 'user' ? '12px 12px 4px 12px' : '12px 12px 12px 4px', padding: '8px 12px', fontSize: 12, lineHeight: 1.5 }}>
-                  {msg.msg}
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setChatOpen(false)} />
+          <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100%-2rem)] sm:w-80 bg-white rounded-xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+            <div className="flex items-center justify-between p-3 sm:p-4" style={{ backgroundColor: SKNLP_RED }}>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+                  <MessageCircle size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'white' }} />
+                </div>
+                <div>
+                  <p className="text-white font-bold text-xs sm:text-sm">Live Chat — Campaign 365</p>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
+                    <span className="text-white/80 text-[10px] sm:text-xs">Online</span>
+                  </div>
                 </div>
               </div>
-            ))}
+              <button onClick={() => setChatOpen(false)} className="text-white/70 hover:text-white transition-colors text-lg leading-none">×</button>
+            </div>
+            <div className="h-64 overflow-y-auto p-3 flex flex-col gap-2" style={{ backgroundColor: '#F8FAFC' }}>
+              {chatHistory.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] p-2.5 rounded-xl text-[11px] sm:text-xs leading-relaxed ${msg.role === 'user' ? 'text-white' : 'text-slate-800 bg-white border border-slate-100'}`} style={msg.role === 'user' ? { backgroundColor: SKNLP_RED } : {}}>
+                    {msg.msg}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="p-3 border-t border-slate-100 flex gap-2">
+              <input
+                value={chatMsg}
+                onChange={e => setChatMsg(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && sendChat()}
+                placeholder="Type your message..."
+                className="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs sm:text-sm outline-none focus:border-red-400"
+              />
+              <button onClick={sendChat} className="rounded-lg px-4 py-1.5 text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90" style={{ backgroundColor: SKNLP_RED }}>
+                Send
+              </button>
+            </div>
           </div>
-          <div style={{ padding: '10px 12px', borderTop: '1px solid #F1F5F9', display: 'flex', gap: 8 }}>
-            <input
-              value={chatMsg}
-              onChange={e => setChatMsg(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && sendChat()}
-              placeholder="Type your message..."
-              style={{ flex: 1, border: '1px solid #E2E8F0', borderRadius: 8, padding: '8px 10px', fontSize: 12, outline: 'none', color: '#0F172A' }}
-            />
-            <button onClick={sendChat} style={{ backgroundColor: SKNLP_RED, color: 'white', border: 'none', borderRadius: 8, padding: '8px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
-              Send
-            </button>
-          </div>
-        </div>
+        </>
       )}
 
-      {/* Floating chat button when closed */}
+      {/* Floating chat button when closed - Responsive */}
       {!chatOpen && (
         <button
           onClick={() => setChatOpen(true)}
-          style={{ position: 'fixed', bottom: 24, right: 24, width: 52, height: 52, borderRadius: '50%', backgroundColor: SKNLP_RED, border: 'none', boxShadow: '0 8px 24px rgba(220,38,38,0.4)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg flex items-center justify-center z-50 transition-all hover:scale-105"
+          style={{ backgroundColor: SKNLP_RED, border: 'none', cursor: 'pointer' }}
         >
-          <MessageCircle size={22} style={{ color: 'white' }} />
+          <MessageCircle size={20} className="sm:w-[22px] sm:h-[22px]" style={{ color: 'white' }} />
         </button>
       )}
     </div>

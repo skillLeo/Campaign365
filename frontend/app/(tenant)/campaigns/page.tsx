@@ -72,50 +72,50 @@ export default function CampaignsPage() {
   });
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-slate-800">Campaigns</h1>
-          <p className="text-sm text-slate-400 mt-0.5">{campaigns.length} total campaigns</p>
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Campaigns</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">{campaigns.length} total campaigns</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0 whitespace-nowrap"
           style={{ backgroundColor: primaryColor }}
         >
-          <Plus size={14} />
+          <Plus size={13} className="sm:w-[14px] sm:h-[14px]" />
           Create Campaign
         </button>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Summary cards - Responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Total Campaigns', value: campaigns.length, color: primaryColor },
           { label: 'Active', value: campaigns.filter(c => c.status === 'active').length, color: '#E30613' },
           { label: 'Completed', value: campaigns.filter(c => c.status === 'completed').length, color: '#3B82F6' },
           { label: 'Draft', value: campaigns.filter(c => c.status === 'draft').length, color: '#94A3B8' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-white rounded-2xl border border-slate-100 p-4">
-            <p className="text-2xl font-bold text-slate-800">{value}</p>
+          <div key={label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
+            <p className="text-xl sm:text-2xl font-bold text-slate-800">{value}</p>
             <div className="flex items-center gap-1.5 mt-1">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-              <p className="text-xs text-slate-400">{label}</p>
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ backgroundColor: color }} />
+              <p className="text-[10px] sm:text-xs text-slate-400 truncate">{label}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative w-full sm:w-auto">
+      {/* Filters - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="relative w-full sm:w-56 md:w-64">
           <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search campaigns..."
-            className="bg-white border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-600 focus:outline-none w-full sm:w-56"
+            className="w-full bg-white border border-slate-200 rounded-lg sm:rounded-xl pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-200"
           />
         </div>
         <div className="flex flex-wrap items-center gap-1">
@@ -123,7 +123,7 @@ export default function CampaignsPage() {
             <button
               key={s}
               onClick={() => setStatusFilter(s)}
-              className="px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all"
+              className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium capitalize transition-all whitespace-nowrap"
               style={statusFilter === s
                 ? { backgroundColor: primaryColor, color: 'white' }
                 : { color: '#64748B' }}
@@ -134,33 +134,37 @@ export default function CampaignsPage() {
         </div>
       </div>
 
-      {/* Create Campaign Modal */}
+      {/* Create Campaign Modal - Responsive */}
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-slate-800 text-lg">Create New Campaign</h3>
-              <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
-                <X size={18} />
+        <>
+          <div 
+            className="fixed inset-0 z-50 bg-black/50" 
+            onClick={() => setShowCreate(false)} 
+          />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <h3 className="font-bold text-slate-800 text-base sm:text-lg">Create New Campaign</h3>
+              <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
+                <X size={16} className="sm:w-[18px] sm:h-[18px]" />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Campaign Name *</label>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Campaign Name *</label>
                 <input
                   value={form.name}
                   onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none focus:border-slate-400"
+                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-slate-400"
                   placeholder="e.g. GOTV Final Push"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Type</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Type</label>
                   <select
                     value={form.type}
                     onChange={e => setForm(f => ({ ...f, type: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none"
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
                   >
                     <option value="gotv">GOTV</option>
                     <option value="canvassing">Canvassing</option>
@@ -169,22 +173,22 @@ export default function CampaignsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Voter Target</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Voter Target</label>
                   <input
                     type="number"
                     value={form.turnout_goal}
                     onChange={e => setForm(f => ({ ...f, turnout_goal: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none"
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none"
                     placeholder="e.g. 5000"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Constituency</label>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Constituency</label>
                 <select
                   value={form.constituency}
                   onChange={e => setForm(f => ({ ...f, constituency: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none"
+                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
                 >
                   <option value="All">All Constituencies</option>
                   <option>Kingston Central</option>
@@ -194,36 +198,36 @@ export default function CampaignsPage() {
                   <option>Clarendon Central</option>
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Start Date</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Start Date</label>
                   <input
                     type="date"
                     value={form.start_date}
                     onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none"
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">End Date</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">End Date</label>
                   <input
                     type="date"
                     value={form.end_date}
                     onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none"
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
                   />
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => { setShowCreate(false); setForm(EMPTY_FORM); }}
-                  className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleCreate}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: primaryColor }}
                 >
                   Create Campaign
@@ -231,77 +235,79 @@ export default function CampaignsPage() {
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
-      {/* Campaign cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Campaign cards - Responsive */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {filtered.map(c => (
           <div
             key={c.id}
-            className="bg-white rounded-2xl border border-slate-100 p-5 cursor-pointer hover:shadow-md transition-all"
+            className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 cursor-pointer hover:shadow-md transition-all"
             onClick={() => router.push(`/campaigns/${c.id}`)}
           >
-            <div className="flex items-start justify-between mb-3">
+            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
               <div className="flex items-center gap-2">
                 <div
-                  className="w-2 h-8 rounded-full"
+                  className="w-1.5 sm:w-2 h-6 sm:h-8 rounded-full"
                   style={{ backgroundColor: typeColors[c.type] || primaryColor }}
                 />
-                <div>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold capitalize mr-2" style={statusStyle(c.status)}>
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-xs font-semibold capitalize whitespace-nowrap" style={statusStyle(c.status)}>
                     {c.status}
                   </span>
-                  <span className="text-xs text-slate-400 uppercase font-medium">{c.type?.replace('_', ' ')}</span>
+                  <span className="text-[9px] sm:text-xs text-slate-400 uppercase font-medium whitespace-nowrap">{c.type?.replace('_', ' ')}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-                <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View" style={{ color: primaryColor }}>
-                  <Eye size={13} />
+              <div className="flex items-center gap-0.5 sm:gap-1" onClick={e => e.stopPropagation()}>
+                <button className="p-1.5 sm:p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View" style={{ color: primaryColor }}>
+                  <Eye size={11} className="sm:w-[13px] sm:h-[13px]" />
                 </button>
-                <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400" title="Edit">
-                  <Edit2 size={13} />
+                <button className="p-1.5 sm:p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400" title="Edit">
+                  <Edit2 size={11} className="sm:w-[13px] sm:h-[13px]" />
                 </button>
-                <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete" style={{ color: '#EF4444' }}>
-                  <Trash2 size={13} />
+                <button className="p-1.5 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete" style={{ color: '#EF4444' }}>
+                  <Trash2 size={11} className="sm:w-[13px] sm:h-[13px]" />
                 </button>
               </div>
             </div>
 
-            <h3 className="font-semibold text-slate-800 mb-3">#{String(c.id).padStart(5, '0')} {c.name}</h3>
+            <h3 className="font-semibold text-slate-800 text-sm sm:text-base mb-2 sm:mb-3 truncate">
+              #{String(c.id).padStart(5, '0')} {c.name}
+            </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <div>
-                <div className="flex items-center gap-1 mb-0.5">
-                  <Target size={10} className="text-slate-400" />
-                  <p className="text-xs text-slate-400">Target</p>
+                <div className="flex items-center gap-0.5 sm:gap-1 mb-0.5">
+                  <Target size={9} className="sm:w-[10px] sm:h-[10px] text-slate-400" />
+                  <p className="text-[10px] sm:text-xs text-slate-400">Target</p>
                 </div>
-                <p className="text-sm font-semibold text-slate-700">{formatNumber(c.turnout_goal)}</p>
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 truncate">{formatNumber(c.turnout_goal)}</p>
               </div>
               <div>
-                <div className="flex items-center gap-1 mb-0.5">
-                  <Users size={10} className="text-slate-400" />
-                  <p className="text-xs text-slate-400">Responses</p>
+                <div className="flex items-center gap-0.5 sm:gap-1 mb-0.5">
+                  <Users size={9} className="sm:w-[10px] sm:h-[10px] text-slate-400" />
+                  <p className="text-[10px] sm:text-xs text-slate-400">Responses</p>
                 </div>
-                <p className="text-sm font-semibold text-slate-700">{formatNumber(c.responses)}</p>
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 truncate">{formatNumber(c.responses)}</p>
               </div>
               <div>
-                <div className="flex items-center gap-1 mb-0.5">
-                  <Calendar size={10} className="text-slate-400" />
-                  <p className="text-xs text-slate-400">Area</p>
+                <div className="flex items-center gap-0.5 sm:gap-1 mb-0.5">
+                  <Calendar size={9} className="sm:w-[10px] sm:h-[10px] text-slate-400" />
+                  <p className="text-[10px] sm:text-xs text-slate-400">Area</p>
                 </div>
-                <p className="text-sm font-semibold text-slate-700 truncate">{c.constituency}</p>
+                <p className="text-xs sm:text-sm font-semibold text-slate-700 truncate">{c.constituency}</p>
               </div>
             </div>
 
             {/* Progress bar */}
             {c.turnout_goal > 0 && (
-              <div className="mt-4">
-                <div className="flex justify-between text-xs text-slate-400 mb-1">
+              <div className="mt-3 sm:mt-4">
+                <div className="flex justify-between text-[10px] sm:text-xs text-slate-400 mb-1">
                   <span>Progress</span>
                   <span>{Math.min(100, Math.round((c.responses / c.turnout_goal) * 100))}%</span>
                 </div>
-                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-1 sm:h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
@@ -314,13 +320,24 @@ export default function CampaignsPage() {
             )}
 
             {c.start_date && (
-              <p className="text-xs text-slate-400 mt-3">
+              <p className="text-[10px] sm:text-xs text-slate-400 mt-2 sm:mt-3 truncate">
                 {c.start_date} — {c.end_date || 'Ongoing'}
               </p>
             )}
           </div>
         ))}
       </div>
+
+      {/* Empty state */}
+      {filtered.length === 0 && !loading && (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 flex items-center justify-center">
+            <Target size={32} className="text-slate-300" />
+          </div>
+          <h3 className="text-base font-semibold text-slate-700 mb-1">No campaigns found</h3>
+          <p className="text-sm text-slate-400">Try adjusting your search or create a new campaign</p>
+        </div>
+      )}
     </div>
   );
 }

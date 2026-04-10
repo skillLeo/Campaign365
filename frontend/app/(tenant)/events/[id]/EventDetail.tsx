@@ -96,39 +96,40 @@ export default function EventDetailPage() {
   const typeColor = event.type === 'Town Hall' ? '#2563EB' : event.type === 'Rally' ? PRIMARY : '#7C3AED';
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <button
           onClick={() => router.back()}
-          style={{ background: '#F1F5F9', border: 'none', borderRadius: 8, padding: '8px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 500, color: '#475569' }}
+          className="flex items-center justify-center gap-1.5 rounded-lg transition-all hover:bg-slate-100 whitespace-nowrap"
+          style={{ background: '#F1F5F9', border: 'none', padding: '6px 12px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 500, color: '#475569', cursor: 'pointer' }}
         >
-          <ArrowLeft size={14} /> Back
+          <ArrowLeft size={13} className="sm:w-[14px] sm:h-[14px]" /> Back
         </button>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>{event.name}</h1>
-            <span style={{ backgroundColor: typeColor + '15', color: typeColor, fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 6 }}>{event.type}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-slate-800 truncate" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.02em' }}>{event.name}</h1>
+            <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: typeColor + '15', color: typeColor }}>{event.type}</span>
           </div>
-          <p style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>Events › {event.name}</p>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Events › {event.name}</p>
         </div>
-        <div className="flex gap-2">
-          <div style={{ position: 'relative' }}>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="relative">
             <button
               onClick={() => setShowReminderMenu(!showReminderMenu)}
-              style={{ display: 'flex', alignItems: 'center', gap: 7, background: reminderSent ? '#F0FDF4' : '#F1F5F9', border: 'none', borderRadius: 9, padding: '9px 16px', fontSize: 13, fontWeight: 600, color: reminderSent ? '#16A34A' : '#475569', cursor: 'pointer' }}
+              className="flex items-center justify-center gap-1.5 rounded-lg transition-all whitespace-nowrap"
+              style={{ background: reminderSent ? '#F0FDF4' : '#F1F5F9', border: 'none', padding: '7px 14px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, color: reminderSent ? '#16A34A' : '#475569', cursor: 'pointer' }}
             >
-              {reminderSent ? <><CheckCircle2 size={14} /> Reminders Sent!</> : <><Bell size={14} /> Send Reminders <ChevronDown size={12} /></>}
+              {reminderSent ? <><CheckCircle2 size={13} className="sm:w-[14px] sm:h-[14px]" /> Reminders Sent!</> : <><Bell size={13} className="sm:w-[14px] sm:h-[14px]" /> Send Reminders <ChevronDown size={11} /></>}
             </button>
             {showReminderMenu && !reminderSent && (
-              <div style={{ position: 'absolute', top: '110%', right: 0, backgroundColor: 'white', border: '1px solid #E2E8F0', borderRadius: 10, boxShadow: '0 8px 24px rgba(0,0,0,0.08)', minWidth: 180, zIndex: 50 }}>
+              <div className="absolute top-full right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 min-w-[160px] overflow-hidden">
                 {['Email reminder', 'SMS reminder', 'WhatsApp reminder', 'All channels'].map(opt => (
                   <button
                     key={opt}
                     onClick={handleSendReminder}
-                    style={{ width: '100%', textAlign: 'left', padding: '10px 14px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, color: '#0F172A' }}
-                    onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#F8FAFC')}
-                    onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
+                    className="w-full text-left px-4 py-2 text-xs sm:text-sm hover:bg-slate-50 transition-colors"
+                    style={{ color: '#0F172A' }}
                   >
                     {opt}
                   </button>
@@ -136,19 +137,19 @@ export default function EventDetailPage() {
               </div>
             )}
           </div>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, backgroundColor: PRIMARY, color: 'white', border: 'none', borderRadius: 9, padding: '9px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-            <Edit2 size={14} /> Edit Event
+          <button className="flex items-center justify-center gap-1.5 rounded-lg text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: PRIMARY, border: 'none', padding: '7px 14px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}>
+            <Edit2 size={13} className="sm:w-[14px] sm:h-[14px]" /> Edit Event
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {/* Left: Event details + RSVP stats */}
-        <div className="space-y-4">
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
+        {/* Left: Event details + RSVP stats - Responsive */}
+        <div className="lg:w-2/5 space-y-3 sm:space-y-4">
           {/* Event info card */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5">
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 14 }}>Event Details</h3>
-            <div className="space-y-3">
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-3 sm:mb-4">Event Details</h3>
+            <div className="space-y-2.5 sm:space-y-3">
               {[
                 { icon: Calendar, label: 'Date', value: event.date },
                 { icon: Clock, label: 'Time', value: `${event.time} – ${event.endTime}` },
@@ -157,39 +158,39 @@ export default function EventDetailPage() {
               ].map(row => {
                 const Icon = row.icon;
                 return (
-                  <div key={row.label} className="flex items-start gap-3">
-                    <div style={{ width: 32, height: 32, backgroundColor: '#F8FAFC', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '1px solid #E2E8F0' }}>
-                      <Icon size={14} style={{ color: '#64748B' }} />
+                  <div key={row.label} className="flex items-start gap-2.5 sm:gap-3">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-slate-50 rounded-lg flex items-center justify-center flex-shrink-0 border border-slate-200">
+                      <Icon size={13} className="sm:w-[14px] sm:h-[14px]" style={{ color: '#64748B' }} />
                     </div>
-                    <div>
-                      <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>{row.label.toUpperCase()}</p>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', marginTop: 1 }}>{row.value}</p>
+                    <div className="min-w-0">
+                      <p className="text-[10px] sm:text-xs text-slate-400 font-medium">{row.label.toUpperCase()}</p>
+                      <p className="text-[11px] sm:text-sm font-semibold text-slate-800 mt-0.5 break-words">{row.value}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
-            <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #F1F5F9' }}>
-              <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6 }}>{event.description}</p>
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100">
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed">{event.description}</p>
             </div>
           </div>
 
           {/* Capacity */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5">
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Capacity</h3>
-            <div className="flex items-end gap-2 mb-3">
-              <p style={{ fontSize: 28, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>{event.registered}</p>
-              <p style={{ fontSize: 14, color: '#94A3B8', marginBottom: 3 }}>/ {event.capacity} seats</p>
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-2 sm:mb-3">Capacity</h3>
+            <div className="flex items-end gap-2 mb-2 sm:mb-3">
+              <p className="text-2xl sm:text-3xl font-extrabold text-slate-800">{event.registered}</p>
+              <p className="text-xs sm:text-sm text-slate-400 mb-1">/ {event.capacity} seats</p>
             </div>
-            <div style={{ height: 10, backgroundColor: '#F1F5F9', borderRadius: 99, overflow: 'hidden', marginBottom: 8 }}>
-              <div style={{ height: '100%', width: `${capacityPct}%`, backgroundColor: capacityPct > 90 ? '#E30613' : capacityPct > 70 ? '#F59E0B' : '#16A34A', borderRadius: 99 }} />
+            <div className="h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div className="h-full rounded-full transition-all" style={{ width: `${capacityPct}%`, backgroundColor: capacityPct > 90 ? '#E30613' : capacityPct > 70 ? '#F59E0B' : '#16A34A' }} />
             </div>
-            <p style={{ fontSize: 12, color: '#64748B' }}>{capacityPct}% capacity filled · {event.capacity - event.registered} seats remaining</p>
+            <p className="text-[11px] sm:text-xs text-slate-500">{capacityPct}% capacity filled · {event.capacity - event.registered} seats remaining</p>
           </div>
 
           {/* RSVP summary */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5">
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>RSVP Summary</h3>
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+            <h3 className="text-xs sm:text-sm font-bold text-slate-800 mb-2 sm:mb-3">RSVP Summary</h3>
             {[
               { label: 'Confirmed', count: confirmed, color: '#16A34A', icon: CheckCircle2 },
               { label: 'Maybe', count: maybe, color: '#D97706', icon: Clock },
@@ -197,114 +198,109 @@ export default function EventDetailPage() {
             ].map(row => {
               const Icon = row.icon;
               return (
-                <div key={row.label} className="flex items-center justify-between py-2">
-                  <div className="flex items-center gap-2">
-                    <Icon size={14} style={{ color: row.color }} />
-                    <span style={{ fontSize: 13, color: '#475569' }}>{row.label}</span>
+                <div key={row.label} className="flex items-center justify-between py-1.5 sm:py-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Icon size={12} className="sm:w-[14px] sm:h-[14px]" style={{ color: row.color }} />
+                    <span className="text-[11px] sm:text-xs text-slate-600">{row.label}</span>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: row.color }}>{row.count}</span>
+                  <span className="text-xs sm:text-sm font-bold" style={{ color: row.color }}>{row.count}</span>
                 </div>
               );
             })}
-            <div style={{ borderTop: '1px solid #F1F5F9', marginTop: 8, paddingTop: 10 }}>
-              <button
-                style={{ width: '100%', backgroundColor: PRIMARY, color: 'white', border: 'none', borderRadius: 9, padding: '10px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7 }}
-              >
-                <Download size={13} /> Export Attendee List
+            <div className="border-t border-slate-100 mt-2 pt-3">
+              <button className="w-full flex items-center justify-center gap-1.5 rounded-lg text-white transition-all hover:opacity-90" style={{ backgroundColor: PRIMARY, border: 'none', padding: '9px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}>
+                <Download size={12} className="sm:w-[13px] sm:h-[13px]" /> Export Attendee List
               </button>
             </div>
           </div>
         </div>
 
-        {/* Right: Attendee table */}
-        <div className="col-span-2">
-          <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>Attendees ({event.attendees.length})</h3>
-              <div className="flex items-center gap-3">
-                <div style={{ position: 'relative' }}>
-                  <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
+        {/* Right: Attendee table - Responsive */}
+        <div className="lg:flex-1">
+          <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
+              <h3 className="text-xs sm:text-sm font-bold text-slate-800">Attendees ({event.attendees.length})</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative flex-1 sm:flex-none">
+                  <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     placeholder="Search..."
-                    style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '7px 10px 7px 28px', fontSize: 12, outline: 'none', width: 180 }}
+                    className="border border-slate-200 rounded-lg pl-8 pr-2.5 py-1.5 text-[11px] sm:text-xs outline-none w-full sm:w-40"
                   />
                 </div>
                 <select
                   value={filterRsvp}
                   onChange={e => setFilterRsvp(e.target.value)}
-                  style={{ border: '1px solid #E2E8F0', borderRadius: 8, padding: '7px 10px', fontSize: 12, color: '#475569', outline: 'none', backgroundColor: 'white' }}
+                  className="border border-slate-200 rounded-lg px-2 py-1.5 text-[11px] sm:text-xs text-slate-600 outline-none bg-white"
                 >
                   <option value="all">All RSVPs</option>
                   <option value="yes">Confirmed</option>
                   <option value="maybe">Maybe</option>
                   <option value="no">Declined</option>
                 </select>
-                <button
-                  style={{ display: 'flex', alignItems: 'center', gap: 5, backgroundColor: PRIMARY, color: 'white', border: 'none', borderRadius: 8, padding: '7px 12px', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}
-                >
-                  <Plus size={13} /> Add
+                <button className="flex items-center justify-center gap-1 rounded-lg text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: PRIMARY, border: 'none', padding: '6px 12px', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer' }}>
+                  <Plus size={12} className="sm:w-[13px] sm:h-[13px]" /> Add
                 </button>
               </div>
             </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#F8FAFC' }}>
-                  {['Name', 'Contact', 'Role', 'RSVP', 'Actions'].map(h => (
-                    <th key={h} style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((a: any, i: number) => {
-                  const rsvp = RSVP_CONFIG[a.rsvp];
-                  return (
-                    <tr key={a.id} style={{ borderTop: '1px solid #F8FAFC' }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#FAFAFA')}
-                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}
-                    >
-                      <td style={{ padding: '12px 16px' }}>
-                        <div className="flex items-center gap-3">
-                          <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: PRIMARY + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: PRIMARY, flexShrink: 0 }}>
-                            {a.name.charAt(0)}
+            <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full text-xs" style={{ minWidth: '700px' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#F8FAFC' }}>
+                    {['Name', 'Contact', 'Role', 'RSVP', 'Actions'].map(h => (
+                      <th key={h} className="py-2 sm:py-2.5 px-3 sm:px-4 text-[10px] sm:text-xs font-semibold text-slate-400 text-left uppercase tracking-wide whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((a: any, i: number) => {
+                    const rsvp = RSVP_CONFIG[a.rsvp];
+                    return (
+                      <tr key={a.id} className="border-t border-slate-50 hover:bg-slate-50 transition-colors">
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                          <div className="flex items-center gap-2 sm:gap-3">
+                            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white text-[11px] sm:text-xs font-bold flex-shrink-0" style={{ backgroundColor: PRIMARY + '20', color: PRIMARY }}>
+                              {a.name.charAt(0)}
+                            </div>
+                            <span className="text-[11px] sm:text-xs font-semibold text-slate-800 truncate max-w-[100px] sm:max-w-none">{a.name}</span>
                           </div>
-                          <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{a.name}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <p style={{ fontSize: 12, color: '#475569' }}>{a.email}</p>
-                        <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{a.phone}</p>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontSize: 12, color: '#64748B', backgroundColor: '#F1F5F9', padding: '3px 8px', borderRadius: 5 }}>{a.role}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: rsvp.color, backgroundColor: rsvp.bg, padding: '3px 8px', borderRadius: 6 }}>{rsvp.label}</span>
-                      </td>
-                      <td style={{ padding: '12px 16px' }}>
-                        <div className="flex gap-1">
-                          <button style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Mail size={12} style={{ color: '#64748B' }} />
-                          </button>
-                          <button style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Phone size={12} style={{ color: '#64748B' }} />
-                          </button>
-                          <button style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <MoreHorizontal size={12} style={{ color: '#64748B' }} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                          <p className="text-[10px] sm:text-xs text-slate-600 truncate max-w-[120px] sm:max-w-none">{a.email}</p>
+                          <p className="text-[9px] sm:text-[11px] text-slate-400 mt-0.5">{a.phone}</p>
+                        </td>
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4">
+                          <span className="text-[10px] sm:text-xs text-slate-500 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded whitespace-nowrap">{a.role}</span>
+                        </td>
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
+                          <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded" style={{ color: rsvp.color, backgroundColor: rsvp.bg }}>{rsvp.label}</span>
+                        </td>
+                        <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
+                          <div className="flex gap-1">
+                            <button className="w-7 h-7 rounded-md border border-slate-200 bg-white cursor-pointer flex items-center justify-center hover:bg-slate-50 transition-colors">
+                              <Mail size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: '#64748B' }} />
+                            </button>
+                            <button className="w-7 h-7 rounded-md border border-slate-200 bg-white cursor-pointer flex items-center justify-center hover:bg-slate-50 transition-colors">
+                              <Phone size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: '#64748B' }} />
+                            </button>
+                            <button className="w-7 h-7 rounded-md border border-slate-200 bg-white cursor-pointer flex items-center justify-center hover:bg-slate-50 transition-colors">
+                              <MoreHorizontal size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: '#64748B' }} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {filtered.length === 0 && (
-              <div style={{ padding: '40px', textAlign: 'center' }}>
-                <p style={{ fontSize: 13, color: '#94A3B8' }}>No attendees match your filter</p>
+              <div className="py-8 sm:py-10 text-center">
+                <p className="text-xs sm:text-sm text-slate-400">No attendees match your filter</p>
               </div>
             )}
           </div>

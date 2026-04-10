@@ -47,109 +47,109 @@ export default function PlatformHealthPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
-      {/* Top bar */}
-      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
-        <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
-          <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
+    <div className="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: '#F8FAFC' }}>
+      {/* Top bar - Responsive */}
+      <div className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 bg-white border-b border-slate-100">
+        <div className="flex flex-wrap items-center gap-1 text-[11px] sm:text-xs text-slate-400 mb-2">
+          <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors whitespace-nowrap">
             Dashboard
           </button>
-          <ChevronRight size={12} />
-          <span className="text-slate-600 font-medium">Platform Health</span>
+          <ChevronRight size={10} className="sm:w-3 sm:h-3 flex-shrink-0" />
+          <span className="text-slate-600 font-medium whitespace-nowrap">Platform Health</span>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-xl font-bold text-slate-800">System Health & Maintenance Dashboard</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-slate-800">System Health & Maintenance Dashboard</h1>
           <div className="flex flex-wrap items-center gap-2">
             <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
+              className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-semibold whitespace-nowrap"
               style={{ backgroundColor: '#D1FAE5', color: '#065F46' }}
             >
-              <CheckCircle size={12} />
-              <span className="hidden sm:inline">All Systems Operational</span>
-              <span className="sm:hidden">Operational</span>
+              <CheckCircle size={11} className="sm:w-3 sm:h-3" />
+              <span className="hidden xs:inline">All Systems Operational</span>
+              <span className="xs:hidden">Operational</span>
             </div>
             <button
               onClick={handleRefresh}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium border border-slate-200 hover:bg-slate-50 transition-all"
+              className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-sm font-medium border border-slate-200 hover:bg-slate-50 transition-all whitespace-nowrap"
               style={{ color: '#64748B' }}
             >
-              <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
-              Refresh
+              <RefreshCw size={12} className={refreshing ? 'animate-spin' : ''} />
+              <span className="hidden xs:inline">Refresh</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 p-4 lg:p-6 space-y-5">
-        {/* KPI stat cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex-1 p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+        {/* KPI stat cards - Responsive */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
             { label: 'Overall Uptime', value: '99.97%', sub: 'Last 30 days', icon: Activity, color: '#2563EB' },
             { label: 'Servers Online', value: '10 / 12', sub: '2 in maintenance', icon: Server, color: '#3B82F6' },
             { label: 'Avg Response Time', value: '48ms', sub: 'API gateway', icon: Zap, color: '#F59E0B' },
             { label: 'Active Incidents', value: '1', sub: 'Warning level', icon: AlertCircle, color: '#EF4444' },
           ].map(({ label, value, sub, icon: Icon, color }) => (
-            <div key={label} className="rounded-2xl p-5" style={{ backgroundColor: '#0F172A' }}>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#1E293B' }}>
-                  <Icon size={16} style={{ color }} />
+            <div key={label} className="rounded-xl sm:rounded-2xl p-3 sm:p-4 hover:shadow-md transition-shadow" style={{ backgroundColor: '#0F172A' }}>
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1E293B' }}>
+                  <Icon size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color }} />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-white">{value}</p>
-              <p className="text-xs mt-0.5" style={{ color: '#94A3B8' }}>{label}</p>
-              <p className="text-xs mt-1" style={{ color }}>{sub}</p>
+              <p className="text-lg sm:text-2xl font-bold text-white">{value}</p>
+              <p className="text-[10px] sm:text-xs mt-0.5" style={{ color: '#94A3B8' }}>{label}</p>
+              <p className="text-[10px] sm:text-xs mt-1" style={{ color }}>{sub}</p>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           {/* Services table */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-100">
-              <h3 className="font-semibold text-slate-700 text-sm">Service Status</h3>
+          <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
+            <div className="px-3 sm:px-4 md:px-5 py-3 sm:py-4 border-b border-slate-100">
+              <h3 className="font-semibold text-slate-700 text-sm sm:text-base">Service Status</h3>
             </div>
-            <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead style={{ backgroundColor: '#F8FAFC' }}>
-                <tr>
+            <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full text-xs" style={{ minWidth: '600px' }}>
+                <thead style={{ backgroundColor: '#F8FAFC' }}>
+                  <tr>
                   {['Service', 'Status', 'Latency', 'Uptime', 'Action'].map(h => (
-                    <th key={h} className="text-left py-2.5 px-4 font-semibold text-slate-500">{h}</th>
+                    <th key={h} className="text-left py-2 sm:py-2.5 px-3 sm:px-4 font-semibold text-slate-500 text-[11px] sm:text-xs whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {SERVICES.map(svc => (
-                  <tr key={svc.name} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-4 font-medium text-slate-700">{svc.name}</td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-1.5">
-                        {statusIcon(svc.status)}
-                        <span
-                          className="capitalize"
-                          style={{ color: svc.status === 'healthy' ? '#2563EB' : svc.status === 'down' ? '#EF4444' : '#F59E0B' }}
-                        >
-                          {svc.status}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 font-mono text-slate-500">{svc.latency}</td>
-                    <td className="py-3 px-4 text-slate-600">{svc.uptime}</td>
-                    <td className="py-3 px-4">
-                      <button className="text-xs font-medium hover:opacity-70" style={{ color: '#2563EB' }}>Ping</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {SERVICES.map(svc => (
+                    <tr key={svc.name} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-2 sm:py-3 px-3 sm:px-4 font-medium text-slate-700 text-[11px] sm:text-xs whitespace-nowrap">{svc.name}</td>
+                      <td className="py-2 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          {statusIcon(svc.status)}
+                          <span
+                            className="capitalize text-[11px] sm:text-xs whitespace-nowrap"
+                            style={{ color: svc.status === 'healthy' ? '#2563EB' : svc.status === 'down' ? '#EF4444' : '#F59E0B' }}
+                          >
+                            {svc.status}
+                          </span>
+                        </div>
+                       </td>
+                      <td className="py-2 sm:py-3 px-3 sm:px-4 font-mono text-slate-500 text-[11px] sm:text-xs whitespace-nowrap">{svc.latency}</td>
+                      <td className="py-2 sm:py-3 px-3 sm:px-4 text-slate-600 text-[11px] sm:text-xs whitespace-nowrap">{svc.uptime}</td>
+                      <td className="py-2 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
+                        <button className="text-[11px] sm:text-xs font-medium hover:opacity-70" style={{ color: '#2563EB' }}>Ping</button>
+                      </td>
+                     </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
           {/* Right column */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Uptime chart */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 className="font-semibold text-slate-700 text-sm mb-3">Uptime — 12 Days</h3>
-              <ResponsiveContainer width="100%" height={80}>
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4">
+              <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-2 sm:mb-3">Uptime — 12 Days</h3>
+              <ResponsiveContainer width="100%" height={70}>
                 <AreaChart data={uptimeData}>
                   <defs>
                     <linearGradient id="ug" x1="0" y1="0" x2="0" y2="1">
@@ -163,9 +163,9 @@ export default function PlatformHealthPage() {
             </div>
 
             {/* Latency chart */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 className="font-semibold text-slate-700 text-sm mb-3">API Latency (ms)</h3>
-              <ResponsiveContainer width="100%" height={80}>
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4">
+              <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-2 sm:mb-3">API Latency (ms)</h3>
+              <ResponsiveContainer width="100%" height={70}>
                 <LineChart data={latencyData}>
                   <Line type="monotone" dataKey="v" stroke="#3B82F6" strokeWidth={2} dot={false} isAnimationActive={false} />
                 </LineChart>
@@ -173,13 +173,13 @@ export default function PlatformHealthPage() {
             </div>
 
             {/* Maintenance actions */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 className="font-semibold text-slate-700 text-sm mb-3">Maintenance</h3>
-              <div className="space-y-2">
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4">
+              <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-2 sm:mb-3">Maintenance</h3>
+              <div className="space-y-1.5 sm:space-y-2">
                 {['Schedule Update', 'Run Backup', 'Clear Cache', 'View Incident Log'].map(action => (
                   <button
                     key={action}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-medium border border-slate-200 hover:bg-slate-50 transition-all text-slate-600"
+                    className="w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-medium border border-slate-200 hover:bg-slate-50 transition-all text-slate-600 whitespace-nowrap"
                   >
                     {action}
                   </button>
@@ -189,30 +189,32 @@ export default function PlatformHealthPage() {
           </div>
         </div>
 
-        {/* Incidents */}
-        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-sm">Recent Incidents</h3>
+        {/* Incidents - Responsive */}
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="px-3 sm:px-4 md:px-5 py-3 sm:py-4 border-b border-slate-100">
+            <h3 className="font-semibold text-slate-700 text-sm sm:text-base">Recent Incidents</h3>
           </div>
           <div className="divide-y divide-slate-50">
             {INCIDENTS.map((inc, i) => (
-              <div key={i} className="flex items-center gap-4 px-5 py-3.5">
-                <div
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ backgroundColor: inc.resolved ? '#2563EB' : inc.severity === 'warning' ? '#F59E0B' : '#3B82F6' }}
-                />
-                <div className="flex-1">
-                  <p className="text-sm text-slate-700 font-medium">{inc.title}</p>
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-3 sm:px-4 md:px-5 py-3 sm:py-3.5">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div
+                    className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: inc.resolved ? '#2563EB' : inc.severity === 'warning' ? '#F59E0B' : '#3B82F6' }}
+                  />
+                  <p className="text-[11px] sm:text-sm text-slate-700 font-medium truncate">{inc.title}</p>
                 </div>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                  style={inc.resolved
-                    ? { backgroundColor: '#D1FAE5', color: '#065F46' }
-                    : { backgroundColor: '#FEF3C7', color: '#92400E' }}
-                >
-                  {inc.resolved ? 'Resolved' : 'Active'}
-                </span>
-                <span className="text-xs text-slate-400 shrink-0">{inc.time}</span>
+                <div className="flex items-center gap-2 sm:gap-3 pl-5 sm:pl-0">
+                  <span
+                    className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-semibold whitespace-nowrap"
+                    style={inc.resolved
+                      ? { backgroundColor: '#D1FAE5', color: '#065F46' }
+                      : { backgroundColor: '#FEF3C7', color: '#92400E' }}
+                  >
+                    {inc.resolved ? 'Resolved' : 'Active'}
+                  </span>
+                  <span className="text-[10px] sm:text-xs text-slate-400 shrink-0">{inc.time}</span>
+                </div>
               </div>
             ))}
           </div>

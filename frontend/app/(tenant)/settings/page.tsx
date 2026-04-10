@@ -23,7 +23,17 @@ export default function SettingsPage() {
   const { branding, user, setBranding } = useAuthStore();
   const primaryColor = branding?.primary_color || '#E30613';
 
-  // Local branding state — editable before saving
+  // State variables
+  const [partyName, setPartyName] = useState(branding?.party_name || 'SKNLP');
+  const [shortName, setShortName] = useState('SKNLP');
+  const [partySlogan, setPartySlogan] = useState('Building a Better Tomorrow');
+  const [partyWebsite, setPartyWebsite] = useState('https://sknlp.org');
+  const [contactEmail, setContactEmail] = useState('info@sknlp.org');
+  const [phoneNumber, setPhoneNumber] = useState('+1 (869) 555-0100');
+  const [aboutParty, setAboutParty] = useState('The St. Kitts-Nevis Labour Party has been serving the people since 1932...');
+  const [subdomain, setSubdomain] = useState(branding?.subdomain || 'sknlp');
+
+  // Local branding state
   const [localPrimaryColor, setLocalPrimaryColor] = useState(branding?.primary_color || '#E30613');
   const [localHexInput, setLocalHexInput] = useState(branding?.primary_color || '#E30613');
   const [localLogoUrl, setLocalLogoUrl] = useState<string | null>(branding?.logo_url || null);
@@ -59,15 +69,14 @@ export default function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     await new Promise(r => setTimeout(r, 800));
-    // Apply new branding globally — update store (persisted, so survives refresh)
     setBranding({
       name: branding?.name || 'SKNLP',
-      party_name: branding?.party_name,
+      party_name: partyName,
       logo_url: localLogoUrl,
       primary_color: localPrimaryColor,
       secondary_color: branding?.secondary_color || '#1A1A1A',
       font: branding?.font || 'Inter',
-      subdomain: branding?.subdomain || 'sknlp',
+      subdomain: subdomain,
     });
     setSaving(false);
     setSaved(true);
@@ -75,30 +84,34 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="space-y-5 fade-in">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-bold text-slate-800">Settings</h1>
-          <p className="text-sm text-slate-500">Manage your campaign account and preferences</p>
+    <div className="w-full max-w-full p-4 sm:p-5 md:p-6 lg:p-8">
+      {/* Header - Fixed to show full title */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6">
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800">Settings</h1>
+          <p className="text-sm sm:text-base text-slate-500 mt-1">Manage your campaign account and preferences</p>
         </div>
-        <Button size="sm" icon={<Save size={14} />} onClick={handleSave} loading={saving} style={{ backgroundColor: primaryColor, borderColor: primaryColor }}>
+        <Button size="sm" icon={<Save size={14} />} onClick={handleSave} loading={saving} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="whitespace-nowrap">
           {saved ? 'Saved!' : 'Save Changes'}
         </Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-5">
         {/* Sidebar nav */}
-        <div className="w-full lg:w-48 lg:flex-shrink-0">
+        <div className="w-full lg:w-48 xl:w-56 lg:flex-shrink-0">
           <Card className="p-2">
-            <div className="flex lg:flex-col flex-wrap gap-1">
-            {tabs.map(({ id, label, icon: Icon }) => (
-              <button key={id} onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-2 lg:gap-3 px-3 py-2 lg:py-2.5 rounded-lg text-sm font-medium text-left transition-all ${activeTab === id ? 'text-white' : 'text-slate-600 hover:bg-slate-50'}`}
-                style={activeTab === id ? { backgroundColor: primaryColor } : {}}>
-                <Icon size={15} />
-                <span className="whitespace-nowrap">{label}</span>
-              </button>
-            ))}
+            <div className="flex flex-row lg:flex-col flex-wrap gap-1">
+              {tabs.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => setActiveTab(id)}
+                  className={`flex items-center gap-2 lg:gap-3 px-3 py-2 lg:py-2.5 rounded-lg text-sm font-medium text-left transition-all whitespace-nowrap ${activeTab === id ? 'text-white' : 'text-slate-600 hover:bg-slate-50'}`}
+                  style={activeTab === id ? { backgroundColor: primaryColor } : {}}
+                >
+                  <Icon size={15} />
+                  <span>{label}</span>
+                </button>
+              ))}
             </div>
           </Card>
         </div>
@@ -106,10 +119,9 @@ export default function SettingsPage() {
         {/* Content */}
         <div className="flex-1 min-w-0">
           {activeTab === 'party' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">Party Profile</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Party Profile</h3>
               <div className="space-y-4">
-                {/* Hidden file input */}
                 <input
                   ref={logoInputRef}
                   type="file"
@@ -118,31 +130,29 @@ export default function SettingsPage() {
                   onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoFile(f); }}
                 />
 
-                <div className="flex items-center gap-4 mb-6">
-                  {/* Logo preview */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
                   <div
-                    className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold text-white relative overflow-hidden flex-shrink-0"
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl font-bold text-white relative overflow-hidden flex-shrink-0"
                     style={{ backgroundColor: primaryColor }}
                   >
                     {localLogoUrl
                       ? <img src={localLogoUrl} alt="Logo" className="w-full h-full object-cover" />
-                      : (branding?.party_name?.[0] || 'S')}
+                      : (partyName?.[0] || 'S')}
                     {localLogoUrl && (
                       <button
                         onClick={() => setLocalLogoUrl(null)}
-                        className="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80"
+                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80"
                         title="Remove logo"
                       >
-                        <X size={10} color="white" />
+                        <X size={9} color="white" />
                       </button>
                     )}
                   </div>
 
-                  {/* Upload controls */}
                   <div>
                     <button
                       onClick={() => logoInputRef.current?.click()}
-                      className="flex items-center gap-2 px-3 py-1.5 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                      className="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                     >
                       <Upload size={13} />
                       {localLogoUrl ? 'Change Logo' : 'Upload Logo'}
@@ -150,36 +160,77 @@ export default function SettingsPage() {
                     <p className="text-xs text-slate-400 mt-1">PNG, SVG or JPG · max 2 MB</p>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { label: 'Party Name', value: branding?.party_name || 'SKNLP', placeholder: 'Party name' },
-                    { label: 'Short Name / Abbreviation', value: 'SKNLP', placeholder: 'e.g. SKNLP' },
-                    { label: 'Party Slogan', value: 'Building a Better Tomorrow', placeholder: 'Campaign slogan' },
-                    { label: 'Party Website', value: 'https://sknlp.org', placeholder: 'https://...' },
-                    { label: 'Contact Email', value: 'info@sknlp.org', placeholder: 'contact@party.org' },
-                    { label: 'Phone Number', value: '+1 (869) 555-0100', placeholder: '+1 ...' },
-                  ].map(({ label, value, placeholder }) => (
-                    <div key={label}>
-                      <label className="block text-xs font-medium text-slate-700 mb-1">{label}</label>
-                      <input defaultValue={value} placeholder={placeholder} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" />
-                    </div>
-                  ))}
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Name</label>
+                    <input 
+                      value={partyName} 
+                      onChange={e => setPartyName(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Short Name / Abbreviation</label>
+                    <input 
+                      value={shortName} 
+                      onChange={e => setShortName(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Slogan</label>
+                    <input 
+                      value={partySlogan} 
+                      onChange={e => setPartySlogan(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Website</label>
+                    <input 
+                      value={partyWebsite} 
+                      onChange={e => setPartyWebsite(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Contact Email</label>
+                    <input 
+                      value={contactEmail} 
+                      onChange={e => setContactEmail(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number</label>
+                    <input 
+                      value={phoneNumber} 
+                      onChange={e => setPhoneNumber(e.target.value)} 
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">About the Party</label>
-                  <textarea rows={3} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm resize-none" defaultValue="The St. Kitts-Nevis Labour Party has been serving the people since 1932..." />
+                  <textarea 
+                    value={aboutParty} 
+                    onChange={e => setAboutParty(e.target.value)} 
+                    rows={3} 
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1" 
+                  />
                 </div>
               </div>
             </Card>
           )}
 
           {activeTab === 'branding' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">White-Label Branding</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">White-Label Branding</h3>
               <div className="space-y-5">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-2">Primary Color</label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     <input
                       type="color"
                       value={localPrimaryColor}
@@ -196,7 +247,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-2">Color Presets</label>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     {['#CC0000', '#E30613', '#006400', '#1D4ED8', '#7C3AED', '#F59E0B'].map(c => (
                       <button
                         key={c}
@@ -213,8 +264,12 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-2">Subdomain</label>
-                  <div className="flex items-center gap-2">
-                    <input defaultValue={branding?.subdomain || 'sknlp'} className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32" />
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input 
+                      value={subdomain} 
+                      onChange={e => setSubdomain(e.target.value)} 
+                      className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32" 
+                    />
                     <span className="text-sm text-slate-400">.campaign365.com</span>
                   </div>
                 </div>
@@ -224,9 +279,9 @@ export default function SettingsPage() {
                     <div className="h-2 w-full" style={{ backgroundColor: localPrimaryColor }} />
                     <div className="p-4 flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: localPrimaryColor }}>
-                        {(branding?.party_name || 'SKNLP')[0]}
+                        {(partyName || 'SKNLP')[0]}
                       </div>
-                      <span className="font-semibold text-slate-800">{branding?.party_name || 'SKNLP'} Campaign 365</span>
+                      <span className="font-semibold text-slate-800">{partyName || 'SKNLP'} Campaign 365</span>
                     </div>
                   </div>
                 </div>
@@ -235,8 +290,8 @@ export default function SettingsPage() {
           )}
 
           {activeTab === 'team' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">Team Members & Roles</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Team Members & Roles</h3>
               <div className="space-y-3">
                 {[
                   { name: 'Dr. Terrence Drew', email: 'tdrew@sknlp.org', role: 'general_secretary', status: 'active' },
@@ -250,12 +305,12 @@ export default function SettingsPage() {
                       <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ backgroundColor: primaryColor }}>
                         {member.name[0]}
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{member.name}</p>
-                        <p className="text-xs text-slate-400 truncate">{member.email}</p>
+                      <div>
+                        <p className="text-sm font-medium text-slate-800">{member.name}</p>
+                        <p className="text-xs text-slate-400">{member.email}</p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 pl-12 sm:pl-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600 capitalize">{member.role.replace(/_/g, ' ')}</span>
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${member.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{member.status}</span>
                       <Button variant="ghost" size="sm">Edit</Button>
@@ -268,8 +323,8 @@ export default function SettingsPage() {
           )}
 
           {activeTab === 'notifications' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">Notification Preferences</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Notification Preferences</h3>
               <div className="space-y-4">
                 {(
                   [
@@ -283,7 +338,7 @@ export default function SettingsPage() {
                 ).map(({ key, label, desc }) => {
                   const enabled = notifPrefs[key];
                   return (
-                    <div key={key} className="flex items-start justify-between py-3 border-b border-slate-50 last:border-0">
+                    <div key={key} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 py-3 border-b border-slate-50 last:border-0">
                       <div>
                         <p className="text-sm font-medium text-slate-800">{label}</p>
                         <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
@@ -297,8 +352,8 @@ export default function SettingsPage() {
           )}
 
           {activeTab === 'security' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">Security Settings</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Security Settings</h3>
               <div className="space-y-5">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">Change Password</label>
@@ -321,7 +376,7 @@ export default function SettingsPage() {
                       { device: 'MacBook Pro — Chrome', ip: '192.168.1.4', time: 'Current session' },
                       { device: 'iPhone 15 — Safari', ip: '10.0.0.12', time: '2 hours ago' },
                     ].map((s, i) => (
-                      <div key={i} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg">
+                      <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-slate-100 rounded-lg">
                         <div>
                           <p className="text-sm text-slate-700">{s.device}</p>
                           <p className="text-xs text-slate-400">{s.ip} · {s.time}</p>
@@ -336,8 +391,8 @@ export default function SettingsPage() {
           )}
 
           {activeTab === 'api' && (
-            <Card className="p-6">
-              <h3 className="font-semibold text-slate-800 mb-5">API & Integrations</h3>
+            <Card className="p-4 sm:p-5 md:p-6">
+              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">API & Integrations</h3>
               <div className="space-y-5">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-2">API Keys</label>
@@ -346,13 +401,15 @@ export default function SettingsPage() {
                       { label: 'Live API Key', value: 'ck_live_••••••••••••••••••••' },
                       { label: 'Test API Key', value: 'ck_test_••••••••••••••••••••' },
                     ].map(({ label, value }) => (
-                      <div key={label} className="flex items-center gap-3 p-3 border border-slate-200 rounded-lg">
+                      <div key={label} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-slate-200 rounded-lg">
                         <div className="flex-1">
                           <p className="text-xs font-medium text-slate-600">{label}</p>
-                          <code className="text-sm text-slate-800 font-mono">{value}</code>
+                          <code className="text-sm text-slate-800 font-mono break-all">{value}</code>
                         </div>
-                        <Button variant="outline" size="sm">Reveal</Button>
-                        <Button variant="ghost" size="sm">Regenerate</Button>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm">Reveal</Button>
+                          <Button variant="ghost" size="sm">Regenerate</Button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -367,12 +424,12 @@ export default function SettingsPage() {
                       { name: 'Stripe (Payments)', status: 'disconnected', color: '#635BFF' },
                       { name: 'Google Maps', status: 'disconnected', color: '#4285F4' },
                     ].map(({ name, status, color }) => (
-                      <div key={name} className="flex items-center justify-between p-3 border border-slate-100 rounded-lg">
+                      <div key={name} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-slate-100 rounded-lg">
                         <div className="flex items-center gap-2">
                           <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
                           <span className="text-sm text-slate-700">{name}</span>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status === 'connected' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{status}</span>
                           <Button variant="ghost" size="sm">{status === 'connected' ? 'Configure' : 'Connect'}</Button>
                         </div>
