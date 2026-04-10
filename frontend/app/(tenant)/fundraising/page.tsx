@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/lib/store';
-import { Plus, DollarSign, Users, TrendingUp, Send, Download } from 'lucide-react';
+import { Plus, DollarSign, Users, TrendingUp, Send, Download, Eye, Edit2, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
@@ -36,20 +36,20 @@ export default function FundraisingPage() {
   return (
     <div className="space-y-5">
       {/* Gradient Hero Banner */}
-      <div style={{ background: 'linear-gradient(135deg, #E30613 0%, #8B0000 50%, #1A1A1A 100%)', borderRadius: 16, padding: '32px 32px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'linear-gradient(135deg, #E30613 0%, #8B0000 50%, #1A1A1A 100%)', borderRadius: 16, padding: '24px 24px 20px' }} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>SKNLP Campaign Finance</p>
           <h1 style={{ color: 'white', fontWeight: 800, fontSize: 26, margin: '0 0 4px', letterSpacing: '-0.02em' }}>Fundraising Dashboard</h1>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 13, margin: 0 }}>{DONORS.length} donors this cycle · Goal: $365,000</p>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer' }}>
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 600, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             <Download size={14} />
             Export Donors
           </button>
           <button
             onClick={() => setShowAddDonor(true)}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'white', color: '#E30613', border: 'none', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 10, fontSize: 13, fontWeight: 700, background: 'white', color: '#E30613', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             <Plus size={14} />
             Launch New Campaign
@@ -101,7 +101,7 @@ export default function FundraisingPage() {
       </div>
 
       {/* Chart + Donors */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Chart */}
         <div className="bg-white rounded-2xl border border-slate-100 p-5">
           <h3 className="font-semibold text-slate-700 text-sm mb-4">Fundraising Trend</h3>
@@ -125,7 +125,7 @@ export default function FundraisingPage() {
         </div>
 
         {/* Donors table */}
-        <div className="col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-semibold text-slate-700 text-sm">Top Donors</h3>
             <button className="flex items-center gap-1.5 text-xs font-medium hover:opacity-70 transition-opacity" style={{ color: primaryColor }}>
@@ -136,7 +136,7 @@ export default function FundraisingPage() {
           <table className="w-full text-xs">
             <thead style={{ backgroundColor: '#F8FAFC' }}>
               <tr>
-                {['Donor', 'Amount', 'Date', 'Method', 'Status'].map(h => (
+                {['Donor', 'Amount', 'Date', 'Method', 'Status', 'Actions'].map(h => (
                   <th key={h} className="text-left py-2.5 px-4 font-semibold text-slate-500">{h}</th>
                 ))}
               </tr>
@@ -157,6 +157,19 @@ export default function FundraisingPage() {
                     >
                       {d.status}
                     </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-1">
+                      <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View Donor" style={{ color: '#E30613' }}>
+                        <Eye size={13} />
+                      </button>
+                      <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit Donor">
+                        <Edit2 size={13} />
+                      </button>
+                      <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete Donor" style={{ color: '#EF4444' }}>
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

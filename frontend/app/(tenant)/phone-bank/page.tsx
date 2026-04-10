@@ -91,7 +91,7 @@ export default function PhoneBankPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Phone Bank</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Dashboard › Phone Bank</p>
@@ -103,7 +103,7 @@ export default function PhoneBankPage() {
       </div>
 
       {/* Today's stats */}
-      <div className="grid grid-cols-5 gap-3 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
         {[
           { label: 'Calls Today', value: todayStats.total, color: '#0F172A' },
           { label: 'Supporters', value: todayStats.supporters, color: '#16A34A' },

@@ -1,14 +1,14 @@
 'use client';
 import { useState } from 'react';
-import { Smartphone, Download, Users, UserCog, Car, MapPin, Activity, CheckCircle, Clock, Plus, QrCode } from 'lucide-react';
+import { Smartphone, Download, Users, UserCog, Car, MapPin, Activity, CheckCircle, Clock, Plus, QrCode, X } from 'lucide-react';
 
 const TEAM_MEMBERS = [
-  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', lastActivity: '#F0813', canvasApp: 'Installed · 2 days ago', candidateApp: 'Installed · 2 days ago', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#E30613' },
-  { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', lastActivity: '#F0813', canvasApp: 'Installed · 3 days ago', candidateApp: '—', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#1D4ED8' },
-  { id: 3, name: 'Michael Johnson', role: 'Runner', status: 'Active', lastActivity: '#F0813', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 1 day ago', outdoorApp: '—', avatar: 'M', avatarColor: '#7C3AED' },
-  { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', lastActivity: '#F0813', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 5 days ago', outdoorApp: '—', avatar: 'S', avatarColor: '#0891B2' },
-  { id: 5, name: 'David Brown', role: 'Outdoor Agent', status: 'Active', lastActivity: '#F0813', canvasApp: '—', candidateApp: '—', runnerApp: '—', outdoorApp: 'Installed · 2 days ago', avatar: 'D', avatarColor: '#D97706' },
-  { id: 6, name: 'Emily Davis', role: 'Canvasser', status: 'Active', lastActivity: '#F0814', canvasApp: 'Installed · 7 days ago', candidateApp: '—', runnerApp: '—', outdoorApp: '—', avatar: 'E', avatarColor: '#059669' },
+  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', lastActivity: '2 min ago', canvasApp: 'Installed · 2 days ago', candidateApp: 'Installed · 2 days ago', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#E30613' },
+  { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', lastActivity: '5 min ago', canvasApp: 'Installed · 3 days ago', candidateApp: '—', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#1D4ED8' },
+  { id: 3, name: 'Michael Johnson', role: 'Runner', status: 'Active', lastActivity: '1 min ago', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 1 day ago', outdoorApp: '—', avatar: 'M', avatarColor: '#7C3AED' },
+  { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', lastActivity: '8 min ago', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 5 days ago', outdoorApp: '—', avatar: 'S', avatarColor: '#0891B2' },
+  { id: 5, name: 'David Brown', role: 'Outdoor Agent', status: 'Active', lastActivity: '3 min ago', canvasApp: '—', candidateApp: '—', runnerApp: '—', outdoorApp: 'Installed · 2 days ago', avatar: 'D', avatarColor: '#D97706' },
+  { id: 6, name: 'Emily Davis', role: 'Canvasser', status: 'Active', lastActivity: '15 min ago', canvasApp: 'Installed · 7 days ago', candidateApp: '—', runnerApp: '—', outdoorApp: '—', avatar: 'E', avatarColor: '#059669' },
 ];
 
 const APPS = [
@@ -66,6 +66,8 @@ type Tab = 'all' | 'canvassers' | 'runners' | 'outdoor' | 'stats';
 
 export default function MobileAppsPage() {
   const [tab, setTab] = useState<Tab>('all');
+  const [showAdd, setShowAdd] = useState(false);
+  const [newMember, setNewMember] = useState({ name: '', role: 'Canvasser', email: '' });
 
   const filterMap: Record<Tab, string[]> = {
     all: [],
@@ -81,13 +83,56 @@ export default function MobileAppsPage() {
 
   return (
     <div>
+      {/* Add Team Member Modal */}
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-slate-800 text-lg">Add Team Member</h3>
+              <button onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Full Name</label>
+                <input value={newMember.name} onChange={e => setNewMember(m => ({ ...m, name: e.target.value }))} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="e.g. John Doe" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Email</label>
+                <input type="email" value={newMember.email} onChange={e => setNewMember(m => ({ ...m, email: e.target.value }))} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="john@example.com" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Role</label>
+                <select value={newMember.role} onChange={e => setNewMember(m => ({ ...m, role: e.target.value }))} className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none">
+                  <option>Campaign Manager</option>
+                  <option>Canvasser</option>
+                  <option>Runner</option>
+                  <option>Outdoor Agent</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={() => setShowAdd(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50">Cancel</button>
+                <button
+                  onClick={() => { setShowAdd(false); setNewMember({ name: '', role: 'Canvasser', email: '' }); }}
+                  style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Send Invite
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Team &amp; Mobile App Management</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Manage app access and monitor mobile app usage by role</p>
         </div>
-        <button style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <button
+          onClick={() => setShowAdd(true)}
+          style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+        >
           <Plus size={14} /> Add New Team Member
         </button>
       </div>

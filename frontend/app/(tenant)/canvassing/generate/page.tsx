@@ -179,7 +179,7 @@ export default function GenerateWalkListPage() {
             <div className="space-y-5">
               <div>
                 <label className="text-sm font-medium mb-2 block" style={{ color: '#374151' }}>Sort Method</label>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {[['street', 'By Street'], ['priority', 'By Priority'], ['proximity', 'By Proximity']].map(([v, l]) => (
                     <button key={v} onClick={() => setSortBy(v)}
                       className="px-4 py-2 rounded-lg text-sm font-medium"
@@ -191,7 +191,7 @@ export default function GenerateWalkListPage() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block" style={{ color: '#374151' }}>Max Stops Per List: <strong>{maxStops}</strong></label>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {[50, 100, 150, 200].map(n => (
                     <button key={n} onClick={() => setMaxStops(n)}
                       className="px-4 py-2 rounded-lg text-sm font-medium"
@@ -223,7 +223,7 @@ export default function GenerateWalkListPage() {
         {step === 3 && (
           <div>
             <h3 className="font-semibold mb-4" style={{ color: '#0F172A' }}>Assign to Canvasser</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {CANVASSERS.map(c => (
                 <label key={c.id} className="flex items-center gap-3 p-3 rounded-lg border cursor-pointer" style={{ borderColor: canvasser === c.id ? 'var(--tenant-primary)' : '#E2E8F0', backgroundColor: canvasser === c.id ? 'color-mix(in srgb, var(--tenant-primary) 8%, transparent)' : '#fff' }}>
                   <input type="radio" checked={canvasser === c.id} onChange={() => setCanvasser(c.id)} style={{ accentColor: 'var(--tenant-primary)' }} />
@@ -244,7 +244,7 @@ export default function GenerateWalkListPage() {
         {step === 4 && (
           <div>
             <h3 className="font-semibold mb-1" style={{ color: '#0F172A' }}>Preview & Generate</h3>
-            <div className="flex gap-4 mb-4">
+            <div className="flex flex-wrap gap-3 mb-4">
               {[
                 [<Route size={13} key="r" />, '4.2 km', 'Total Distance'],
                 [<Clock size={13} key="c" />, '2h 15m', 'Est. Time'],

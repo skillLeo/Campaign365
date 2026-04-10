@@ -14,9 +14,9 @@ const CHECKLISTS = [
 const DATA_EXPORTS = [
   { id: 'EX-001', client: 'Jamaica Labour Party', date: '2025-10-05', status: 'Completed' },
   { id: 'EX-002', client: 'SKNLP', date: '2025-10-04', status: 'Completed' },
-  { id: 'EX-003', client: 'PNP', date: '2025-10-06', status: 'Hornd' },
+  { id: 'EX-003', client: 'PNP', date: '2025-10-06', status: 'Pending' },
   { id: 'EX-004', client: 'UK Labour', date: '2025-10-03', status: 'Completed' },
-  { id: 'EX-005', client: 'DLP Barbados', date: '2025-09-28', status: 'Hornd' },
+  { id: 'EX-005', client: 'DLP Barbados', date: '2025-09-28', status: 'Pending' },
   { id: 'EX-006', client: 'Canvass Demo', date: '2025-09-25', status: 'Completed' },
 ];
 
@@ -70,7 +70,7 @@ export default function CompliancePage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Compliance</span>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           {[
             { key: 'global' as const, label: 'Global Compliance' },
             { key: 'client' as const, label: 'Per-Client' },
@@ -92,7 +92,8 @@ export default function CompliancePage() {
       </div>
 
       <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
           {/* LEFT: Compliance Checklists */}
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <h3 className="font-semibold text-slate-700 text-sm mb-4">Compliance Checklists</h3>
@@ -137,41 +138,42 @@ export default function CompliancePage() {
                 </button>
               </div>
               <button
-                className="px-3 py-1 rounded-full text-xs font-medium border"
+                className="px-3 py-1 rounded-full text-xs font-medium border hover:bg-blue-50 transition-all"
                 style={{ borderColor: '#2563EB', color: '#2563EB' }}
               >
-                Temall Requests
+                View All Requests
               </button>
             </div>
             <div className="flex-1 overflow-auto">
-              <div className="overflow-x-auto">
-              <table className="w-full text-xs">
+              <table className="w-full text-xs" style={{ minWidth: '420px' }}>
                 <thead style={{ backgroundColor: '#F8FAFC' }}>
                   <tr>
-                    {['ID', 'Client', 'Date', 'Status', 'Action'].map(h => (
-                      <th key={h} className="text-left py-2.5 px-4 font-semibold text-slate-500">{h}</th>
-                    ))}
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-500 w-16">ID</th>
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-500">Client</th>
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-500 w-24">Date</th>
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-500 w-24">Status</th>
+                    <th className="text-left py-2.5 px-3 font-semibold text-slate-500 w-14">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {filtered.map(row => (
                     <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-2.5 px-4 font-mono text-slate-500">{row.id}</td>
-                      <td className="py-2.5 px-4 font-medium text-slate-700">{row.client}</td>
-                      <td className="py-2.5 px-4 text-slate-400">{row.date}</td>
-                      <td className="py-2.5 px-4">
+                      <td className="py-2.5 px-3 font-mono text-slate-500 whitespace-nowrap">{row.id}</td>
+                      <td className="py-2.5 px-3 font-medium text-slate-700">{row.client}</td>
+                      <td className="py-2.5 px-3 text-slate-400 whitespace-nowrap">{row.date}</td>
+                      <td className="py-2.5 px-3 whitespace-nowrap">
                         <span
-                          className="px-2 py-0.5 rounded-full text-xs font-semibold"
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap"
                           style={
                             row.status === 'Completed'
                               ? { backgroundColor: '#D1FAE5', color: '#065F46' }
-                              : { backgroundColor: '#CCFBF1', color: '#0F766E' }
+                              : { backgroundColor: '#FEF3C7', color: '#92400E' }
                           }
                         >
                           {row.status}
                         </span>
                       </td>
-                      <td className="py-2.5 px-4">
+                      <td className="py-2.5 px-3">
                         <button className="hover:opacity-70 transition-opacity" style={{ color: '#2563EB' }}>
                           <Download size={13} />
                         </button>
@@ -180,7 +182,6 @@ export default function CompliancePage() {
                   ))}
                 </tbody>
               </table>
-              </div>
             </div>
           </div>
 
@@ -232,7 +233,11 @@ export default function CompliancePage() {
                 onClick={() => setAuditOpen(!auditOpen)}
               >
                 <span>Audit Trail</span>
-                <ChevronRight size={14} className={`text-slate-400 transition-transform ${auditOpen ? 'rotate-90' : ''}`} />
+                <ChevronRight
+                  size={14}
+                  className="text-slate-400 transition-transform"
+                  style={{ transform: auditOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                />
               </button>
               {auditOpen && (
                 <div className="px-5 pb-4 space-y-2.5 border-t border-slate-100 pt-3">
@@ -242,7 +247,7 @@ export default function CompliancePage() {
                         <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#2563EB' }} />
                         <span className="text-slate-600">{ev.label}</span>
                       </div>
-                      <span className="text-slate-400 shrink-0">{ev.time}</span>
+                      <span className="text-slate-400 shrink-0 ml-2">{ev.time}</span>
                     </div>
                   ))}
                 </div>
@@ -257,6 +262,7 @@ export default function CompliancePage() {
               Export All Voter Data (Anonymized)
             </button>
           </div>
+
         </div>
       </div>
     </div>

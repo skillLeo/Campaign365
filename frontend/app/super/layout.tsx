@@ -11,7 +11,7 @@ const PUBLIC_PATHS = ['/super/login', '/super/forgot-password', '/super/login-su
 export default function SuperAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { token } = useAuthStore();
+  const { branding } = useAuthStore();
   const [checked, setChecked] = useState(false);
   const { isOpen, toggle, close } = useSidebar();
 
@@ -31,9 +31,16 @@ export default function SuperAdminLayout({ children }: { children: React.ReactNo
   if (isPublic) return <>{children}</>;
   if (!checked) return null;
 
-  const logoContent = (
+  const platformName = branding?.name || 'Campaign 365';
+  const logoUrl = branding?.logo_url;
+
+  const logoContent = logoUrl ? (
+    <img src={logoUrl} alt={platformName} style={{ height: 28, objectFit: 'contain' }} />
+  ) : (
     <span style={{ fontWeight: 800, fontSize: 14, color: '#0F172A' }}>
-      Campaign <span style={{ color: '#2563EB' }}>365</span>
+      {platformName.includes('365') ? (
+        <>{platformName.replace('365', '')}<span style={{ color: '#2563EB' }}>365</span></>
+      ) : platformName}
     </span>
   );
 

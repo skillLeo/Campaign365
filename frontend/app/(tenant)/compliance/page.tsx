@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Shield, Download, AlertCircle, CheckCircle, Clock, FileText, Plus, Search, ChevronDown } from 'lucide-react';
+import { Shield, Download, AlertCircle, CheckCircle, Clock, FileText, Plus, Search, ChevronDown, Eye, Edit2, Trash2 } from 'lucide-react';
 
 const DATA_REQUESTS = [
   { id: 'DR-001', request: 'Voter data export', status: 'Done', date: '2023-11-04', assignedTo: 'John Doe', type: 'Export' },
@@ -66,12 +66,12 @@ export default function CompliancePage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Compliance &amp; Data Management</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Dashboard › Compliance</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
             <FileText size={14} /> Generate Compliance Report
           </button>
@@ -115,7 +115,7 @@ export default function CompliancePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+      <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full">
         {([
           { id: 'history', label: 'Data History' },
           { id: 'election', label: 'Election Compliance' },
@@ -155,27 +155,38 @@ export default function CompliancePage() {
             </button>
           </div>
           <div className="overflow-x-auto">
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 580 }}>
             <thead>
               <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                {['ID', 'Request', 'Status', 'Date', 'Assigned To', 'Actions'].map(h => (
-                  <th key={h} style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>{h}</th>
-                ))}
+                <th className="hidden sm:table-cell" style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>ID</th>
+                <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>Request</th>
+                <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>Status</th>
+                <th className="hidden md:table-cell" style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>Date</th>
+                <th className="hidden lg:table-cell" style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>Assigned To</th>
+                <th style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 700, color: '#475569' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((r, i) => (
                 <tr key={r.id} style={{ borderBottom: i < filtered.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
-                  <td style={{ padding: '12px 20px', fontSize: 12, fontFamily: 'monospace', color: '#2563EB', fontWeight: 600 }}>{r.id}</td>
-                  <td style={{ padding: '12px 20px', fontSize: 13, color: '#0F172A' }}>{r.request}</td>
+                  <td className="hidden sm:table-cell" style={{ padding: '12px 20px', fontSize: 12, fontFamily: 'monospace', color: '#2563EB', fontWeight: 600 }}>{r.id}</td>
+                  <td style={{ padding: '12px 20px', fontSize: 13, color: '#0F172A', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.request}</td>
                   <td style={{ padding: '12px 20px' }}><StatusBadge status={r.status} /></td>
-                  <td style={{ padding: '12px 20px', fontSize: 12, color: '#64748B' }}>{r.date}</td>
-                  <td style={{ padding: '12px 20px', fontSize: 12, color: '#64748B' }}>{r.assignedTo}</td>
+                  <td className="hidden md:table-cell" style={{ padding: '12px 20px', fontSize: 12, color: '#64748B' }}>{r.date}</td>
+                  <td className="hidden lg:table-cell" style={{ padding: '12px 20px', fontSize: 12, color: '#64748B' }}>{r.assignedTo}</td>
                   <td style={{ padding: '12px 20px' }}>
-                    <div className="flex items-center gap-2">
-                      <button style={{ background: '#EFF6FF', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', color: '#2563EB', fontSize: 11, fontWeight: 600 }}>View</button>
-                      <button style={{ background: '#F1F5F9', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer', color: '#475569', fontSize: 11, fontWeight: 600 }}>
-                        <Download size={11} />
+                    <div className="flex flex-wrap items-center gap-1">
+                      <button style={{ background: 'none', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#2563EB', display: 'flex' }} title="View">
+                        <Eye size={13} />
+                      </button>
+                      <button style={{ background: 'none', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#475569', display: 'flex' }} title="Edit">
+                        <Edit2 size={13} />
+                      </button>
+                      <button style={{ background: 'none', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#475569', display: 'flex' }} title="Download">
+                        <Download size={13} />
+                      </button>
+                      <button style={{ background: 'none', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#EF4444', display: 'flex' }} title="Delete">
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   </td>

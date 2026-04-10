@@ -49,7 +49,7 @@ export default function PlatformHealthPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -57,15 +57,16 @@ export default function PlatformHealthPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Platform Health</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">System Health & Maintenance Dashboard</h1>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <div
               className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold"
               style={{ backgroundColor: '#D1FAE5', color: '#065F46' }}
             >
               <CheckCircle size={12} />
-              All Systems Operational
+              <span className="hidden sm:inline">All Systems Operational</span>
+              <span className="sm:hidden">Operational</span>
             </div>
             <button
               onClick={handleRefresh}
@@ -101,9 +102,9 @@ export default function PlatformHealthPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Services table */}
-          <div className="col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
             <div className="px-5 py-4 border-b border-slate-100">
               <h3 className="font-semibold text-slate-700 text-sm">Service Status</h3>
             </div>

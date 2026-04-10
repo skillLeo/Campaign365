@@ -56,7 +56,7 @@ export default function SuperAnalyticsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-3">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -64,9 +64,9 @@ export default function SuperAnalyticsPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Reports</span>
         </div>
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Global Reports & Analytics</h1>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all">
               Date Range <ChevronDown size={13} />
             </button>
@@ -87,9 +87,6 @@ export default function SuperAnalyticsPage() {
             </div>
             <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all">
               <Download size={13} /> Export <ChevronDown size={13} />
-            </button>
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all">
-              Sebra <ChevronDown size={13} />
             </button>
           </div>
         </div>
@@ -156,7 +153,7 @@ export default function SuperAnalyticsPage() {
                 iconType="circle"
                 iconSize={8}
                 wrapperStyle={{ fontSize: 12 }}
-                formatter={(v: string) => v === 'store' ? 'Store Itmems' : 'Personal ments'}
+                formatter={(v: string) => v === 'store' ? 'Campaign Activity' : 'Personal Usage'}
               />
               <Line type="monotone" dataKey="store" stroke="#2563EB" strokeWidth={2.5} dot={false} name="store" />
               <Line type="monotone" dataKey="personal" stroke="#3B82F6" strokeWidth={2.5} dot={false} name="personal" strokeDasharray="5 3" />
@@ -167,8 +164,8 @@ export default function SuperAnalyticsPage() {
         {/* Subscription Tier Breakdown */}
         <div className="bg-white rounded-2xl border border-slate-100 p-5">
           <h3 className="font-semibold text-slate-700 text-sm mb-4">Subscription Tier Breakdown</h3>
-          <div className="flex items-center gap-8">
-            <div style={{ width: 180, height: 180, flexShrink: 0 }}>
+          <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
+            <div className="w-full sm:w-[180px] h-[180px] shrink-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

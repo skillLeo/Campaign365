@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useAuthStore } from '@/lib/store';
-import { MapPin, Plus, Users, CheckCircle, Clock, Smartphone, Download, Search } from 'lucide-react';
+import { MapPin, Plus, Users, CheckCircle, Clock, Smartphone, Download, Search, Eye, Edit2, Trash2 } from 'lucide-react';
 
 const WALK_LISTS = [
   { id: 1, name: 'Kingston Central — Zone A', constituency: 'Kingston Central', team: 'Team Alpha', total: 320, knocked: 280, status: 'active' },
@@ -42,12 +42,12 @@ export default function CanvassingPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Field Canvassing Operations</h1>
           <p className="text-sm text-slate-400 mt-0.5">Manage walk lists, turf assignments, and field teams</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
             <Download size={14} />
             Export Lists
@@ -173,12 +173,21 @@ export default function CanvassingPage() {
                     <span className="text-xs font-semibold text-slate-600 shrink-0">{list.knocked}/{list.total}</span>
                     <span className="text-xs font-bold w-8 text-right shrink-0" style={{ color: primaryColor }}>{pct}%</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <button className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all">
                       <Smartphone size={11} /> Send to App
                     </button>
                     <button className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all">
                       <Download size={11} /> Export
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View" style={{ color: primaryColor }}>
+                      <Eye size={13} />
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit">
+                      <Edit2 size={13} />
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete" style={{ color: '#EF4444' }}>
+                      <Trash2 size={13} />
                     </button>
                   </div>
                 </div>

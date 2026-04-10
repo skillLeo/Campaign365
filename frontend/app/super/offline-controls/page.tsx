@@ -70,12 +70,12 @@ export default function OfflineControlsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
         <div>
           <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Dashboard › Global Controls</p>
           <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>Global Offline &amp; Multi-Region Controls</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleSave}
             style={{ backgroundColor: '#2563EB', color: 'white', border: 'none', borderRadius: 10, padding: '9px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
@@ -110,10 +110,10 @@ export default function OfflineControlsPage() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* World Map */}
-          <div className="col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
-            <div className="flex items-center justify-between mb-4">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A' }}>Regional Status Map</h3>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5"><div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#16A34A' }} /><span style={{ fontSize: 12, color: '#64748B' }}>Online</span></div>
@@ -164,7 +164,7 @@ export default function OfflineControlsPage() {
               })()}
             </div>
             {/* Region list */}
-            <div className="grid grid-cols-2 gap-2 mt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
               {REGIONS.map(r => (
                 <div key={r.id} className="flex items-center justify-between px-3 py-2 rounded-xl" style={{ backgroundColor: '#F8FAFC' }}>
                   <div className="flex items-center gap-2">
@@ -259,15 +259,15 @@ export default function OfflineControlsPage() {
           </div>
           <div className="space-y-3">
             {CLIENTS_OFFLINE.map((c, i) => (
-              <div key={i} className="flex items-center justify-between px-4 py-3 rounded-xl" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}>
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3 rounded-xl" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}>
                 <div className="flex items-center gap-3">
-                  <WifiOff size={14} style={{ color: '#DC2626' }} />
-                  <div>
+                  <WifiOff size={14} style={{ color: '#DC2626', flexShrink: 0 }} />
+                  <div className="min-w-0">
                     <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{c.name}</p>
                     <p style={{ fontSize: 11, color: '#94A3B8' }}>{c.region} · Last sync: {c.lastSync}</p>
                   </div>
                 </div>
-                <span style={{ background: '#FEE2E2', color: '#991B1B', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20 }}>
+                <span style={{ background: '#FEE2E2', color: '#991B1B', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>
                   {c.devices} offline
                 </span>
               </div>

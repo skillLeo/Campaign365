@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { Mail, MessageSquare, Phone, Send, Plus, Search } from 'lucide-react';
+import { Mail, MessageSquare, Phone, Send, Plus, Search, Eye, Edit2, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 
 type Tab = 'email' | 'sms' | 'whatsapp';
@@ -34,14 +34,14 @@ export default function CommunicationsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Communications Hub</h1>
           <p className="text-sm text-slate-400 mt-0.5">Email, SMS & WhatsApp campaigns</p>
         </div>
         <button
           onClick={() => setCompose(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
           style={{ backgroundColor: primaryColor }}
         >
           <Plus size={14} />
@@ -95,12 +95,17 @@ export default function CommunicationsPage() {
             </div>
           </div>
         </div>
-        <table className="w-full text-xs">
+        <div className="overflow-x-auto">
+        <table className="w-full text-xs" style={{ minWidth: 640 }}>
           <thead style={{ backgroundColor: '#F8FAFC' }}>
             <tr>
-              {['Campaign', 'Status', 'Recipients', 'Opens', tab === 'email' ? 'Click Rate' : '—', 'Sent At', 'Action'].map(h => (
-                <th key={h} className="text-left py-3 px-4 font-semibold text-slate-500">{h}</th>
-              ))}
+              <th className="text-left py-3 px-4 font-semibold text-slate-500">Campaign</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500">Status</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden sm:table-cell">Recipients</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden sm:table-cell">Opens</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden lg:table-cell">{tab === 'email' ? 'Click Rate' : '—'}</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden md:table-cell">Sent At</th>
+              <th className="text-left py-3 px-4 font-semibold text-slate-500">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -110,29 +115,41 @@ export default function CommunicationsPage() {
               </tr>
             ) : filtered.map(row => (
               <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                <td className="py-3.5 px-4 font-semibold text-slate-700">{row.name}</td>
+                <td className="py-3.5 px-4 font-semibold text-slate-700 max-w-[160px] truncate">{row.name}</td>
                 <td className="py-3.5 px-4">
                   <span className="px-2 py-0.5 rounded-full text-xs font-semibold capitalize" style={statusStyle(row.status)}>
                     {row.status}
                   </span>
                 </td>
-                <td className="py-3.5 px-4 text-slate-600">{row.recipients.toLocaleString()}</td>
-                <td className="py-3.5 px-4 text-slate-600">{row.opens.toLocaleString()}</td>
-                <td className="py-3.5 px-4 text-slate-500">
+                <td className="py-3.5 px-4 text-slate-600 hidden sm:table-cell">{row.recipients.toLocaleString()}</td>
+                <td className="py-3.5 px-4 text-slate-600 hidden sm:table-cell">{row.opens.toLocaleString()}</td>
+                <td className="py-3.5 px-4 text-slate-500 hidden lg:table-cell">
                   {tab === 'email' && row.recipients > 0
                     ? `${((row.clicks / row.recipients) * 100).toFixed(1)}%`
                     : '—'}
                 </td>
-                <td className="py-3.5 px-4 text-slate-400">{row.sent_at}</td>
+                <td className="py-3.5 px-4 text-slate-400 hidden md:table-cell">{row.sent_at}</td>
                 <td className="py-3.5 px-4">
-                  <button className="flex items-center gap-1 font-medium hover:opacity-70 transition-opacity" style={{ color: primaryColor }}>
-                    <Send size={11} /> {row.status === 'draft' ? 'Send' : 'Resend'}
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="View" style={{ color: primaryColor }}>
+                      <Eye size={13} />
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title={row.status === 'draft' ? 'Send' : 'Resend'}>
+                      <Send size={13} />
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500 hidden sm:inline-flex" title="Edit">
+                      <Edit2 size={13} />
+                    </button>
+                    <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete" style={{ color: '#EF4444' }}>
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Compose modal */}
@@ -172,7 +189,7 @@ export default function CommunicationsPage() {
                 <button onClick={() => setCompose(false)} className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50">
                   Cancel
                 </button>
-                <button className="px-4 py-2 rounded-xl text-sm font-semibold text-white border border-slate-200 text-slate-600 hover:bg-slate-50">
+                <button className="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
                   Schedule
                 </button>
                 <button

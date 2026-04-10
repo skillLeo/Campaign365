@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, Search, Zap, Info } from 'lucide-react';
+import { Toggle } from '@/components/ui/Toggle';
 
 const FEATURE_KEYS = [
   { key: 'whatsapp', label: 'WhatsApp' },
@@ -29,20 +30,6 @@ const planColors: Record<string, string> = {
   Sovereign: '#8B5CF6',
 };
 
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <button
-      onClick={onChange}
-      className="relative w-9 h-5 rounded-full transition-all duration-200 focus:outline-none"
-      style={{ backgroundColor: on ? '#2563EB' : '#CBD5E1' }}
-    >
-      <span
-        className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-        style={{ transform: on ? 'translateX(1.125rem)' : 'translateX(0.125rem)' }}
-      />
-    </button>
-  );
-}
 
 export default function FeatureFlagsPage() {
   const router = useRouter();
@@ -66,7 +53,7 @@ export default function FeatureFlagsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -74,7 +61,7 @@ export default function FeatureFlagsPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Feature Flags</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Feature Flags — Per-Tenant Overrides</h1>
           <div className="relative">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -82,7 +69,7 @@ export default function FeatureFlagsPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search client..."
-              className="bg-slate-100 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-600 focus:outline-none w-48"
+              className="bg-slate-100 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-600 focus:outline-none w-full sm:w-48"
             />
           </div>
         </div>
@@ -139,7 +126,7 @@ export default function FeatureFlagsPage() {
                       <button
                         onClick={() => handleSave(tenant.id)}
                         className="px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-all hover:opacity-90"
-                        style={{ backgroundColor: saved === tenant.id ? '#2563EB' : '#2563EB' }}
+                        style={{ backgroundColor: saved === tenant.id ? '#16A34A' : '#2563EB' }}
                       >
                         {saved === tenant.id ? 'Saved ✓' : 'Save'}
                       </button>

@@ -44,12 +44,12 @@ export default function PerformanceReportPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Performance Report</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Reports › Performance</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1">
             {[['7d', '7 Days'], ['30d', '30 Days'], ['campaign', 'Campaign']].map(([key, label]) => (
               <button key={key} onClick={() => setPeriod(key)}
@@ -65,7 +65,7 @@ export default function PerformanceReportPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-5 gap-3 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
         {[
           { label: 'Voters Contacted', value: '14,872', change: '+12%', icon: Users, color: PRIMARY },
           { label: 'Doors Knocked', value: '8,721', change: '+8%', icon: Map, color: '#2563EB' },
@@ -88,7 +88,7 @@ export default function PerformanceReportPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+      <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full">
         {[['overview', 'Overview'], ['constituency', 'By Constituency'], ['canvassers', 'Canvasser Stats']].map(([key, label]) => (
           <button key={key} onClick={() => setTab(key as any)}
             style={{ padding: '7px 18px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer', backgroundColor: tab === key ? PRIMARY : 'transparent', color: tab === key ? 'white' : '#64748B' }}>
@@ -175,8 +175,8 @@ export default function PerformanceReportPage() {
         <div className="space-y-3">
           {CONSTITUENCY_DATA.map(c => (
             <div key={c.name} className="bg-white rounded-2xl border border-slate-100 p-5">
-              <div className="flex items-center gap-4">
-                <div style={{ minWidth: 160 }}>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div style={{ minWidth: 140 }}>
                   <p style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{c.name}</p>
                   <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{(c.supporters + c.undecided + c.opposition).toLocaleString()} contacted</p>
                 </div>
@@ -204,6 +204,7 @@ export default function PerformanceReportPage() {
 
       {tab === 'canvassers' && (
         <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto">
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ backgroundColor: '#F8FAFC' }}>
@@ -251,6 +252,7 @@ export default function PerformanceReportPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

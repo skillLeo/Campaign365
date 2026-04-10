@@ -29,12 +29,12 @@ export default function ReportsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Campaign Performance & Insights</h1>
           <p className="text-sm text-slate-400 mt-0.5">Jan 1, 2025 — Dec 31, 2025</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
+        <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all shrink-0">
           <Download size={14} />
           Export PDF Report
         </button>

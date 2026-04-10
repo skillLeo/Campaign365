@@ -25,7 +25,7 @@ const TASKS: RunnerTask[] = [
 
 const statusMeta = (s: RunnerTask['status']) => ({
   in_transit: { label: 'In Transit', color: '#E30613', bg: '#FEE2E2', icon: Navigation },
-  delivered: { label: 'Delivered', color: '#E30613', bg: '#ECFDF5', icon: CheckCircle },
+  delivered: { label: 'Delivered', color: '#065F46', bg: '#D1FAE5', icon: CheckCircle },
   pending: { label: 'Pending', color: '#E30613', bg: '#FEE2E2', icon: Clock },
   failed: { label: 'Failed', color: '#EF4444', bg: '#FEF2F2', icon: AlertCircle },
 }[s]);
@@ -52,14 +52,14 @@ export default function RunnersPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Runner Coordination</h1>
           <p className="text-sm text-slate-400 mt-0.5">Dispatch and track election day runners in real time</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
           style={{ backgroundColor: primaryColor }}
         >
           <Plus size={14} />
@@ -141,7 +141,7 @@ export default function RunnersPage() {
                         <p className="text-xs text-slate-400">{task.runner}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5 shrink-0 ml-2">
                       <span className="px-2 py-0.5 rounded-full text-xs font-semibold capitalize" style={priorityStyle(task.priority)}>
                         {task.priority}
                       </span>

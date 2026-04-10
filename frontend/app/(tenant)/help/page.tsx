@@ -62,9 +62,8 @@ export default function HelpPage() {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none"
+            className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none w-full sm:w-60"
             placeholder="Search help topics..."
-            style={{ width: 240 }}
           />
         </div>
       </div>
