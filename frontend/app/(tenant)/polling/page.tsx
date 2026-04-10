@@ -44,14 +44,14 @@ export default function PollingPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
           <p style={{ color: '#64748B', fontSize: 13, margin: '0 0 4px' }}>Dashboard &gt; Polling &amp; Research</p>
           <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0F172A', margin: 0 }}>
             Advanced Polling &amp; Research
           </h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div style={{ position: 'relative' }}>
             <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8' }} />
             <input
@@ -61,7 +61,7 @@ export default function PollingPage() {
               style={{
                 paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8,
                 border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 13,
-                color: '#0F172A', outline: 'none', width: 200,
+                color: '#0F172A', outline: 'none', width: '100%', maxWidth: 220,
               }}
             />
           </div>
@@ -74,7 +74,7 @@ export default function PollingPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E2E8F0', marginBottom: 24 }}>
+      <div className="flex flex-wrap" style={{ gap: 0, borderBottom: '1px solid #E2E8F0', marginBottom: 24 }}>
         {TABS.map(tab => (
           <button
             key={tab}
@@ -96,9 +96,9 @@ export default function PollingPage() {
         ))}
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col lg:flex-row gap-6">
         {/* Main content */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           {/* Bar chart */}
           <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 24, marginBottom: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -106,7 +106,7 @@ export default function PollingPage() {
                 <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>Voter Sentiment by Segment</h2>
                 <p style={{ color: '#64748B', fontSize: 12, margin: '4px 0 0' }}>Support rate (%) across demographics &amp; constituencies</p>
               </div>
-              <div style={{ display: 'flex', gap: 12, fontSize: 12, color: '#64748B' }}>
+              <div className="hidden sm:flex" style={{ gap: 12, fontSize: 12, color: '#64748B' }}>
                 <span>Age</span>
                 <span>|</span>
                 <span>Gender</span>
@@ -133,7 +133,7 @@ export default function PollingPage() {
 
           {/* Live Poll Results table */}
           <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3" style={{ marginBottom: 16 }}>
               <div>
                 <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>Live Poll Results</h2>
                 <p style={{ color: '#64748B', fontSize: 12, margin: '4px 0 0' }}>
@@ -153,19 +153,21 @@ export default function PollingPage() {
               </button>
             </div>
             <div className="overflow-x-auto">
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 520 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                  {['Poll ID', 'Question', 'Responses', 'Status', 'Last Updated'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>{h}</th>
-                  ))}
+                  <th className="hidden sm:table-cell" style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>Poll ID</th>
+                  <th style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>Question</th>
+                  <th style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>Responses</th>
+                  <th style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>Status</th>
+                  <th className="hidden md:table-cell" style={{ textAlign: 'left', padding: '8px 12px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>Last Updated</th>
                 </tr>
               </thead>
               <tbody>
                 {livePolls.map(poll => (
                   <tr key={poll.id} style={{ borderBottom: '1px solid #F8FAFC' }}>
-                    <td style={{ padding: '12px', fontSize: 13, fontWeight: 600, color: RED }}>{poll.id}</td>
-                    <td style={{ padding: '12px', fontSize: 13, color: '#0F172A', maxWidth: 260 }}>{poll.question}</td>
+                    <td className="hidden sm:table-cell" style={{ padding: '12px', fontSize: 13, fontWeight: 600, color: RED }}>{poll.id}</td>
+                    <td style={{ padding: '12px', fontSize: 13, color: '#0F172A', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poll.question}</td>
                     <td style={{ padding: '12px', fontSize: 13, color: '#0F172A', fontWeight: 600 }}>{poll.responses.toLocaleString()}</td>
                     <td style={{ padding: '12px' }}>
                       <span style={{
@@ -176,7 +178,7 @@ export default function PollingPage() {
                         {poll.status === 'active' ? 'Live' : 'Paused'}
                       </span>
                     </td>
-                    <td style={{ padding: '12px', fontSize: 12, color: '#64748B' }}>{poll.updated}</td>
+                    <td className="hidden md:table-cell" style={{ padding: '12px', fontSize: 12, color: '#64748B' }}>{poll.updated}</td>
                   </tr>
                 ))}
               </tbody>
@@ -186,7 +188,7 @@ export default function PollingPage() {
         </div>
 
         {/* Right: Constituencies */}
-        <div style={{ width: 260, flexShrink: 0 }}>
+        <div className="w-full lg:w-64 lg:flex-shrink-0">
           <div style={{ background: 'white', borderRadius: 12, border: '1px solid #E2E8F0', padding: 20 }}>
             <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: '0 0 16px' }}>Constituencies</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>

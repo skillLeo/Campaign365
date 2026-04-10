@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Download, Eye, Search, Shield, AlertTriangle, FileText, LogIn } from 'lucide-react';
+import { ChevronRight, Download, Eye, Search, Shield, AlertTriangle, FileText, LogIn, Trash2 } from 'lucide-react';
 
 const MOCK_LOGS = [
   { id: 72941, user: 'superadmin@c365.com', client: 'Platform', action: 'Tenant created', ip: '192.168.1.10', status: 'Success', time: '10:32 AM', date: 'Oct 6' },
@@ -31,7 +31,7 @@ export default function AuditLogsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -39,10 +39,10 @@ export default function AuditLogsPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Audit Logs</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Super Admin Audit Logs</h1>
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
             style={{ backgroundColor: '#2563EB' }}
           >
             <Download size={14} />
@@ -55,7 +55,7 @@ export default function AuditLogsPage() {
         {/* KPI cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Total Entries', value: '14,291', icon: FileText, color: '#2563EB', bg: '#F0FDFA' },
+            { label: 'Total Entries', value: '14,291', icon: FileText, color: '#2563EB', bg: '#EFF6FF' },
             { label: 'Today', value: '47', icon: LogIn, color: '#3B82F6', bg: '#EFF6FF' },
             { label: 'Failed Actions', value: '3', icon: AlertTriangle, color: '#EF4444', bg: '#FEF2F2' },
             { label: 'Data Exports', value: '12', icon: Shield, color: '#F59E0B', bg: '#FFFBEB' },
@@ -75,7 +75,7 @@ export default function AuditLogsPage() {
         {/* Table card */}
         <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
           {/* Filters */}
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
+          <div className="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
@@ -96,20 +96,25 @@ export default function AuditLogsPage() {
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-xs">
+            <table className="w-full text-xs" style={{ minWidth: 700 }}>
               <thead style={{ backgroundColor: '#F8FAFC' }}>
                 <tr>
-                  {['ID', 'User', 'Client', 'Action', 'IP Address', 'Status', 'Time', 'View'].map(h => (
-                    <th key={h} className="text-left py-3 px-4 font-semibold text-slate-500">{h}</th>
-                  ))}
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden sm:table-cell">ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500">User</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden md:table-cell">Client</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500">Action</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden lg:table-cell">IP Address</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500 hidden md:table-cell">Time</th>
+                  <th className="text-left py-3 px-4 font-semibold text-slate-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {filtered.map(row => (
                   <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-3 px-4 font-mono text-slate-400">#{String(row.id).padStart(5, '0')}</td>
-                    <td className="py-3 px-4 text-slate-600 max-w-[160px] truncate">{row.user}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 font-mono text-slate-400 hidden sm:table-cell">#{String(row.id).padStart(5, '0')}</td>
+                    <td className="py-3 px-4 text-slate-600 max-w-[140px] truncate">{row.user}</td>
+                    <td className="py-3 px-4 hidden md:table-cell">
                       <span
                         className="px-2 py-0.5 rounded-full text-xs font-semibold"
                         style={row.client === 'Platform'
@@ -119,8 +124,8 @@ export default function AuditLogsPage() {
                         {row.client}
                       </span>
                     </td>
-                    <td className="py-3 px-4 font-medium text-slate-700">{row.action}</td>
-                    <td className="py-3 px-4 font-mono text-slate-400">{row.ip}</td>
+                    <td className="py-3 px-4 font-medium text-slate-700 max-w-[140px] truncate">{row.action}</td>
+                    <td className="py-3 px-4 font-mono text-slate-400 hidden lg:table-cell">{row.ip}</td>
                     <td className="py-3 px-4">
                       <span
                         className="px-2 py-0.5 rounded-full text-xs font-semibold"
@@ -131,12 +136,19 @@ export default function AuditLogsPage() {
                         {row.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">{row.time} · {row.date}</td>
+                    <td className="py-3 px-4 text-slate-400 hidden md:table-cell">{row.time} · {row.date}</td>
                     <td className="py-3 px-4">
-                      <button className="flex items-center gap-1 font-medium hover:opacity-70 transition-opacity" style={{ color: '#2563EB' }}>
-                        <Eye size={12} />
-                        View
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button className="p-1.5 rounded-lg hover:bg-blue-50 transition-colors" title="View Log" style={{ color: '#2563EB' }}>
+                          <Eye size={13} />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500 hidden sm:inline-flex" title="Export Entry">
+                          <Download size={13} />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete Entry" style={{ color: '#EF4444' }}>
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -145,7 +157,7 @@ export default function AuditLogsPage() {
           </div>
 
           {/* Pagination stub */}
-          <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-between">
+          <div className="px-5 py-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs text-slate-400">Showing {filtered.length} of 14,291 entries</p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, '...', 298].map((p, i) => (

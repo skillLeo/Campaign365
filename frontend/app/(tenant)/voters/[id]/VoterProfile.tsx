@@ -48,15 +48,17 @@ export default function VoterProfile() {
 
   return (
     <div className="space-y-5 fade-in">
-      <div className="flex items-center gap-3">
-        <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-          <ArrowLeft size={16} />
-        </button>
-        <div>
-          <h1 className="text-xl font-bold text-slate-800">{voter.first_name} {voter.last_name}</h1>
-          <p className="text-sm text-slate-500">Voter Profile · {voter.registration_number} · ID: {params?.id}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-center gap-3">
+          <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
+            <ArrowLeft size={16} />
+          </button>
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold text-slate-800">{voter.first_name} {voter.last_name}</h1>
+            <p className="text-sm text-slate-500 truncate">Voter Profile · {voter.registration_number} · ID: {params?.id}</p>
+          </div>
         </div>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 sm:ml-auto">
           <Button variant="outline" size="sm" icon={<Phone size={13} />}>Call</Button>
           <Button variant="outline" size="sm" icon={<Mail size={13} />}>Email</Button>
           <Button variant="outline" size="sm" icon={<MessageSquare size={13} />}>SMS</Button>

@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, ChevronDown, Play } from 'lucide-react';
+import { ChevronRight, ChevronDown, Play, Edit2, Settings } from 'lucide-react';
+import { Toggle } from '@/components/ui/Toggle';
 
 const AI_MODELS = [
   { id: 'gpt4o', name: 'OpenAI GPT-4o', icon: '⊙', tiers: ['Basic', 'Plus', 'Pro'], usage: 579, enabled: true },
@@ -11,20 +12,6 @@ const AI_MODELS = [
 
 const WAVEFORM = [8, 20, 35, 50, 42, 60, 48, 38, 55, 62, 45, 30, 50, 40, 28, 48, 56, 44, 32, 52, 46, 36, 58, 42, 30, 48, 40, 35, 50, 44];
 
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <button
-      onClick={onChange}
-      className="relative w-9 h-5 rounded-full transition-all duration-200 focus:outline-none shrink-0"
-      style={{ backgroundColor: on ? '#2563EB' : '#CBD5E1' }}
-    >
-      <span
-        className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-        style={{ transform: on ? 'translateX(1.125rem)' : 'translateX(0.125rem)' }}
-      />
-    </button>
-  );
-}
 
 export default function AiControlsPage() {
   const router = useRouter();
@@ -42,7 +29,7 @@ export default function AiControlsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -50,7 +37,7 @@ export default function AiControlsPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">AI Enhancements</span>
         </div>
-        <h1 className="text-xl font-bold text-slate-800">AI Model Management - Edge + OpenAI Integration</h1>
+        <h1 className="text-xl font-bold text-slate-800">AI Model Management — Edge + OpenAI Integration</h1>
       </div>
 
       <div className="flex-1 p-4 lg:p-6 flex flex-col lg:flex-row gap-5">
@@ -65,7 +52,7 @@ export default function AiControlsPage() {
             <table className="w-full text-sm">
               <thead style={{ backgroundColor: '#F8FAFC' }}>
                 <tr>
-                  {['Model', 'Client Tier Access', 'Usage', 'Toggle'].map(h => (
+                  {['Model', 'Client Tier Access', 'Usage', 'Toggle', 'Actions'].map(h => (
                     <th key={h} className="text-left py-3 px-5 text-xs font-semibold text-slate-500">{h}</th>
                   ))}
                 </tr>
@@ -98,6 +85,16 @@ export default function AiControlsPage() {
                     </td>
                     <td className="py-4 px-5">
                       <Toggle on={model.enabled} onChange={() => toggleModel(model.id)} />
+                    </td>
+                    <td className="py-4 px-5">
+                      <div className="flex items-center gap-1">
+                        <button className="p-1.5 rounded-lg hover:bg-blue-50 transition-colors" title="Configure" style={{ color: '#2563EB' }}>
+                          <Settings size={13} />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit">
+                          <Edit2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -145,7 +142,7 @@ export default function AiControlsPage() {
         </div>
 
         {/* RIGHT sidebar */}
-        <div className="hidden lg:block w-72 shrink-0 space-y-4">
+        <div className="w-full lg:w-72 lg:shrink-0 space-y-4">
           {/* Usage This Month */}
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <h3 className="font-semibold text-slate-700 text-sm mb-4">Usage This Month</h3>

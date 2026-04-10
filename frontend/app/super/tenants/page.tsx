@@ -1,13 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, RefreshCw, UserPlus, ChevronDown, ArrowUpDown } from 'lucide-react';
+import { Search, RefreshCw, UserPlus, ChevronDown, ArrowUpDown, Eye, Edit2, Trash2, MoreVertical } from 'lucide-react';
 import { mockTenants } from '@/lib/mockData';
 
 // Convert mockTenants to local format
 const MOCK_TENANTS = mockTenants.map(t => ({
   id: t.id,
-  name: 'Organization Name',
+  name: t.name,
   country: t.country,
   flag: t.flag,
   plan: t.plan,
@@ -55,18 +55,18 @@ export default function TenantsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
-        <div className="flex-shrink-0">
+      <div className="flex flex-wrap items-center gap-3 px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
+        <div className="flex-shrink-0 hidden sm:block">
           <p className="text-sm text-slate-400">Welcome back,</p>
           <p className="font-bold text-slate-800">Malissa</p>
         </div>
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1 min-w-[180px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full bg-slate-100 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-600 focus:outline-none placeholder-slate-400"
-            placeholder="Global Search"
+            placeholder="Search clients..."
           />
         </div>
         <button
@@ -75,22 +75,23 @@ export default function TenantsPage() {
           style={{ backgroundColor: '#2563EB' }}
         >
           <UserPlus size={15} />
-          Add New Client
+          <span className="hidden sm:inline">Add New Client</span>
+          <span className="sm:hidden">Add</span>
         </button>
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Main */}
         <div className="flex-1 p-4 lg:p-6 overflow-auto">
-          <div className="flex items-center justify-between mb-4">
-            <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 26, color: '#0F172A', letterSpacing: '-0.025em' }}>All Clients / Tenant Management</h1>
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, color: '#0F172A', letterSpacing: '-0.025em' }} className="text-xl md:text-2xl">All Clients / Tenant Management</h1>
+            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:bg-slate-50 transition-all shrink-0">
               Actions <ChevronDown size={14} />
             </button>
           </div>
 
           {/* Filters */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             {[
               { value: filterCountry, set: setFilterCountry, options: ['All Countries', 'Jamaica', 'UK', 'USA', 'Canada', 'St. Kitts', 'Barbados'] },
               { value: filterTier, set: setFilterTier, options: ['All Tiers', 'Starter', 'Professional', 'Enterprise', 'Enterprise+'] },
@@ -115,17 +116,18 @@ export default function TenantsPage() {
           {/* Table */}
           <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
             <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm" style={{ minWidth: 700 }}>
               <thead style={{ backgroundColor: '#F8FAFC' }}>
                 <tr>
-                  {['Filter', 'Country', 'Subscription Tier', 'Active Users', 'Status', 'Last Activity'].map((h, i) => (
-                    <th key={h} className="text-left py-3 px-4 text-xs font-semibold text-slate-500">
-                      <div className="flex items-center gap-1">
-                        {h}
-                        {i === 0 && <ArrowUpDown size={11} className="text-slate-400" />}
-                      </div>
-                    </th>
-                  ))}
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500">
+                    <div className="flex items-center gap-1">Client <ArrowUpDown size={11} className="text-slate-400" /></div>
+                  </th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 hidden md:table-cell">Country</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 hidden sm:table-cell">Subscription Tier</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 hidden lg:table-cell">Active Users</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500">Status</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500 hidden lg:table-cell">Last Activity</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-slate-500">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -138,7 +140,7 @@ export default function TenantsPage() {
                 )) : filtered.map(t => (
                   <tr
                     key={t.id}
-                    className={`hover:bg-slate-50 transition-colors cursor-pointer ${selected?.id === t.id ? 'bg-teal-50' : ''}`}
+                    className={`hover:bg-slate-50 transition-colors cursor-pointer ${selected?.id === t.id ? 'bg-blue-50' : ''}`}
                     onClick={() => setSelected(t)}
                   >
                     <td className="py-3 px-4">
@@ -149,25 +151,52 @@ export default function TenantsPage() {
                         >
                           {t.name.charAt(0)}
                         </div>
-                        <span className="font-medium text-slate-700">{t.name}</span>
+                        <span className="font-medium text-slate-700 truncate max-w-[120px]">{t.name}</span>
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-slate-600">{t.flag} {t.country || '—'}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-3 px-4 text-slate-600 hidden md:table-cell">{t.flag} {t.country || '—'}</td>
+                    <td className="py-3 px-4 hidden sm:table-cell">
                       <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: tierColor(t.plan) }}>
                         {t.plan}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-600">{(t.users_count ?? 0).toLocaleString()}</td>
+                    <td className="py-3 px-4 text-slate-600 hidden lg:table-cell">{(t.users_count ?? 0).toLocaleString()}</td>
                     <td className="py-3 px-4">
                       {t.status === 'active' ? (
                         <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Active</span>
                       ) : (
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-pink-100 text-pink-700">Inactive</span>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600">Inactive</span>
                       )}
                     </td>
                     <td className="py-3 px-4 text-slate-400 text-xs">
                       {t.updated_at || '—'}
+                    </td>
+                    <td className="py-3 px-4" onClick={e => e.stopPropagation()}>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => router.push(`/super/tenants/${t.id}`)}
+                          className="p-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                          title="View Details"
+                          style={{ color: '#2563EB' }}
+                        >
+                          <Eye size={13} />
+                        </button>
+                        <button
+                          onClick={() => router.push(`/super/tenants/${t.id}`)}
+                          className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500"
+                          title="Edit Client"
+                        >
+                          <Edit2 size={13} />
+                        </button>
+                        <button
+                          onClick={() => {}}
+                          className="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                          title="Suspend Client"
+                          style={{ color: '#EF4444' }}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -204,15 +233,15 @@ export default function TenantsPage() {
                 </div>
                 <div className="pt-2 space-y-2">
                   {[
-                    { label: 'View/ Edit/Suspend', action: () => router.push(`/super/tenants/${selected.id}`) },
-                    { label: 'View/ Edit/Suspend', action: () => router.push(`/super/tenants/${selected.id}`) },
-                    { label: 'View/ Edit/Suspend', action: () => {} },
+                    { label: 'View Details', action: () => router.push(`/super/tenants/${selected.id}`), bg: '#2563EB' },
+                    { label: 'Edit Client', action: () => router.push(`/super/tenants/${selected.id}`), bg: '#3B82F6' },
+                    { label: 'Suspend Client', action: () => {}, bg: '#EF4444' },
                   ].map((btn, i) => (
                     <button
                       key={i}
                       onClick={btn.action}
                       className="w-full py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                      style={{ backgroundColor: '#2563EB' }}
+                      style={{ backgroundColor: btn.bg }}
                     >
                       {btn.label}
                     </button>

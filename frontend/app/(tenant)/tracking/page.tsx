@@ -38,12 +38,12 @@ export default function TrackingPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Live GPS Tracking</h1>
           <p className="text-sm text-slate-400 mt-0.5">Real-time field agent locations — updates every 30 seconds</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <span
             className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
             style={{ backgroundColor: '#ECFDF5', color: '#065F46' }}
@@ -53,13 +53,14 @@ export default function TrackingPage() {
           </span>
           <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
             <AlertTriangle size={13} />
-            Simulate Panic
+            <span className="hidden sm:inline">Simulate Panic</span>
+            <span className="sm:hidden">Panic</span>
           </button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, color: '#E30613', bg: '#ECFDF5', icon: Activity },
           { label: 'Idle', value: agents.filter(a => a.status === 'idle').length, color: '#F59E0B', bg: '#FFFBEB', icon: Clock },

@@ -1,18 +1,20 @@
 'use client';
 import { useState } from 'react';
-import { Search, Plus, UserCog, Car, Phone, Users, MoreVertical, Activity, MessageSquare, BarChart2, Filter } from 'lucide-react';
+import { Search, Plus, UserCog, Car, Phone, Users, MoreVertical, Activity, MessageSquare, BarChart2, Filter, X } from 'lucide-react';
+
+const EMPTY_MEMBER = { name: '', role: 'Canvasser', constituency: 'St. Christopher 1', phone: '' };
 
 const TEAM = [
-  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '#F0813', constituency: 'St. Christopher 1', phone: '+1-869-555-0101' },
-  { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', avatar: 'J', lastActive: '#F0813', constituency: 'St. Christopher 2', phone: '+1-869-555-0102' },
-  { id: 3, name: 'Michael Johnson', role: 'Canvasser', status: 'Active', avatar: 'M', lastActive: '#F0813', constituency: 'Nevis 1', phone: '+1-869-555-0103' },
-  { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', avatar: 'S', lastActive: '#F0813', constituency: 'St. Christopher 3', phone: '+1-869-555-0104' },
-  { id: 5, name: 'David Brown', role: 'Runner', status: 'Active', avatar: 'D', lastActive: '#F0813', constituency: 'St. Christopher 4', phone: '+1-869-555-0105' },
-  { id: 6, name: 'Emily Davis', role: 'Phone Bank', status: 'Active', avatar: 'E', lastActive: '#F0813', constituency: 'Nevis 2', phone: '+1-869-555-0106' },
-  { id: 7, name: 'Robert Wilson', role: 'Outdoor Agent', status: 'Active', avatar: 'R', lastActive: '#F0813', constituency: 'St. Christopher 5', phone: '+1-869-555-0107' },
-  { id: 8, name: 'Lisa Martinez', role: 'Canvasser', status: 'Inactive', avatar: 'L', lastActive: '#F0814', constituency: 'Nevis 3', phone: '+1-869-555-0108' },
-  { id: 9, name: 'James Taylor', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '#F0813', constituency: 'St. Christopher 6', phone: '+1-869-555-0109' },
-  { id: 10, name: 'Nancy Anderson', role: 'Phone Bank', status: 'Active', avatar: 'N', lastActive: '#F0814', constituency: 'St. Christopher 7', phone: '+1-869-555-0110' },
+  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '2 min ago', constituency: 'St. Christopher 1', phone: '+1-869-555-0101' },
+  { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', avatar: 'J', lastActive: '5 min ago', constituency: 'St. Christopher 2', phone: '+1-869-555-0102' },
+  { id: 3, name: 'Michael Johnson', role: 'Canvasser', status: 'Active', avatar: 'M', lastActive: '12 min ago', constituency: 'Nevis 1', phone: '+1-869-555-0103' },
+  { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', avatar: 'S', lastActive: '1 hr ago', constituency: 'St. Christopher 3', phone: '+1-869-555-0104' },
+  { id: 5, name: 'David Brown', role: 'Runner', status: 'Active', avatar: 'D', lastActive: '45 min ago', constituency: 'St. Christopher 4', phone: '+1-869-555-0105' },
+  { id: 6, name: 'Emily Davis', role: 'Phone Bank', status: 'Active', avatar: 'E', lastActive: '30 min ago', constituency: 'Nevis 2', phone: '+1-869-555-0106' },
+  { id: 7, name: 'Robert Wilson', role: 'Outdoor Agent', status: 'Active', avatar: 'R', lastActive: '3 hrs ago', constituency: 'St. Christopher 5', phone: '+1-869-555-0107' },
+  { id: 8, name: 'Lisa Martinez', role: 'Canvasser', status: 'Inactive', avatar: 'L', lastActive: '2 days ago', constituency: 'Nevis 3', phone: '+1-869-555-0108' },
+  { id: 9, name: 'James Taylor', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '8 min ago', constituency: 'St. Christopher 6', phone: '+1-869-555-0109' },
+  { id: 10, name: 'Nancy Anderson', role: 'Phone Bank', status: 'Active', avatar: 'N', lastActive: '1 day ago', constituency: 'St. Christopher 7', phone: '+1-869-555-0110' },
 ];
 
 const ROLE_COLORS: Record<string, { bg: string; color: string }> = {
@@ -31,6 +33,25 @@ export default function TeamPage() {
   const [tab, setTab] = useState<TabType>('all');
   const [search, setSearch] = useState('');
   const [selectedMember, setSelectedMember] = useState<typeof TEAM[0] | null>(null);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newMember, setNewMember] = useState(EMPTY_MEMBER);
+  const [team, setTeam] = useState(TEAM);
+
+  const handleAddMember = () => {
+    if (!newMember.name.trim()) return;
+    setTeam(prev => [...prev, {
+      id: prev.length + 1,
+      name: newMember.name,
+      role: newMember.role,
+      status: 'Active',
+      avatar: newMember.name[0].toUpperCase(),
+      lastActive: 'Just now',
+      constituency: newMember.constituency,
+      phone: newMember.phone,
+    }]);
+    setNewMember(EMPTY_MEMBER);
+    setShowAdd(false);
+  };
 
   const filterMap: Record<TabType, string[]> = {
     all: [],
@@ -39,39 +60,93 @@ export default function TeamPage() {
     phone_bank: ['Phone Bank'],
   };
 
-  const filtered = TEAM.filter(m => {
+  const filtered = team.filter(m => {
     const matchRole = filterMap[tab].length === 0 || filterMap[tab].includes(m.role);
     const matchSearch = search === '' || m.name.toLowerCase().includes(search.toLowerCase()) || m.role.toLowerCase().includes(search.toLowerCase());
     return matchRole && matchSearch;
   });
 
   const stats = [
-    { label: 'All Members', value: TEAM.length, icon: Users, color: '#E30613', bg: '#FEF2F2' },
-    { label: 'Canvassers', value: TEAM.filter(m => m.role === 'Canvasser').length, icon: UserCog, color: '#15803D', bg: '#F0FDF4' },
-    { label: 'Runners', value: TEAM.filter(m => m.role === 'Runner').length, icon: Car, color: '#E30613', bg: '#FEE2E2' },
-    { label: 'Phone Bank', value: TEAM.filter(m => m.role === 'Phone Bank').length, icon: Phone, color: '#E30613', bg: '#FEE2E2' },
+    { label: 'All Members', value: team.length, icon: Users, color: '#E30613', bg: '#FEF2F2' },
+    { label: 'Canvassers', value: team.filter(m => m.role === 'Canvasser').length, icon: UserCog, color: '#15803D', bg: '#F0FDF4' },
+    { label: 'Runners', value: team.filter(m => m.role === 'Runner').length, icon: Car, color: '#E30613', bg: '#FEE2E2' },
+    { label: 'Phone Bank', value: team.filter(m => m.role === 'Phone Bank').length, icon: Phone, color: '#E30613', bg: '#FEE2E2' },
   ];
 
   return (
     <div>
+      {/* Add Member Modal */}
+      {showAdd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-bold text-slate-800 text-lg">Add Team Member</h3>
+              <button onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Full Name *</label>
+                <input value={newMember.name} onChange={e => setNewMember(m => ({ ...m, name: e.target.value }))}
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="Jane Smith" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Role</label>
+                  <select value={newMember.role} onChange={e => setNewMember(m => ({ ...m, role: e.target.value }))}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none">
+                    <option>Campaign Manager</option>
+                    <option>Canvasser</option>
+                    <option>Runner</option>
+                    <option>Phone Bank</option>
+                    <option>Outdoor Agent</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Constituency</label>
+                  <select value={newMember.constituency} onChange={e => setNewMember(m => ({ ...m, constituency: e.target.value }))}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none">
+                    <option>St. Christopher 1</option>
+                    <option>St. Christopher 2</option>
+                    <option>St. Christopher 3</option>
+                    <option>Nevis 1</option>
+                    <option>Nevis 2</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Phone</label>
+                <input value={newMember.phone} onChange={e => setNewMember(m => ({ ...m, phone: e.target.value }))}
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="+1-869-555-0100" />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button onClick={() => { setShowAdd(false); setNewMember(EMPTY_MEMBER); }}
+                  className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50">Cancel</button>
+                <button onClick={handleAddMember}
+                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                  style={{ backgroundColor: '#E30613' }}>Add Member</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Team Management</h1>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>St. Kitts and Nevis Labour Party</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none focus:border-red-400"
+              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none focus:border-red-400 w-full sm:w-48"
               placeholder="Search team..."
-              style={{ width: 200 }}
             />
           </div>
-          <button style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
             <Plus size={14} /> Add New Member
           </button>
         </div>
@@ -94,7 +169,7 @@ export default function TeamPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+      <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full overflow-x-auto">
         {([
           { id: 'all', label: 'All Members' },
           { id: 'canvassers', label: 'Canvassers' },
@@ -169,7 +244,7 @@ export default function TeamPage() {
 
       {/* Add New Team Member Button at Bottom */}
       <div className="mt-6 flex justify-center">
-        <button style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Plus size={16} /> Add New Team Member
         </button>
       </div>

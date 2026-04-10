@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronRight, Settings, Bell, Shield, Server, Mail, Save, Eye, EyeOff } from 'lucide-react';
+import { Toggle } from '@/components/ui/Toggle';
 
 const TABS = [
   { id: 'general', label: 'General', icon: Settings },
@@ -11,20 +12,6 @@ const TABS = [
   { id: 'notifications', label: 'Notifications', icon: Bell },
 ];
 
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <button
-      onClick={onChange}
-      className="relative w-10 h-5 rounded-full transition-all duration-200 focus:outline-none shrink-0"
-      style={{ backgroundColor: on ? '#2563EB' : '#CBD5E1' }}
-    >
-      <span
-        className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-        style={{ transform: on ? 'translateX(1.375rem)' : 'translateX(0.125rem)' }}
-      />
-    </button>
-  );
-}
 
 function Field({ label, value, type = 'text', readOnly = false }: { label: string; value: string; type?: string; readOnly?: boolean }) {
   return (
@@ -76,7 +63,7 @@ export default function SuperSettingsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -84,13 +71,13 @@ export default function SuperSettingsPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Settings</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Platform Settings</h1>
           <button
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-70"
-            style={{ backgroundColor: saved ? '#2563EB' : '#2563EB' }}
+            style={{ backgroundColor: saved ? '#16A34A' : '#2563EB' }}
           >
             <Save size={14} className={saving ? 'animate-pulse' : ''} />
             {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Changes'}
@@ -98,10 +85,10 @@ export default function SuperSettingsPage() {
         </div>
       </div>
 
-      <div className="flex-1 p-6">
-        <div className="flex gap-5">
+      <div className="flex-1 p-4 md:p-6">
+        <div className="flex flex-col md:flex-row gap-5">
           {/* Sidebar tabs */}
-          <div className="w-48 shrink-0">
+          <div className="w-full md:w-48 shrink-0">
             <div className="bg-white rounded-2xl border border-slate-100 p-2 space-y-0.5">
               {TABS.map(({ id, label, icon: Icon }) => (
                 <button
@@ -215,7 +202,7 @@ export default function SuperSettingsPage() {
                   <Field label="Storage Driver" value="s3" readOnly />
                   <Field label="Log Channel" value="daily" readOnly />
                 </div>
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2">
                   {['Clear Cache', 'Run Queue Worker', 'View Logs', 'Run Migrations'].map(action => (
                     <button
                       key={action}

@@ -36,10 +36,10 @@ export default function GOTVPage() {
   return (
     <div className="space-y-5">
       {/* RED Header Banner */}
-      <div style={{ backgroundColor: '#E30613', borderRadius: 12, padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div style={{ backgroundColor: '#E30613', borderRadius: 12, padding: '16px 24px' }} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <span
-            className="animate-pulse"
+            className="animate-pulse shrink-0"
             style={{ fontSize: 11, padding: '4px 10px', borderRadius: 99, fontWeight: 700, backgroundColor: 'rgba(255,255,255,0.25)', color: 'white', letterSpacing: '0.05em' }}
           >
             ● LIVE UPDATES
@@ -49,15 +49,15 @@ export default function GOTVPage() {
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: 12, margin: '3px 0 0' }}>All Constituencies · {time}</p>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="flex flex-wrap gap-2 shrink-0">
           <button
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             <Send size={14} />
             Final Push Alert
           </button>
           <button
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, backgroundColor: '#0F172A', color: 'white', border: 'none', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 10, fontSize: 13, fontWeight: 600, backgroundColor: '#0F172A', color: 'white', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}
           >
             <FileText size={14} />
             End Day Report
@@ -108,9 +108,9 @@ export default function GOTVPage() {
       </div>
 
       {/* Constituency breakdown + actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Polling station status */}
-        <div className="col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100">
             <h3 className="font-semibold text-slate-700 text-sm">Polling Station Status</h3>
           </div>

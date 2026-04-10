@@ -49,12 +49,12 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Notifications</h1>
           <p className="text-sm text-slate-400 mt-0.5">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-xl overflow-hidden border border-slate-200">
             {(['all', 'unread'] as const).map(f => (
               <button

@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Key, Plus, RefreshCw, Eye, EyeOff, Copy, Trash2, Bell, BarChart2, Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { Key, Plus, RefreshCw, Eye, EyeOff, Copy, Trash2, Bell, BarChart2, Shield, CheckCircle, AlertCircle, Edit2 } from 'lucide-react';
 import { useAuthStore } from '@/lib/store';
 import { AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
@@ -66,12 +66,12 @@ export default function APIManagementPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
         <div>
           <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Dashboard › API Management</p>
           <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>API Keys &amp; Integrations</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button style={{ backgroundColor: '#2563EB', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Plus size={14} /> Generate New Key
           </button>
@@ -104,7 +104,7 @@ export default function APIManagementPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+        <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full">
           {TABS.map(t => (
             <button
               key={t.id}
@@ -121,8 +121,8 @@ export default function APIManagementPage() {
         </div>
 
         {tab === 'keys' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
                 <div className="overflow-x-auto">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -159,9 +159,12 @@ export default function APIManagementPage() {
                         </td>
                         <td style={{ padding: '12px 16px', fontSize: 12, color: '#0F172A', fontWeight: 600 }}>{k.requests.toLocaleString()}</td>
                         <td style={{ padding: '12px 16px' }}>
-                          <div className="flex items-center gap-2">
-                            <button style={{ background: '#F1F5F9', border: 'none', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#475569', fontSize: 11 }}>Review</button>
-                            <button style={{ background: '#FEF2F2', border: 'none', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#DC2626' }}>
+                          <div className="flex items-center gap-1">
+                            <button style={{ background: '#EFF6FF', border: 'none', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#2563EB', fontSize: 11 }}>Review</button>
+                            <button style={{ background: '#F1F5F9', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#475569', display: 'flex', alignItems: 'center' }} title="Edit">
+                              <Edit2 size={12} />
+                            </button>
+                            <button style={{ background: '#FEF2F2', border: 'none', borderRadius: 6, padding: '6px', cursor: 'pointer', color: '#DC2626', display: 'flex', alignItems: 'center' }} title="Revoke">
                               <Trash2 size={12} />
                             </button>
                           </div>
@@ -209,15 +212,15 @@ export default function APIManagementPage() {
             </div>
             <div className="divide-y divide-slate-50">
               {WEBHOOKS.map((w, i) => (
-                <div key={i} className="flex items-center justify-between px-6 py-4">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-6 py-4">
                   <div className="flex items-center gap-4">
                     <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: w.status === 'active' ? '#16A34A' : w.status === 'error' ? '#DC2626' : '#F59E0B', flexShrink: 0 }} />
-                    <div>
+                    <div className="min-w-0">
                       <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{w.event}</p>
-                      <code style={{ fontSize: 11, color: '#64748B', fontFamily: 'monospace' }}>{w.endpoint}</code>
+                      <code style={{ fontSize: 11, color: '#64748B', fontFamily: 'monospace', wordBreak: 'break-all' }}>{w.endpoint}</code>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-3 pl-7 sm:pl-0">
                     <span style={{ fontSize: 11, color: '#94A3B8' }}>Last: {w.lastTriggered}</span>
                     <span style={{ background: w.status === 'active' ? '#F0FDF4' : w.status === 'error' ? '#FEF2F2' : '#FFFBEB', color: w.status === 'active' ? '#15803D' : w.status === 'error' ? '#DC2626' : '#B45309', fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 }}>
                       {w.status}

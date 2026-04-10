@@ -63,12 +63,12 @@ export default function EventsPage() {
 
   return (
     <div className="space-y-5 fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Events</h1>
           <p className="text-sm text-slate-500">Schedule and manage campaign events</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-lg border border-slate-200 overflow-hidden">
             <button onClick={() => setView('list')} className={`px-3 py-1.5 text-xs font-medium transition-colors ${view === 'list' ? 'text-white' : 'text-slate-500'}`} style={view === 'list' ? { backgroundColor: primaryColor } : {}}>List</button>
             <button onClick={() => setView('calendar')} className={`px-3 py-1.5 text-xs font-medium transition-colors ${view === 'calendar' ? 'text-white' : 'text-slate-500'}`} style={view === 'calendar' ? { backgroundColor: primaryColor } : {}}>Calendar</button>

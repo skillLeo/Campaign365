@@ -82,7 +82,6 @@ export default function TenantDetail() {
         </div>
 
         <div className="flex items-center gap-4">
-          <p className="font-semibold text-slate-500 text-sm mr-2">4i › Client Details</p>
           {/* Avatar + name */}
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-lg shrink-0"

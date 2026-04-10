@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Download, Send, DollarSign, AlertTriangle, RefreshCw, TrendingUp } from 'lucide-react';
+import { ChevronRight, Download, Send, DollarSign, AlertTriangle, RefreshCw, TrendingUp, Eye, Edit2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const BILLING_DATA = [
@@ -41,7 +41,7 @@ export default function BillingPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="px-6 py-4 bg-white border-b border-slate-100">
+      <div className="px-4 md:px-6 py-4 bg-white border-b border-slate-100">
         <div className="flex items-center gap-1 text-xs text-slate-400 mb-2">
           <button onClick={() => router.push('/super/dashboard')} className="hover:text-slate-600 transition-colors">
             Dashboard
@@ -49,14 +49,15 @@ export default function BillingPage() {
           <ChevronRight size={12} />
           <span className="text-slate-600 font-medium">Billing</span>
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Billing & Invoicing Overview</h1>
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90 shrink-0"
             style={{ backgroundColor: '#2563EB' }}
           >
             <Download size={14} />
-            Generate All Invoices
+            <span className="hidden sm:inline">Generate All Invoices</span>
+            <span className="sm:hidden">Export</span>
           </button>
         </div>
       </div>
@@ -111,7 +112,7 @@ export default function BillingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           {/* Revenue chart */}
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <h3 className="font-semibold text-slate-700 text-sm mb-4">Revenue Trend</h3>
@@ -129,9 +130,9 @@ export default function BillingPage() {
           </div>
 
           {/* Billing table */}
-          <div className="col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-3">
-              <h3 className="font-semibold text-slate-700 text-sm flex-1">Invoices</h3>
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 flex flex-wrap items-center gap-2">
+              <h3 className="font-semibold text-slate-700 text-sm flex-1 min-w-[80px]">Invoices</h3>
               {['All', 'Paid', 'Overdue', 'Pending'].map(s => (
                 <button
                   key={s}
@@ -186,10 +187,15 @@ export default function BillingPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
-                      <div className="flex items-center gap-2">
-                        <button className="font-medium hover:opacity-70 transition-opacity" style={{ color: '#2563EB' }}>View</button>
-                        <button className="flex items-center gap-0.5 font-medium hover:opacity-70 transition-opacity" style={{ color: '#3B82F6' }}>
-                          <Send size={10} /> Send
+                      <div className="flex items-center gap-1">
+                        <button className="p-1.5 rounded-lg hover:bg-blue-50 transition-colors" title="View Invoice" style={{ color: '#2563EB' }}>
+                          <Eye size={13} />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Send Invoice">
+                          <Send size={13} />
+                        </button>
+                        <button className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Download PDF">
+                          <Download size={13} />
                         </button>
                       </div>
                     </td>

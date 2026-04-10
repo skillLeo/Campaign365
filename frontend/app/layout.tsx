@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { BrandingProvider } from '@/components/BrandingProvider';
 
 export const metadata: Metadata = {
   title: 'Campaign 365',
@@ -16,8 +17,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full">
-      <body className="min-h-full">{children}</body>
+    <html lang="en" className="h-full" suppressHydrationWarning>
+      <body className="min-h-full">
+        <BrandingProvider>{children}</BrandingProvider>
+      </body>
     </html>
   );
 }

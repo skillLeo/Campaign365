@@ -77,16 +77,16 @@ export default function EmailTemplatesPage() {
           <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>Email &amp; Notification Templates</h2>
         </div>
         <div className="flex items-center gap-3">
-          <span style={{ fontSize: 12, color: '#94A3B8', background: '#F1F5F9', padding: '4px 12px', borderRadius: 20 }}>Enterprise template management studio</span>
+          <span className="hidden sm:inline" style={{ fontSize: 12, color: '#94A3B8', background: '#F1F5F9', padding: '4px 12px', borderRadius: 20 }}>Enterprise template management studio</span>
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#2563EB' }}>
             {user?.name?.charAt(0) || 'S'}
           </div>
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden" style={{ height: 'auto', minHeight: 'calc(100vh - 73px)' }}>
         {/* Left sidebar: template list */}
-        <div className="w-64 bg-white border-r border-slate-100 overflow-y-auto flex-shrink-0">
+        <div className="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-r border-slate-100 overflow-y-auto lg:flex-shrink-0 max-h-48 lg:max-h-none">
           <div className="px-4 pt-4 pb-2">
             <p style={{ fontSize: 11, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Templates</p>
           </div>
@@ -115,7 +115,7 @@ export default function EmailTemplatesPage() {
         {/* Middle: editor */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Channel tabs */}
-          <div className="flex items-center gap-1 px-5 pt-4 pb-0 bg-white border-b border-slate-100">
+          <div className="flex flex-wrap items-center gap-1 px-5 pt-4 pb-0 bg-white border-b border-slate-100">
             {CHANNELS.map(c => (
               <button
                 key={c.id}
@@ -154,7 +154,7 @@ export default function EmailTemplatesPage() {
                 </button>
               ))}
               <div style={{ flex: 1 }} />
-              <span style={{ fontSize: 11, color: '#94A3B8' }}>Variables: {'{{user.name}}, {{client.name}}, {{client.support_email}}'}</span>
+              <span className="hidden md:inline" style={{ fontSize: 11, color: '#94A3B8' }}>Variables: {'{{user.name}}, {{client.name}}, {{client.support_email}}'}</span>
             </div>
 
             <div style={{ marginBottom: 16 }}>

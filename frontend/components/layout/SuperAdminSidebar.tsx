@@ -39,8 +39,11 @@ interface SuperAdminSidebarProps {
 export function SuperAdminSidebar({ onClose }: SuperAdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout, branding } = useAuthStore();
   const isDesktop = useIsDesktop();
+
+  const platformName = branding?.name || 'Campaign 365';
+  const logoUrl = branding?.logo_url;
 
   const handleLogout = () => { logout(); router.push('/super/login'); };
   const handleNavClick = () => { if (!isDesktop) onClose(); };
@@ -50,12 +53,18 @@ export function SuperAdminSidebar({ onClose }: SuperAdminSidebarProps) {
       {/* Logo */}
       <div style={{ padding: '22px 16px 18px', flexShrink: 0, borderBottom: '1px solid #1E293B' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Zap size={18} color="white" />
+          <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+            {logoUrl
+              ? <img src={logoUrl} alt={platformName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <Zap size={18} color="white" />}
           </div>
           <div>
             <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 14, color: 'white', letterSpacing: '-0.02em', whiteSpace: 'nowrap' }}>
-              Campaign <span style={{ color: '#2563EB' }}>365</span>
+              {platformName.includes('365') ? (
+                <>
+                  {platformName.replace('365', '')}<span style={{ color: '#2563EB' }}>365</span>
+                </>
+              ) : platformName}
             </span>
             <p style={{ fontWeight: 500, fontSize: 11, color: '#2563EB', margin: '2px 0 0', whiteSpace: 'nowrap' }}>
               Super Admin

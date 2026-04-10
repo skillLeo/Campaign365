@@ -71,20 +71,20 @@ export default function RolesPermissionsPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
+      <div className="flex flex-wrap items-center gap-3 justify-between px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
         <div>
           <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Dashboard › Roles &amp; Permissions</p>
           <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>User Roles &amp; Permissions</h2>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleSave}
             style={{ backgroundColor: '#2563EB', color: 'white', border: 'none', borderRadius: 10, padding: '9px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
           >
             {saved ? <><Check size={14} /> Saved!</> : 'Save Changes'}
           </button>
-          <button style={{ backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 10, padding: '9px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Copy size={14} /> Copy to Custom Role
+          <button style={{ backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Copy size={14} /> <span className="hidden sm:inline">Copy to Custom Role</span><span className="sm:hidden">Copy</span>
           </button>
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#2563EB' }}>
             {user?.name?.charAt(0) || 'S'}
@@ -92,7 +92,7 @@ export default function RolesPermissionsPage() {
         </div>
       </div>
 
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 md:p-6">
         {/* Tabs */}
         <div className="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1 w-fit">
           {(['global', 'overrides'] as const).map(t => (
@@ -130,15 +130,14 @@ export default function RolesPermissionsPage() {
         )}
 
         {/* Search + Add */}
-        <div className="flex items-center gap-3 mb-5">
-          <div className="relative">
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <div className="relative flex-1 min-w-[160px] max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-400"
+              className="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none focus:border-blue-400"
               placeholder="Search roles..."
-              style={{ width: 220 }}
             />
           </div>
           <button style={{ backgroundColor: '#2563EB', color: 'white', border: 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -197,7 +196,7 @@ export default function RolesPermissionsPage() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-6 mt-4">
+        <div className="flex flex-wrap items-center gap-4 mt-4">
           {[
             { val: 'edit', label: 'Full Edit Access', bg: '#DBEAFE', color: '#1D4ED8', border: '#93C5FD' },
             { val: 'view', label: 'View Only', bg: '#F0FDF4', color: '#15803D', border: '#86EFAC' },

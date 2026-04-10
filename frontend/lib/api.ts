@@ -1,13 +1,5 @@
 import axios from 'axios';
 
-const getBaseUrl = () => {
-  if (typeof window === 'undefined') return process.env.NEXT_PUBLIC_API_URL;
-  const hostname = window.location.hostname;
-  if (hostname === 'admin.campaign365.app' || hostname === 'localhost') {
-    return process.env.NEXT_PUBLIC_SUPER_ADMIN_URL || process.env.NEXT_PUBLIC_API_URL;
-  }
-  return process.env.NEXT_PUBLIC_API_URL;
-};
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -22,7 +14,7 @@ export const superAdminApi = axios.create({
 // Request interceptor to attach token
 [api, superAdminApi].forEach((instance) => {
   instance.interceptors.request.use((config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('c365_token');
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   });
@@ -31,9 +23,11 @@ export const superAdminApi = axios.create({
     (res) => res,
     (err) => {
       if (err.response?.status === 401) {
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+        const role = localStorage.getItem('c365_role');
+        localStorage.removeItem('c365_token');
+        localStorage.removeItem('c365_role');
+        localStorage.removeItem('c365_user');
+        window.location.href = role === 'super_admin' ? '/super/login' : '/login';
       }
       return Promise.reject(err);
     }

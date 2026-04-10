@@ -64,8 +64,12 @@ interface TenantSidebarProps {
 export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout, branding } = useAuthStore();
   const isDesktop = useIsDesktop();
+
+  // Dynamic branding: prefer values from store (set by BrandingProvider / admin)
+  const logoUrl = branding?.logo_url;
+  const partyName = branding?.name || theme.name;
   const [expanded, setExpanded] = useState<string[]>(['/communications', '/reports']);
 
   const storedUser = typeof window !== 'undefined'
@@ -105,13 +109,15 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
       {/* Branding */}
       <div style={{ padding: '16px 14px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: P, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <span style={{ color: 'white', fontSize: 10, fontWeight: 900 }}>
-              {theme.logoText?.slice(0, 2) || theme.name.slice(0, 2)}
-            </span>
+          <div style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: P, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+            {logoUrl
+              ? <img src={logoUrl} alt={partyName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              : <span style={{ color: 'white', fontSize: 10, fontWeight: 900 }}>
+                  {theme.logoText?.slice(0, 2) || theme.name.slice(0, 2)}
+                </span>}
           </div>
           <div>
-            <p style={{ color: 'white', fontWeight: 800, fontSize: 13, margin: 0, whiteSpace: 'nowrap' }}>{theme.name}</p>
+            <p style={{ color: 'white', fontWeight: 800, fontSize: 13, margin: 0, whiteSpace: 'nowrap' }}>{partyName}</p>
             <p style={{ color: '#64748B', fontSize: 9, margin: '2px 0 0' }}>Campaign 365</p>
           </div>
         </div>

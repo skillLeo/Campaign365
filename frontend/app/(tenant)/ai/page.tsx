@@ -85,9 +85,9 @@ export default function AIInsightsPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="flex flex-wrap items-center gap-3 mb-1">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FEF2F2' }}>
               <Brain size={16} style={{ color: '#E30613' }} />
             </div>
@@ -123,9 +123,9 @@ export default function AIInsightsPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* AI Insights Feed */}
-        <div className="col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-4">
           <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', marginBottom: 4 }}>AI Insights Panel</h2>
           {AI_INSIGHTS.map((insight) => (
             <div key={insight.type} className="bg-white rounded-2xl border border-slate-100 p-5">

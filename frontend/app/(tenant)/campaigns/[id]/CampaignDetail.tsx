@@ -72,19 +72,19 @@ export default function CampaignDetail() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
         <div>
           <button onClick={() => router.push('/campaigns')} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', fontSize: 13, background: 'none', border: 'none', cursor: 'pointer', marginBottom: 8, padding: 0 }}>
             <ArrowLeft size={14} /> Back to Campaigns
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>{campaign.name}</h1>
             <span style={{ background: sc.bg, color: sc.color, fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 20 }}>{sc.label}</span>
             <span style={{ background: '#F1F5F9', color: '#475569', fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 20 }}>{campaign.type}</span>
           </div>
           <p style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>{campaign.constituency} · {campaign.start_date}{campaign.end_date ? ` → ${campaign.end_date}` : ' · Ongoing'}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button style={{ background: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 9, padding: '8px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
             <Edit2 size={13} /> Edit
           </button>
@@ -98,7 +98,7 @@ export default function CampaignDetail() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         {[
           { label: 'Voters Contacted', value: campaign.voters_contacted.toLocaleString(), sub: `of ${campaign.voters_targeted.toLocaleString()}`, icon: Users, color: '#E30613', bg: '#FEF2F2' },
           { label: 'Doors Knocked', value: campaign.doors_knocked.toLocaleString(), sub: `${progress}% complete`, icon: Target, color: '#1D4ED8', bg: '#EFF6FF' },
@@ -120,7 +120,7 @@ export default function CampaignDetail() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+      <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full">
         {(['overview', 'canvassing', 'communications', 'analytics'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{ padding: '7px 18px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer', backgroundColor: tab === t ? '#E30613' : 'transparent', color: tab === t ? 'white' : '#64748B', textTransform: 'capitalize' }}>
             {t}
@@ -129,8 +129,8 @@ export default function CampaignDetail() {
       </div>
 
       {tab === 'overview' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <div className="col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
             <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', marginBottom: 4 }}>Voter Contact Progress</h3>
             <p style={{ fontSize: 12, color: '#94A3B8', marginBottom: 16 }}>Cumulative voters contacted over campaign duration</p>
             <ResponsiveContainer width="100%" height={200}>
@@ -181,7 +181,7 @@ export default function CampaignDetail() {
             </div>
           </div>
 
-          <div className="col-span-3 bg-white rounded-2xl border border-slate-100 p-5">
+          <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 p-5">
             <h3 style={{ fontWeight: 700, fontSize: 14, color: '#0F172A', marginBottom: 8 }}>Campaign Description</h3>
             <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.7 }}>{campaign.description}</p>
           </div>

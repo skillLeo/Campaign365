@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Check, ChevronUp, ChevronDown as ChevDown } from 'lucide-react';
+import { Toggle } from '@/components/ui/Toggle';
 
 const INIT_PLANS = [
   {
@@ -46,20 +47,6 @@ function NumberInput({ value, onChange }: { value: number; onChange: (v: number)
   );
 }
 
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <button
-      onClick={onChange}
-      className="relative w-9 h-5 rounded-full transition-all duration-200 focus:outline-none shrink-0"
-      style={{ backgroundColor: on ? '#2563EB' : '#374151' }}
-    >
-      <span
-        className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-        style={{ transform: on ? 'translateX(1.125rem)' : 'translateX(0.125rem)' }}
-      />
-    </button>
-  );
-}
 
 export default function SubscriptionTiersPage() {
   const [activeTab, setActiveTab] = useState<'all' | 'create' | 'history'>('all');
@@ -79,8 +66,8 @@ export default function SubscriptionTiersPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#1E2433' }}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-5">
-        <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 26, color: 'white', letterSpacing: '-0.025em' }}>Subscription Tiers Manager</h1>
+      <div className="flex items-center justify-between px-4 md:px-6 py-4 md:py-5">
+        <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, letterSpacing: '-0.025em', color: 'white' }} className="text-xl md:text-2xl">Subscription Tiers Manager</h1>
         <div
           className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold"
           style={{ backgroundColor: '#2563EB' }}
@@ -90,7 +77,7 @@ export default function SubscriptionTiersPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center px-6 border-b" style={{ borderColor: '#2D3748' }}>
+      <div className="flex items-center px-4 md:px-6 border-b overflow-x-auto" style={{ borderColor: '#2D3748' }}>
         {tabs.map(tab => (
           <button
             key={tab.key}
@@ -110,9 +97,9 @@ export default function SubscriptionTiersPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-4 md:p-6">
         {activeTab === 'all' && (
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             {plans.map(plan => (
               <div
                 key={plan.id}
@@ -135,11 +122,11 @@ export default function SubscriptionTiersPage() {
                   <div className="flex flex-col gap-1.5 items-end">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs text-slate-400">Active</span>
-                      <Toggle on={plan.active} onChange={() => updatePlan(plan.id, 'active', !plan.active)} />
+                      <Toggle on={plan.active} onChange={() => updatePlan(plan.id, 'active', !plan.active)} color="#2563EB" />
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-slate-400">Anaive</span>
-                      <Toggle on={!plan.active} onChange={() => updatePlan(plan.id, 'active', !plan.active)} />
+                      <span className="text-xs text-slate-400">Inactive</span>
+                      <Toggle on={!plan.active} onChange={() => updatePlan(plan.id, 'active', !plan.active)} color="#475569" />
                     </div>
                   </div>
                 </div>
@@ -180,7 +167,7 @@ export default function SubscriptionTiersPage() {
                 {/* Features */}
                 <div className="space-y-1.5">
                   <p className="text-xs text-slate-400 mb-1">Features</p>
-                  {['Active', 'Erable'].map(f => (
+                  {['All Core Modules', 'White-Label Branding'].map(f => (
                     <div key={f} className="flex items-center gap-2">
                       <div
                         className="w-4 h-4 rounded flex items-center justify-center"
@@ -270,11 +257,11 @@ export default function SubscriptionTiersPage() {
 
       {/* Bottom bar */}
       <div
-        className="flex items-center justify-between px-6 py-4 border-t"
+        className="flex flex-wrap items-center gap-3 justify-between px-4 md:px-6 py-4 border-t"
         style={{ backgroundColor: '#0F172A', borderColor: '#2D3748' }}
       >
         <div className="flex items-center gap-3">
-          <Toggle on={whiteLabelToggle} onChange={() => setWhiteLabelToggle(!whiteLabelToggle)} />
+          <Toggle on={whiteLabelToggle} onChange={() => setWhiteLabelToggle(!whiteLabelToggle)} offColor="#374151" />
           <span className="text-sm text-slate-300">Enable Custom White-Label Pricing per Tenant</span>
         </div>
         <span className="text-xs text-slate-500">{whiteLabelToggle ? 'Enabled globally' : 'Disabled'}</span>
