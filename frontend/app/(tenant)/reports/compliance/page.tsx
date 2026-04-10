@@ -45,56 +45,59 @@ export default function ComplianceReportPage() {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Compliance Reports</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>Reports › Compliance</p>
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.02em' }}>Compliance Reports</h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">Reports › Compliance</p>
         </div>
-        <div className="flex gap-2">
-          <button style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#F1F5F9', border: 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
-            <Download size={14} /> Export All
+        <div className="flex flex-wrap items-center gap-2">
+          <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">
+            <Download size={13} className="sm:w-[14px] sm:h-[14px]" /> Export All
           </button>
           <button onClick={handleGenerate}
-            style={{ display: 'flex', alignItems: 'center', gap: 7, backgroundColor: generated ? '#16A34A' : PRIMARY, color: 'white', border: 'none', borderRadius: 10, padding: '9px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
-            {generating ? <><Clock size={14} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</> : generated ? <><CheckCircle2 size={14} /> Report Ready</> : <><FileText size={14} /> Generate Full Report</>}
+            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
+            style={{ backgroundColor: generated ? '#16A34A' : PRIMARY }}>
+            {generating ? <><Clock size={13} className="animate-spin" /> Generating...</> : generated ? <><CheckCircle2 size={13} /> Report Ready</> : <><FileText size={13} /> Generate Full Report</>}
           </button>
         </div>
       </div>
 
-      {/* Score card */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-        <div className="col-span-1 bg-white rounded-2xl border border-slate-100 p-5 flex flex-col items-center justify-center">
-          <div style={{ position: 'relative', width: 80, height: 80 }}>
+      {/* Score card - Responsive */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 flex flex-col items-center justify-center hover:shadow-md transition-shadow">
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20">
             <svg viewBox="0 0 80 80" style={{ transform: 'rotate(-90deg)' }}>
               <circle cx="40" cy="40" r="32" fill="none" stroke="#F1F5F9" strokeWidth="8" />
               <circle cx="40" cy="40" r="32" fill="none" stroke={score >= 80 ? '#16A34A' : score >= 60 ? '#F59E0B' : PRIMARY} strokeWidth="8"
                 strokeDasharray={`${(score / 100) * 201} 201`} strokeLinecap="round" />
             </svg>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{score}%</span>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-base sm:text-lg font-bold text-slate-800">{score}%</span>
             </div>
           </div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 10 }}>Compliance Score</p>
-          <p style={{ fontSize: 11, color: '#94A3B8' }}>{complete} of {REQUIREMENTS.length} complete</p>
+          <p className="text-xs sm:text-sm font-bold text-slate-800 mt-2">Compliance Score</p>
+          <p className="text-[10px] sm:text-xs text-slate-400">{complete} of {REQUIREMENTS.length} complete</p>
         </div>
         {[
           { label: 'Completed', value: complete, color: '#16A34A', bg: '#F0FDF4' },
           { label: 'Pending', value: REQUIREMENTS.filter(r => r.status === 'pending').length, color: '#F59E0B', bg: '#FFFBEB' },
           { label: 'Overdue', value: 0, color: '#94A3B8', bg: '#F8FAFC' },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-2xl border border-slate-100 p-5 flex flex-col items-center justify-center">
-            <p style={{ fontSize: 36, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, color: s.color }}>{s.value}</p>
-            <p style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>{s.label}</p>
+          <div key={s.label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 flex flex-col items-center justify-center hover:shadow-md transition-shadow">
+            <p className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: s.color }}>{s.value}</p>
+            <p className="text-xs sm:text-sm text-slate-500 font-semibold">{s.label}</p>
           </div>
         ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit">
+      {/* Tabs - Responsive */}
+      <div className="flex flex-wrap gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full">
         {[['checklist', 'Requirements Checklist'], ['audit', 'Audit Trail'], ['reports', 'Filed Reports']].map(([key, label]) => (
           <button key={key} onClick={() => setTab(key as any)}
-            style={{ padding: '7px 18px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer', backgroundColor: tab === key ? PRIMARY : 'transparent', color: tab === key ? 'white' : '#64748B' }}>
+            className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-semibold transition-all whitespace-nowrap"
+            style={{ backgroundColor: tab === key ? PRIMARY : 'transparent', color: tab === key ? 'white' : '#64748B' }}>
             {label}
           </button>
         ))}
@@ -103,32 +106,36 @@ export default function ComplianceReportPage() {
       {tab === 'checklist' && (
         <div className="space-y-3">
           {REQUIREMENTS.map(req => (
-            <div key={req.id} className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+            <div key={req.id} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
               <button onClick={() => setExpanded(expanded === req.id ? null : req.id)}
-                className="w-full flex items-center gap-4 p-5" style={{ border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left' }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: req.status === 'complete' ? '#F0FDF4' : '#FFFBEB', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {req.status === 'complete'
-                    ? <CheckCircle2 size={18} style={{ color: '#16A34A' }} />
-                    : <Clock size={18} style={{ color: '#D97706' }} />}
+                className="w-full flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5" style={{ border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left' }}>
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: req.status === 'complete' ? '#F0FDF4' : '#FFFBEB' }}>
+                    {req.status === 'complete'
+                      ? <CheckCircle2 size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: '#16A34A' }} />
+                      : <Clock size={16} className="sm:w-[18px] sm:h-[18px]" style={{ color: '#D97706' }} />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs sm:text-sm font-bold text-slate-800 truncate">{req.name}</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">{req.jurisdiction} · Due: {req.due}</p>
+                  </div>
                 </div>
-                <div className="flex-1 text-left">
-                  <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{req.name}</p>
-                  <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>{req.jurisdiction} · Due: {req.due}</p>
+                <div className="flex items-center justify-between sm:justify-end gap-3">
+                  <span className="text-[10px] sm:text-xs font-semibold px-2 py-1 rounded whitespace-nowrap" style={{ color: req.status === 'complete' ? '#16A34A' : '#D97706', backgroundColor: req.status === 'complete' ? '#F0FDF4' : '#FFFBEB' }}>
+                    {req.status === 'complete' ? 'Complete' : 'Pending'}
+                  </span>
+                  {expanded === req.id ? <ChevronUp size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: '#94A3B8' }} /> : <ChevronDown size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: '#94A3B8' }} />}
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 600, color: req.status === 'complete' ? '#16A34A' : '#D97706', backgroundColor: req.status === 'complete' ? '#F0FDF4' : '#FFFBEB', padding: '4px 10px', borderRadius: 6, marginRight: 8 }}>
-                  {req.status === 'complete' ? 'Complete' : 'Pending'}
-                </span>
-                {expanded === req.id ? <ChevronUp size={16} style={{ color: '#94A3B8' }} /> : <ChevronDown size={16} style={{ color: '#94A3B8' }} />}
               </button>
               {expanded === req.id && (
-                <div style={{ padding: '0 20px 16px 20px', paddingLeft: 73, borderTop: '1px solid #F8FAFC' }}>
-                  <p style={{ fontSize: 13, color: '#475569', marginTop: 12, lineHeight: 1.6 }}>{req.notes}</p>
-                  <div className="flex gap-3 mt-3">
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 8, border: '1px solid #E2E8F0', background: 'white', fontSize: 12, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
-                      <Eye size={12} /> View Documents
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5 pt-0 border-t border-slate-100">
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-3 leading-relaxed">{req.notes}</p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    <button className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                      <Eye size={11} className="sm:w-[12px] sm:h-[12px]" /> View Documents
                     </button>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 8, border: '1px solid #E2E8F0', background: 'white', fontSize: 12, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
-                      <Upload size={12} /> Upload Evidence
+                    <button className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                      <Upload size={11} className="sm:w-[12px] sm:h-[12px]" /> Upload Evidence
                     </button>
                   </div>
                 </div>
@@ -139,57 +146,64 @@ export default function ComplianceReportPage() {
       )}
 
       {tab === 'audit' && (
-        <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#F8FAFC' }}>
-                {['Date', 'Action', 'User', 'Details', 'Risk Level'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', fontSize: 11, fontWeight: 600, color: '#94A3B8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {AUDIT_TRAIL.map((row, i) => (
-                <tr key={i} style={{ borderTop: '1px solid #F8FAFC' }}
-                  onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#FAFAFA')}
-                  onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#94A3B8' }}>{row.date}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{row.action}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#475569' }}>{row.user}</td>
-                  <td style={{ padding: '12px 16px', fontSize: 12, color: '#64748B' }}>{row.detail}</td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: row.risk === 'low' ? '#16A34A' : '#D97706', backgroundColor: row.risk === 'low' ? '#F0FDF4' : '#FFFBEB', padding: '3px 9px', borderRadius: 6, textTransform: 'capitalize' }}>
-                      {row.risk}
-                    </span>
-                  </td>
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <table className="w-full text-xs" style={{ minWidth: '800px' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#F8FAFC' }}>
+                  {['Date', 'Action', 'User', 'Details', 'Risk Level'].map(h => (
+                    <th key={h} className="py-2 sm:py-2.5 px-3 sm:px-4 text-[10px] sm:text-xs font-semibold text-slate-400 text-left uppercase tracking-wide whitespace-nowrap">{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {AUDIT_TRAIL.map((row, i) => (
+                  <tr key={i} className="border-t border-slate-50 hover:bg-slate-50 transition-colors">
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-xs text-slate-400 whitespace-nowrap">{row.date}</td>
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-xs font-semibold text-slate-800 whitespace-nowrap">{row.action}</td>
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-xs text-slate-500 whitespace-nowrap">{row.user}</td>
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-xs text-slate-500 max-w-[200px] truncate">{row.detail}</td>
+                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
+                      <span className={`text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded ${
+                        row.risk === 'low' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'
+                      }`}>
+                        {row.risk}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {tab === 'reports' && (
         <div className="space-y-3">
           {REPORTS.map(r => (
-            <div key={r.name} className="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-5">
-              <div style={{ width: 44, height: 44, backgroundColor: '#F1F5F9', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <FileText size={20} style={{ color: '#64748B' }} />
+            <div key={r.name} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4 hover:shadow-md transition-shadow">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#F1F5F9' }}>
+                <FileText size={18} className="sm:w-[20px] sm:h-[20px]" style={{ color: '#64748B' }} />
               </div>
-              <div className="flex-1">
-                <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{r.name}</p>
-                <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 2 }}>Generated: {r.generated} · {r.size}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm font-bold text-slate-800 truncate">{r.name}</p>
+                <p className="text-[10px] sm:text-xs text-slate-400 mt-1">Generated: {r.generated} · {r.size}</p>
               </div>
-              <span style={{ fontSize: 11, fontWeight: 600, color: r.status === 'submitted' ? '#16A34A' : r.status === 'generated' ? '#2563EB' : '#94A3B8', backgroundColor: r.status === 'submitted' ? '#F0FDF4' : r.status === 'generated' ? '#EFF6FF' : '#F8FAFC', padding: '4px 10px', borderRadius: 6, textTransform: 'capitalize' }}>
-                {r.status}
-              </span>
-              <div className="flex gap-2">
-                <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 8, border: '1px solid #E2E8F0', background: 'white', fontSize: 12, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
-                  <Eye size={12} /> View
-                </button>
-                <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '7px 12px', borderRadius: 8, border: '1px solid #E2E8F0', background: 'white', fontSize: 12, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>
-                  <Download size={12} /> Download
-                </button>
+              <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2">
+                <span className={`text-[10px] sm:text-xs font-semibold px-2 py-1 rounded whitespace-nowrap ${
+                  r.status === 'submitted' ? 'bg-green-50 text-green-700' :
+                  r.status === 'generated' ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-500'
+                }`}>
+                  {r.status}
+                </span>
+                <div className="flex gap-2">
+                  <button className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                    <Eye size={11} className="sm:w-[12px] sm:h-[12px]" /> View
+                  </button>
+                  <button className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                    <Download size={11} className="sm:w-[12px] sm:h-[12px]" /> Download
+                  </button>
+                </div>
               </div>
             </div>
           ))}

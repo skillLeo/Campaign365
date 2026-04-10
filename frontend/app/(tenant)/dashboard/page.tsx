@@ -63,79 +63,80 @@ export default function DashboardPage() {
   const name = storedUser?.name || 'General Secretary';
 
   return (
-    <div className="space-y-5">
-      {/* Welcome header */}
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Welcome header - Responsive */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold" style={{ color: '#0F172A' }}>
-            Welcome, {name.toLowerCase().includes('general') ? 'general secretary' : name.split(' ')[0]}!
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold truncate" style={{ color: '#0F172A' }}>
+            Welcome, {name.toLowerCase().includes('general') ? 'General Secretary' : name.split(' ')[0]}!
           </h1>
-          <p className="text-sm mt-0.5" style={{ color: '#64748B' }}>Campaign 365 Dashboard</p>
+          <p className="text-xs sm:text-sm mt-0.5 truncate" style={{ color: '#64748B' }}>Campaign 365 Dashboard</p>
         </div>
         <button
           onClick={() => router.push('/campaigns')}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          className="flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white hover:opacity-90 transition-opacity whitespace-nowrap"
           style={{ backgroundColor: 'var(--tenant-primary)' }}
         >
-          <Plus size={15} />
-          Launch New Campaign
+          <Plus size={14} className="sm:w-[15px] sm:h-[15px]" />
+          <span className="hidden xs:inline">Launch New Campaign</span>
+          <span className="xs:hidden">New Campaign</span>
         </button>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stat cards - Responsive grid */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {statCards.map(({ label, value, sub, icon: Icon, subAccent }) => (
-          <div key={label} className="bg-white rounded-xl border p-5" style={{ borderColor: '#E2E8F0' }}>
-            <div className="flex items-start justify-between mb-4">
-              <p className="text-sm font-medium" style={{ color: '#64748B' }}>{label}</p>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--tenant-primary) 15%, transparent)' }}>
-                <Icon size={18} style={{ color: 'var(--tenant-primary)' }} />
+          <div key={label} className="bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-4 md:p-5 hover:shadow-md transition-shadow" style={{ borderColor: '#E2E8F0' }}>
+            <div className="flex items-start justify-between mb-2 sm:mb-3 md:mb-4">
+              <p className="text-[11px] sm:text-xs md:text-sm font-medium truncate" style={{ color: '#64748B' }}>{label}</p>
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'color-mix(in srgb, var(--tenant-primary) 15%, transparent)' }}>
+                <Icon size={14} className="sm:w-[16px] sm:h-[16px] md:w-[18px] md:h-[18px]" style={{ color: 'var(--tenant-primary)' }} />
               </div>
             </div>
-            <p className="text-3xl font-bold mb-1" style={{ color: '#0F172A' }}>{value}</p>
-            <p className="text-xs" style={{ color: subAccent ? 'var(--tenant-primary)' : '#94A3B8' }}>{sub}</p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold mb-0.5 sm:mb-1 truncate" style={{ color: '#0F172A' }}>{value}</p>
+            <p className="text-[10px] sm:text-xs truncate" style={{ color: subAccent ? 'var(--tenant-primary)' : '#94A3B8' }}>{sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Live Map + Voter Sentiment */}
-      <div className="flex flex-col lg:flex-row gap-4">
+      {/* Live Map + Voter Sentiment - Responsive */}
+      <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
         {/* Live Map */}
-        <div className="bg-white rounded-xl border p-5 lg:flex-1 min-w-0" style={{ borderColor: '#E2E8F0' }}>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Map size={16} style={{ color: 'var(--tenant-primary)' }} />
-              <span className="font-semibold text-sm" style={{ color: '#0F172A' }}>Live Map</span>
-              <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#DCFCE7', color: '#16A34A' }}>
+        <div className="bg-white rounded-xl sm:rounded-2xl border p-4 sm:p-5 lg:flex-1 min-w-0" style={{ borderColor: '#E2E8F0' }}>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3 sm:mb-4">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <Map size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: 'var(--tenant-primary)' }} />
+              <span className="font-semibold text-xs sm:text-sm" style={{ color: '#0F172A' }}>Live Map</span>
+              <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-medium whitespace-nowrap" style={{ backgroundColor: '#DCFCE7', color: '#16A34A' }}>
                 0 Active
               </span>
             </div>
-            <button className="text-xs font-medium hover:opacity-70" style={{ color: 'var(--tenant-primary)' }}>
+            <button className="text-[11px] sm:text-xs font-medium hover:opacity-70 whitespace-nowrap" style={{ color: 'var(--tenant-primary)' }}>
               Full Screen →
             </button>
           </div>
           {/* Map placeholder */}
           <div
             className="rounded-xl flex flex-col items-center justify-center"
-            style={{ height: 260, backgroundColor: '#F0FDF4' }}
+            style={{ height: 'clamp(200px, 40vw, 260px)', backgroundColor: '#F0FDF4' }}
           >
-            <Map size={36} style={{ color: '#CBD5E1' }} className="mb-3" />
-            <p className="text-sm font-medium" style={{ color: '#94A3B8' }}>Live map requires Mapbox token</p>
-            <p className="text-xs mt-1" style={{ color: '#CBD5E1' }}>Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
+            <Map size={28} className="sm:w-[32px] sm:h-[32px] md:w-[36px] md:h-[36px] mb-2 sm:mb-3" style={{ color: '#CBD5E1' }} />
+            <p className="text-xs sm:text-sm font-medium text-center px-2" style={{ color: '#94A3B8' }}>Live map requires Mapbox token</p>
+            <p className="text-[10px] sm:text-xs mt-0.5 sm:mt-1 text-center px-2" style={{ color: '#CBD5E1' }}>Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
           </div>
         </div>
 
         {/* Voter Sentiment */}
-        <div className="bg-white rounded-xl border p-5 lg:w-[300px] lg:shrink-0" style={{ borderColor: '#E2E8F0' }}>
-          <h3 className="font-semibold text-sm mb-4" style={{ color: '#0F172A' }}>Voter Sentiment</h3>
-          <ResponsiveContainer width="100%" height={150}>
+        <div className="bg-white rounded-xl sm:rounded-2xl border p-4 sm:p-5 lg:w-[300px] lg:shrink-0" style={{ borderColor: '#E2E8F0' }}>
+          <h3 className="font-semibold text-xs sm:text-sm mb-3 sm:mb-4" style={{ color: '#0F172A' }}>Voter Sentiment</h3>
+          <ResponsiveContainer width="100%" height={140}>
             <PieChart>
               <Pie
                 data={MOCK_STATS.sentiment}
                 cx="50%"
                 cy="50%"
-                innerRadius={45}
-                outerRadius={65}
+                innerRadius={40}
+                outerRadius={55}
                 paddingAngle={3}
                 dataKey="value"
               >
@@ -146,16 +147,16 @@ export default function DashboardPage() {
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
             </PieChart>
           </ResponsiveContainer>
-          <div className="space-y-2 mt-3">
+          <div className="space-y-1.5 sm:space-y-2 mt-2 sm:mt-3">
             {MOCK_STATS.sentiment.map(s => (
-              <div key={s.name} className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} />
-                  <span style={{ color: '#64748B' }}>{s.name}</span>
+              <div key={s.name} className="flex items-center justify-between text-[10px] sm:text-xs">
+                <div className="flex items-center gap-1 sm:gap-1.5">
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ backgroundColor: s.color }} />
+                  <span className="truncate" style={{ color: '#64748B' }}>{s.name}</span>
                 </div>
-                <span className="font-semibold" style={{ color: '#0F172A' }}>
+                <span className="font-semibold whitespace-nowrap" style={{ color: '#0F172A' }}>
                   {s.value.toLocaleString()}
-                  <span style={{ color: '#94A3B8' }} className="font-normal ml-1">
+                  <span style={{ color: '#94A3B8' }} className="font-normal ml-0.5 sm:ml-1">
                     ({Math.round((s.value / totalSentiment) * 100)}%)
                   </span>
                 </span>
@@ -165,17 +166,22 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Quick action buttons */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Quick action buttons - Responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
         {quickActions.map(({ label, mobileLabel, href, color, accent }) => (
           <button
             key={label}
             onClick={() => router.push(href)}
-            className="py-4 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: accent ? 'var(--tenant-primary)' : color, fontSize: 'clamp(12px, 3vw, 16px)' }}
+            className="py-3 sm:py-4 rounded-xl text-white font-semibold hover:opacity-90 transition-opacity text-center"
+            style={{ 
+              backgroundColor: accent ? 'var(--tenant-primary)' : color, 
+              fontSize: 'clamp(11px, 3vw, 14px)',
+              paddingLeft: 'clamp(8px, 2vw, 16px)',
+              paddingRight: 'clamp(8px, 2vw, 16px)'
+            }}
           >
-            <span className="hidden sm:inline">{label}</span>
-            <span className="sm:hidden">{mobileLabel}</span>
+            <span className="hidden xs:inline">{label}</span>
+            <span className="xs:hidden">{mobileLabel}</span>
           </button>
         ))}
       </div>

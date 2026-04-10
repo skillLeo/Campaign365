@@ -53,21 +53,15 @@ const navItems = [
 
 interface TenantSidebarProps {
   theme: TenantTheme;
-  /** Called when a nav link is clicked (closes sidebar on mobile) */
   onClose: () => void;
 }
 
-/**
- * Renders sidebar CONTENT only.
- * Positioning (fixed, slide animation) is handled entirely by AppShell.
- */
 export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, branding } = useAuthStore();
   const isDesktop = useIsDesktop();
 
-  // Dynamic branding: prefer values from store (set by BrandingProvider / admin)
   const logoUrl = branding?.logo_url;
   const partyName = branding?.name || theme.name;
   const [expanded, setExpanded] = useState<string[]>(['/communications', '/reports']);
@@ -80,8 +74,8 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
     : 'general_secretary';
   const displayName = storedUser?.name || user?.name || 'General Secretary';
 
-  const P = theme.primary;   // primary color shorthand
-  const BG = theme.sidebar;  // sidebar background
+  const primaryColor = theme.primary || '#2563EB';
+  const sidebarBg = '#0F172A';
 
   const roleLabel: Record<string, string> = {
     general_secretary: 'General Secretary',
@@ -105,73 +99,175 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
     setExpanded(p => p.includes(h) ? p.filter(x => x !== h) : [...p, h]);
 
   return (
-    <div style={{ height: '100%', backgroundColor: BG, display: 'flex', flexDirection: 'column' }}>
-      {/* Branding */}
-      <div style={{ padding: '16px 14px 12px', borderBottom: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: P, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden' }}>
+    <div style={{ height: '100%', backgroundColor: sidebarBg, display: 'flex', flexDirection: 'column', color: '#E2E8F0' }}>
+      {/* Simple Branding - Just Canvass */}
+      <div style={{ padding: '20px 16px', borderBottom: '1px solid #1E293B', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ 
+            width: 36, 
+            height: 36, 
+            borderRadius: 10, 
+            backgroundColor: primaryColor, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            flexShrink: 0, 
+            overflow: 'hidden' 
+          }}>
             {logoUrl
               ? <img src={logoUrl} alt={partyName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : <span style={{ color: 'white', fontSize: 10, fontWeight: 900 }}>
-                  {theme.logoText?.slice(0, 2) || theme.name.slice(0, 2)}
+              : <span style={{ color: 'white', fontSize: 14, fontWeight: 900 }}>
+                  {partyName.slice(0, 2).toUpperCase()}
                 </span>}
           </div>
-          <div>
-            <p style={{ color: 'white', fontWeight: 800, fontSize: 13, margin: 0, whiteSpace: 'nowrap' }}>{partyName}</p>
-            <p style={{ color: '#64748B', fontSize: 9, margin: '2px 0 0' }}>Campaign 365</p>
-          </div>
+          <p style={{ color: 'white', fontWeight: 700, fontSize: 16, margin: 0 }}>{partyName}</p>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: '50%', backgroundColor: P, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: 'white', flexShrink: 0 }}>
+      </div>
+
+      {/* User Profile - Just General Secretary SKNLP with role */}
+      <div style={{ padding: '16px 16px 20px', borderBottom: '1px solid #1E293B', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ 
+            width: 40, 
+            height: 40, 
+            borderRadius: '50%', 
+            backgroundColor: primaryColor, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            fontSize: 15, 
+            fontWeight: 700, 
+            color: 'white', 
+            flexShrink: 0 
+          }}>
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ color: 'white', fontSize: 12, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{displayName}</p>
-            <p style={{ color: '#64748B', fontSize: 10, margin: '2px 0 0' }}>{roleLabel[storedRole] || storedRole}</p>
+            <p style={{ color: 'white', fontSize: 13, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {displayName}
+            </p>
+            <p style={{ color: '#64748B', fontSize: 11, margin: '2px 0 0' }}>
+              {roleLabel[storedRole] || storedRole}
+            </p>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: '8px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}>
+      <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}>
         {navItems.map(({ href, label, icon: Icon, children }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
           const isExpanded = expanded.includes(href);
           const hasChildren = !!(children?.length);
 
           return (
-            <div key={href}>
+            <div key={href} style={{ marginBottom: 2 }}>
               {hasChildren ? (
                 <button
                   onClick={() => toggleExpand(href)}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, border: 'none', cursor: 'pointer', backgroundColor: active ? P + '25' : 'transparent', color: active ? P : '#94A3B8', textAlign: 'left', marginBottom: 2 }}
+                  style={{ 
+                    width: '100%', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 12, 
+                    padding: '10px 12px', 
+                    borderRadius: 10, 
+                    border: 'none', 
+                    cursor: 'pointer', 
+                    backgroundColor: active ? `${primaryColor}20` : 'transparent', 
+                    color: active ? primaryColor : '#94A3B8', 
+                    textAlign: 'left',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={e => { 
+                    if (!active) { 
+                      e.currentTarget.style.backgroundColor = '#1E293B'; 
+                      e.currentTarget.style.color = '#F1F5F9'; 
+                    } 
+                  }}
+                  onMouseLeave={e => { 
+                    if (!active) { 
+                      e.currentTarget.style.backgroundColor = 'transparent'; 
+                      e.currentTarget.style.color = '#94A3B8'; 
+                    } 
+                  }}
                 >
-                  <Icon size={15} style={{ flexShrink: 0 }} />
+                  <Icon size={18} style={{ flexShrink: 0 }} />
                   <span style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{label}</span>
-                  <ChevronRight size={12} style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }} />
+                  <ChevronRight size={14} style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }} />
                 </button>
               ) : (
                 <Link
                   href={href}
                   onClick={handleNavClick}
-                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, textDecoration: 'none', marginBottom: 2, fontSize: 13, fontWeight: 500, ...(active ? { backgroundColor: P, color: 'white' } : { color: '#94A3B8' }) }}
-                  onMouseEnter={e => { if (!active) { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#2A2A2A'; (e.currentTarget as HTMLAnchorElement).style.color = 'white'; } }}
-                  onMouseLeave={e => { if (!active) { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8'; } }}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 12, 
+                    padding: '10px 12px', 
+                    borderRadius: 10, 
+                    textDecoration: 'none', 
+                    fontSize: 13, 
+                    fontWeight: 500,
+                    transition: 'all 0.2s ease',
+                    ...(active 
+                      ? { backgroundColor: primaryColor, color: 'white' } 
+                      : { color: '#94A3B8' })
+                  }}
+                  onMouseEnter={e => { 
+                    if (!active) { 
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E293B'; 
+                      (e.currentTarget as HTMLAnchorElement).style.color = '#F1F5F9'; 
+                    } 
+                  }}
+                  onMouseLeave={e => { 
+                    if (!active) { 
+                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; 
+                      (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8'; 
+                    } 
+                  }}
                 >
-                  <Icon size={15} style={{ flexShrink: 0 }} />
+                  <Icon size={18} style={{ flexShrink: 0 }} />
                   <span>{label}</span>
                 </Link>
               )}
 
               {hasChildren && isExpanded && (
-                <div style={{ paddingLeft: 26, marginBottom: 4 }}>
+                <div style={{ paddingLeft: 38, marginTop: 4, marginBottom: 4 }}>
                   {children!.map(child => {
                     const ca = pathname === child.href || pathname.startsWith(child.href);
                     return (
-                      <Link key={child.href} href={child.href} onClick={handleNavClick}
-                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', borderRadius: 8, textDecoration: 'none', marginBottom: 2, fontSize: 12, ...(ca ? { backgroundColor: P, color: 'white' } : { color: '#64748B' }) }}
+                      <Link 
+                        key={child.href} 
+                        href={child.href} 
+                        onClick={handleNavClick}
+                        style={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 10, 
+                          padding: '8px 12px', 
+                          borderRadius: 8, 
+                          textDecoration: 'none', 
+                          fontSize: 12,
+                          transition: 'all 0.2s ease',
+                          ...(ca 
+                            ? { backgroundColor: primaryColor, color: 'white' } 
+                            : { color: '#64748B' })
+                        }}
+                        onMouseEnter={e => { 
+                          if (!ca) { 
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E293B'; 
+                            (e.currentTarget as HTMLAnchorElement).style.color = '#F1F5F9'; 
+                          } 
+                        }}
+                        onMouseLeave={e => { 
+                          if (!ca) { 
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; 
+                            (e.currentTarget as HTMLAnchorElement).style.color = '#64748B'; 
+                          } 
+                        }}
                       >
-                        <div style={{ width: 5, height: 5, borderRadius: '50%', backgroundColor: 'currentColor', opacity: 0.6, flexShrink: 0 }} />
+                        <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor', opacity: 0.6, flexShrink: 0 }} />
                         <span>{child.label}</span>
                       </Link>
                     );
@@ -184,13 +280,34 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
       </nav>
 
       {/* Logout */}
-      <div style={{ padding: '10px 8px', borderTop: '1px solid rgba(255,255,255,0.08)', flexShrink: 0 }}>
-        <button onClick={handleLogout}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', width: '100%', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: 13, fontWeight: 500 }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#2A2A2A'; (e.currentTarget as HTMLButtonElement).style.color = 'white'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = '#94A3B8'; }}
+      <div style={{ padding: '12px 8px', borderTop: '1px solid #1E293B', flexShrink: 0 }}>
+        <button 
+          onClick={handleLogout}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 12, 
+            padding: '10px 12px', 
+            width: '100%', 
+            borderRadius: 10, 
+            border: 'none', 
+            background: 'none', 
+            cursor: 'pointer', 
+            color: '#94A3B8', 
+            fontSize: 13, 
+            fontWeight: 500,
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={e => { 
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1E293B'; 
+            (e.currentTarget as HTMLButtonElement).style.color = '#F1F5F9'; 
+          }}
+          onMouseLeave={e => { 
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; 
+            (e.currentTarget as HTMLButtonElement).style.color = '#94A3B8'; 
+          }}
         >
-          <LogOut size={15} style={{ flexShrink: 0 }} />
+          <LogOut size={18} style={{ flexShrink: 0 }} />
           <span>Logout</span>
         </button>
       </div>

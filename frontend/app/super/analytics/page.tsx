@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
@@ -16,6 +16,10 @@ const monthlyData = [
   { month: 'Jun', store: 580, personal: 380 },
   { month: 'Jul', store: 710, personal: 460 },
   { month: 'Aug', store: 680, personal: 430 },
+  { month: 'Sep', store: 720, personal: 450 },
+  { month: 'Oct', store: 690, personal: 440 },
+  { month: 'Nov', store: 750, personal: 480 },
+  { month: 'Dec', store: 800, personal: 500 },
 ];
 
 const miniBarData = [
@@ -27,6 +31,15 @@ const subBreakdown = [
   { name: 'Professional', value: 9, color: '#3B82F6' },
   { name: 'Enterprise', value: 18, color: '#0F172A' },
   { name: 'Enterprise+', value: 6, color: '#F59E0B' },
+];
+
+const dateRanges = [
+  { label: 'Last 30 Days', value: '30days', months: 1 },
+  { label: 'Last 3 Months', value: '3months', months: 3 },
+  { label: 'Last 6 Months', value: '6months', months: 6 },
+  { label: 'Last 12 Months', value: '12months', months: 12 },
+  { label: 'Year to Date', value: 'ytd', months: 12 },
+  { label: 'All Time', value: 'all', months: 12 },
 ];
 
 function MiniBar({ color = '#2563EB' }: { color?: string }) {
@@ -52,6 +65,84 @@ function MiniLine({ color = '#3B82F6' }: { color?: string }) {
 export default function SuperAnalyticsPage() {
   const router = useRouter();
   const [regionTab, setRegionTab] = useState<'all' | 'region'>('all');
+  const [dateRange, setDateRange] = useState('3months');
+  const [isDateDropdownOpen, setIsDateDropdownOpen] = useState(false);
+  const dateDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dateDropdownRef.current && !dateDropdownRef.current.contains(event.target as Node)) {
+        setIsDateDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Filter data based on selected date range
+  const getFilteredData = () => {
+    const range = dateRanges.find(r => r.value === dateRange);
+    if (!range) return monthlyData;
+    
+    const monthsToShow = range.months;
+    return monthlyData.slice(-monthsToShow);
+  };
+
+  const filteredData = getFilteredData();
+
+  // Calculate KPIs based on filtered data
+  const getTotalCampaigns = () => {
+    return filteredData.reduce((sum, item) => sum + item.store + item.personal, 0);
+  };
+
+  const getAvgTurnoutLift = () => {
+    const ranges: Record<string, number> = {
+      '30days': 52,
+      '3months': 49,
+      '6months': 47,
+      '12months': 45,
+      'ytd': 46,
+      'all': 44,
+    };
+    return ranges[dateRange] || 49;
+  };
+
+  const getFeatureAdoption = () => {
+    const ranges: Record<string, number> = {
+      '30days': 78,
+      '3months': 73,
+      '6months': 71,
+      '12months': 68,
+      'ytd': 69,
+      'all': 65,
+    };
+    return ranges[dateRange] || 73;
+  };
+
+  const getRevenue = () => {
+    const ranges: Record<string, string> = {
+      '30days': '$48K',
+      '3months': '$92K',
+      '6months': '$138K',
+      '12months': '$184K',
+      'ytd': '$156K',
+      'all': '$210K',
+    };
+    return ranges[dateRange] || '$184K';
+  };
+
+  const getTrend = () => {
+    const ranges: Record<string, string> = {
+      '30days': '+8%',
+      '3months': '+7%',
+      '6months': '+6%',
+      '12months': '+5%',
+      'ytd': '+5%',
+      'all': '+4%',
+    };
+    return ranges[dateRange] || '+4%';
+  };
 
   return (
     <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
@@ -67,25 +158,57 @@ export default function SuperAnalyticsPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-xl font-bold text-slate-800">Global Reports & Analytics</h1>
           <div className="flex flex-wrap items-center gap-2">
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all">
-              Date Range <ChevronDown size={13} />
-            </button>
-            <div className="flex rounded-xl overflow-hidden border border-slate-200">
-              {['All Clients', 'By Region'].map(t => {
-                const isActive = (t === 'All Clients' && regionTab === 'all') || (t === 'By Region' && regionTab === 'region');
-                return (
-                  <button
-                    key={t}
-                    onClick={() => setRegionTab(t === 'All Clients' ? 'all' : 'region')}
-                    className="px-3 py-1.5 text-sm font-medium transition-all"
-                    style={isActive ? { backgroundColor: '#2563EB', color: 'white' } : { color: '#64748B', backgroundColor: 'white' }}
-                  >
-                    {t}
-                  </button>
-                );
-              })}
+            {/* Date Range Dropdown - FIXED: Now overlays instead of pushing content */}
+            <div className="relative" ref={dateDropdownRef}>
+              <button
+                onClick={() => setIsDateDropdownOpen(!isDateDropdownOpen)}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all whitespace-nowrap"
+              >
+                {dateRanges.find(r => r.value === dateRange)?.label || 'Date Range'}
+                <ChevronDown size={13} className={`transition-transform duration-200 ${isDateDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {isDateDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl border border-slate-200 shadow-lg z-50 py-1">
+                  {dateRanges.map(range => (
+                    <button
+                      key={range.value}
+                      onClick={() => {
+                        setDateRange(range.value);
+                        setIsDateDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors ${
+                        dateRange === range.value ? 'text-blue-600 bg-blue-50 font-semibold' : 'text-slate-600'
+                      }`}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all">
+            
+            {/* Toggle Buttons */}
+            <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-white">
+              <button
+                onClick={() => setRegionTab('all')}
+                className={`px-4 py-1.5 text-sm font-medium transition-all whitespace-nowrap ${
+                  regionTab === 'all' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                All Clients
+              </button>
+              <button
+                onClick={() => setRegionTab('region')}
+                className={`px-4 py-1.5 text-sm font-medium transition-all whitespace-nowrap ${
+                  regionTab === 'region' ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                By Region
+              </button>
+            </div>
+
+            {/* Export Button */}
+            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-sm hover:bg-slate-50 transition-all whitespace-nowrap">
               <Download size={13} /> Export <ChevronDown size={13} />
             </button>
           </div>
@@ -97,30 +220,30 @@ export default function SuperAnalyticsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <p className="text-xs font-semibold text-slate-400 mb-2">Total Active Campaigns</p>
-            <p className="text-3xl font-bold text-slate-800 mb-2">312</p>
+            <p className="text-3xl font-bold text-slate-800 mb-2">{getTotalCampaigns()}</p>
             <MiniBar color="#2563EB" />
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <p className="text-xs font-semibold text-slate-400 mb-1">Average Turnout Lift</p>
             <div className="flex items-end gap-2">
-              <p className="text-4xl font-bold text-slate-800">49%</p>
+              <p className="text-4xl font-bold text-slate-800">{getAvgTurnoutLift()}%</p>
               <div className="flex items-center gap-0.5 mb-1 text-xs font-semibold" style={{ color: '#2563EB' }}>
                 <TrendingUp size={12} />
-                <span>↑ +4%</span>
+                <span>{getTrend()}</span>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-100 p-5">
             <p className="text-xs font-semibold text-slate-400 mb-2">Feature Adoption Rate</p>
-            <p className="text-3xl font-bold text-slate-800 mb-2">73%</p>
+            <p className="text-3xl font-bold text-slate-800 mb-2">{getFeatureAdoption()}%</p>
             <MiniLine color="#3B82F6" />
           </div>
 
           <div className="rounded-2xl p-5 text-white" style={{ backgroundColor: '#2563EB' }}>
             <p className="text-xs font-semibold opacity-80 mb-2">Revenue Trend</p>
-            <p className="text-3xl font-bold mb-2">$184K</p>
+            <p className="text-3xl font-bold mb-2">{getRevenue()}</p>
             <ResponsiveContainer width="100%" height={40}>
               <LineChart data={miniBarData} margin={{ top: 2, right: 0, bottom: 0, left: 0 }}>
                 <Line type="monotone" dataKey="v" stroke="rgba(255,255,255,0.85)" strokeWidth={2} dot={false} isAnimationActive={false} />
@@ -131,8 +254,13 @@ export default function SuperAnalyticsPage() {
 
         {/* Monthly Usage chart */}
         <div className="bg-white rounded-2xl border border-slate-100 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-slate-700 text-sm">Monthly Usage Across All Clients</h3>
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+            <h3 className="font-semibold text-slate-700 text-sm">
+              Monthly Usage Across All Clients
+              <span className="ml-2 text-xs text-slate-400 font-normal">
+                ({dateRanges.find(r => r.value === dateRange)?.label})
+              </span>
+            </h3>
             <div className="flex items-center gap-2">
               {['CSV', 'PDF'].map(btn => (
                 <button
@@ -145,7 +273,7 @@ export default function SuperAnalyticsPage() {
             </div>
           </div>
           <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={monthlyData}>
+            <LineChart data={filteredData}>
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #E2E8F0' }} />

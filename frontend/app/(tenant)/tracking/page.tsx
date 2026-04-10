@@ -36,62 +36,62 @@ export default function TrackingPage() {
   const filtered = filter === 'all' ? agents : agents.filter(a => a.status === filter);
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-slate-800">Live GPS Tracking</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Real-time field agent locations — updates every 30 seconds</p>
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Live GPS Tracking</h1>
+          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">Real-time field agent locations — updates every 30 seconds</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span
-            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full"
+            className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full whitespace-nowrap"
             style={{ backgroundColor: '#ECFDF5', color: '#065F46' }}
           >
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-400 animate-pulse" />
             Live
           </span>
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all">
-            <AlertTriangle size={13} />
-            <span className="hidden sm:inline">Simulate Panic</span>
-            <span className="sm:hidden">Panic</span>
+          <button className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all whitespace-nowrap">
+            <AlertTriangle size={12} className="sm:w-[13px] sm:h-[13px]" />
+            <span className="hidden xs:inline">Simulate Panic</span>
+            <span className="xs:hidden">Panic</span>
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Cards - Responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, color: '#E30613', bg: '#ECFDF5', icon: Activity },
           { label: 'Idle', value: agents.filter(a => a.status === 'idle').length, color: '#F59E0B', bg: '#FFFBEB', icon: Clock },
           { label: 'Offline', value: agents.filter(a => a.status === 'offline').length, color: '#94A3B8', bg: '#F1F5F9', icon: Radio },
           { label: 'Total Tracked', value: agents.length, color: primaryColor, bg: '#F0FDFA', icon: Users },
         ].map(({ label, value, color, bg, icon: Icon }) => (
-          <div key={label} className="bg-white rounded-2xl border border-slate-100 p-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}>
-                <Icon size={16} style={{ color }} />
+          <div key={label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}>
+                <Icon size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color }} />
               </div>
             </div>
-            <p className="text-2xl font-bold text-slate-800">{value}</p>
-            <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+            <p className="text-lg sm:text-2xl font-bold text-slate-800">{value}</p>
+            <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">{label}</p>
           </div>
         ))}
       </div>
 
-      {/* Map + Agent List */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      {/* Map + Agent List - Responsive */}
+      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
         {/* Map */}
-        <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="font-semibold text-slate-700 text-sm">Live Agent Map</h3>
-            <span className="text-xs text-slate-400">Jamaica · All Constituencies</span>
+        <div className="lg:flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
+            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Live Agent Map</h3>
+            <span className="text-[10px] sm:text-xs text-slate-400">Jamaica · All Constituencies</span>
           </div>
-          <div className="relative h-[420px] flex items-center justify-center" style={{ backgroundColor: '#E8EEF5' }}>
+          <div className="relative h-[300px] sm:h-[380px] lg:h-[420px] flex items-center justify-center" style={{ backgroundColor: '#E8EEF5' }}>
             <div className="text-center text-slate-400 pointer-events-none">
-              <MapPin size={32} className="mx-auto mb-2 opacity-20" />
-              <p className="text-sm font-medium text-slate-500">Mapbox Live Map</p>
-              <p className="text-xs text-slate-400">Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
+              <MapPin size={28} className="sm:w-8 sm:h-8 mx-auto mb-2 opacity-20" />
+              <p className="text-xs sm:text-sm font-medium text-slate-500">Mapbox Live Map</p>
+              <p className="text-[10px] sm:text-xs text-slate-400">Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
             </div>
             {agents.map((agent, i) => (
               <button
@@ -102,7 +102,7 @@ export default function TrackingPage() {
                 title={agent.name}
               >
                 <div
-                  className="w-8 h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-xs font-bold"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
                   style={{
                     backgroundColor: statusColors[agent.status],
                     animation: agent.status === 'active' ? 'pulse 2s infinite' : undefined,
@@ -116,15 +116,15 @@ export default function TrackingPage() {
         </div>
 
         {/* Agent list */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 overflow-hidden flex flex-col">
-          <div className="px-4 py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-sm mb-3">Field Agents</h3>
-            <div className="flex gap-1">
+        <div className="lg:w-80 xl:w-96 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden flex flex-col">
+          <div className="px-3 sm:px-4 py-3 sm:py-4 border-b border-slate-100">
+            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-2 sm:mb-3">Field Agents</h3>
+            <div className="flex flex-wrap gap-1">
               {(['all', 'active', 'idle', 'offline'] as const).map(f => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className="px-2.5 py-1 rounded-full text-xs font-medium capitalize transition-all"
+                  className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium capitalize transition-all whitespace-nowrap"
                   style={filter === f
                     ? { backgroundColor: primaryColor, color: 'white' }
                     : { backgroundColor: '#F1F5F9', color: '#64748B' }}
@@ -134,50 +134,50 @@ export default function TrackingPage() {
               ))}
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-50">
+          <div className="flex-1 overflow-y-auto divide-y divide-slate-50 max-h-[400px] sm:max-h-[500px]">
             {filtered.map(agent => (
               <button
                 key={agent.id}
                 onClick={() => setSelected(selected?.id === agent.id ? null : agent)}
-                className="w-full text-left px-4 py-3.5 hover:bg-slate-50 transition-colors"
+                className="w-full text-left px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-slate-50 transition-colors"
                 style={selected?.id === agent.id ? { backgroundColor: '#F8FAFC', borderLeft: `3px solid ${primaryColor}` } : {}}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div className="relative shrink-0">
                     <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold"
                       style={{ backgroundColor: primaryColor }}
                     >
                       {agent.name[0]}
                     </div>
                     <span
-                      className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white"
+                      className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-white"
                       style={{ backgroundColor: statusColors[agent.status] }}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-800 truncate">{agent.name}</p>
-                    <p className="text-xs text-slate-400">{agent.role} · {agent.constituency}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">{agent.name}</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 truncate">{agent.role} · {agent.constituency}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs text-slate-400">{agent.last_seen}</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">{agent.last_seen}</p>
                     <div className="flex items-center gap-1 mt-0.5 justify-end">
-                      <div className="w-10 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full" style={{ width: `${agent.battery}%`, backgroundColor: batteryColor(agent.battery) }} />
+                      <div className="w-8 sm:w-10 h-1 bg-slate-100 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${agent.battery}%`, backgroundColor: batteryColor(agent.battery) }} />
                       </div>
-                      <span className="text-xs" style={{ color: batteryColor(agent.battery) }}>{agent.battery}%</span>
+                      <span className="text-[10px] sm:text-xs" style={{ color: batteryColor(agent.battery) }}>{agent.battery}%</span>
                     </div>
                   </div>
                 </div>
                 {selected?.id === agent.id && (
-                  <div className="mt-3 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+                  <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
                     <div>
-                      <p className="text-xs font-semibold text-slate-600">GPS Coordinates</p>
-                      <p className="text-xs text-slate-400 mt-0.5">{agent.lat.toFixed(4)}, {agent.lng.toFixed(4)}</p>
+                      <p className="text-[10px] sm:text-xs font-semibold text-slate-600">GPS Coordinates</p>
+                      <p className="text-[9px] sm:text-xs text-slate-400 mt-0.5 truncate">{agent.lat.toFixed(4)}, {agent.lng.toFixed(4)}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-600">Status</p>
-                      <p className="text-xs capitalize mt-0.5" style={{ color: statusColors[agent.status] }}>{agent.status}</p>
+                      <p className="text-[10px] sm:text-xs font-semibold text-slate-600">Status</p>
+                      <p className="text-[10px] sm:text-xs capitalize mt-0.5" style={{ color: statusColors[agent.status] }}>{agent.status}</p>
                     </div>
                   </div>
                 )}
@@ -186,6 +186,14 @@ export default function TrackingPage() {
           </div>
         </div>
       </div>
+
+      {/* Add pulse animation keyframes */}
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
+      `}</style>
     </div>
   );
 }

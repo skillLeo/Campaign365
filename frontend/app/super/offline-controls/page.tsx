@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Wifi, WifiOff, Globe, RefreshCw, AlertTriangle, CheckCircle, Clock, Server, Bell, ChevronDown } from 'lucide-react';
-import { useAuthStore } from '@/lib/store';
+import { Wifi, WifiOff, Globe, RefreshCw, AlertTriangle, CheckCircle, Clock, Server, ChevronDown } from 'lucide-react';
 
 const REGIONS = [
   { id: 'na', name: 'North America', lat: 54, lng: -100, status: 'online', devices: 142, syncRate: 98.2 },
@@ -49,7 +48,6 @@ const MAP_DOTS = [
 ];
 
 export default function OfflineControlsPage() {
-  const { user } = useAuthStore();
   const [forceOffline, setForceOffline] = useState(false);
   const [autoSync, setAutoSync] = useState(true);
   const [dataResidency, setDataResidency] = useState(false);
@@ -68,69 +66,67 @@ export default function OfflineControlsPage() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-h-screen" style={{ backgroundColor: '#F8FAFC' }}>
-      {/* Top bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-4 lg:px-6 py-3 lg:py-4 bg-white border-b border-slate-100">
+    <div className="flex-1 flex flex-col min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: '#F8FAFC' }}>
+      {/* Top bar - Clean, no profile/notification icons */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 bg-white border-b border-slate-100">
         <div>
-          <p style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>Dashboard › Global Controls</p>
-          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 20, color: '#0F172A', letterSpacing: '-0.02em' }}>Global Offline &amp; Multi-Region Controls</h2>
+          <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
+            Dashboard › Global Controls
+          </p>
+          <h2 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(18px, 4vw, 20px)', color: '#0F172A', letterSpacing: '-0.02em' }}>
+            Global Offline &amp; Multi-Region Controls
+          </h2>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={handleSave}
-            style={{ backgroundColor: '#2563EB', color: 'white', border: 'none', borderRadius: 10, padding: '9px 20px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
-          >
-            {saved ? '✓ Saved' : 'Apply Visitor Offline Policy'}
-          </button>
-          <Bell size={18} style={{ color: '#94A3B8', cursor: 'pointer' }} />
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#2563EB' }}>
-            {user?.name?.charAt(0) || 'S'}
-          </div>
-        </div>
+        <button
+          onClick={handleSave}
+          className="flex items-center justify-center gap-2 rounded-xl text-white transition-all hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-md whitespace-nowrap"
+          style={{ backgroundColor: saved ? '#16A34A' : '#2563EB', padding: 'clamp(8px, 2vw, 10px) clamp(16px, 3vw, 20px)', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, border: 'none', cursor: 'pointer' }}
+        >
+          {saved ? <CheckCircle size={14} /> : null}
+          {saved ? 'Applied!' : 'Apply Visitor Offline Policy'}
+        </button>
       </div>
 
-      <div className="flex-1 p-4 lg:p-6 space-y-5">
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex-1 p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+        {/* Stats Row - Responsive */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
             { label: 'Regions Online', value: `${REGIONS.filter(r => r.status === 'online').length}/${REGIONS.length}`, icon: Globe, color: '#2563EB', bg: '#EFF6FF' },
             { label: 'Devices Currently Offline', value: totalOffline, icon: WifiOff, color: '#DC2626', bg: '#FEF2F2' },
             { label: 'Sync Success Rate', value: `${syncSuccess}%`, icon: RefreshCw, color: '#16A34A', bg: '#F0FDF4' },
             { label: 'Auto-Sync Active', value: autoSync ? 'Enabled' : 'Disabled', icon: Wifi, color: autoSync ? '#16A34A' : '#94A3B8', bg: autoSync ? '#F0FDF4' : '#F8FAFC' },
           ].map((s, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-100 p-4 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-                <s.icon size={18} style={{ color: s.color }} />
+            <div key={i} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:shadow-md transition-shadow">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bg }}>
+                <s.icon size={14} className="sm:w-[18px] sm:h-[18px]" style={{ color: s.color }} />
               </div>
-              <div>
-                <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500, marginBottom: 2 }}>{s.label}</p>
-                <p style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>{s.value}</p>
+              <div className="min-w-0">
+                <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', fontWeight: 500, marginBottom: 2, whiteSpace: 'nowrap' }}>{s.label}</p>
+                <p style={{ fontSize: 'clamp(16px, 4vw, 18px)', fontWeight: 800, color: '#0F172A', whiteSpace: 'nowrap' }}>{s.value}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
           {/* World Map */}
-          <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
+          <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
-              <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A' }}>Regional Status Map</h3>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5"><div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#16A34A' }} /><span style={{ fontSize: 12, color: '#64748B' }}>Online</span></div>
-                <div className="flex items-center gap-1.5"><div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#DC2626' }} /><span style={{ fontSize: 12, color: '#64748B' }}>Offline</span></div>
+              <h3 style={{ fontWeight: 700, fontSize: 'clamp(13px, 3vw, 15px)', color: '#0F172A' }}>Regional Status Map</h3>
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-1.5"><div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#16A34A' }} /><span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#64748B' }}>Online</span></div>
+                <div className="flex items-center gap-1.5"><div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#DC2626' }} /><span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#64748B' }}>Offline</span></div>
               </div>
             </div>
             {/* SVG Map */}
             <div style={{ backgroundColor: '#1E293B', borderRadius: 12, padding: '20px 24px', position: 'relative', minHeight: 200 }}>
               <svg viewBox="0 0 100 70" style={{ width: '100%', height: 'auto' }}>
-                {/* Simple continent outlines */}
                 <path d="M5 20 Q15 15 25 18 Q28 22 26 30 Q20 35 15 32 Q8 28 5 20Z" fill="#334155" />
                 <path d="M35 15 Q45 12 55 14 Q60 18 58 24 Q52 28 46 26 Q38 22 35 15Z" fill="#334155" />
                 <path d="M28 38 Q38 36 42 42 Q40 52 35 56 Q28 58 24 52 Q22 44 28 38Z" fill="#334155" />
                 <path d="M47 48 Q57 45 64 50 Q65 60 60 64 Q52 66 48 60 Q45 55 47 48Z" fill="#334155" />
                 <path d="M68 20 Q80 16 88 20 Q92 28 86 35 Q78 38 72 34 Q66 28 68 20Z" fill="#334155" />
                 <path d="M46 18 Q49 15 53 17 Q54 22 51 24 Q47 23 46 18Z" fill="#334155" />
-                {/* Region dots */}
                 {MAP_DOTS.map(dot => {
                   const reg = REGIONS.find(r => r.id === dot.region);
                   const isOnline = reg?.status === 'online';
@@ -169,9 +165,9 @@ export default function OfflineControlsPage() {
                 <div key={r.id} className="flex items-center justify-between px-3 py-2 rounded-xl" style={{ backgroundColor: '#F8FAFC' }}>
                   <div className="flex items-center gap-2">
                     <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: r.status === 'online' ? '#16A34A' : '#DC2626' }} />
-                    <span style={{ fontSize: 12, fontWeight: 500, color: '#0F172A' }}>{r.name}</span>
+                    <span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 500, color: '#0F172A' }}>{r.name}</span>
                   </div>
-                  <span style={{ fontSize: 11, color: '#94A3B8' }}>{r.devices} devices</span>
+                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>{r.devices} devices</span>
                 </div>
               ))}
             </div>
@@ -180,33 +176,33 @@ export default function OfflineControlsPage() {
           {/* Controls Panel */}
           <div className="flex flex-col gap-4">
             {/* Master Toggles */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', marginBottom: 16 }}>Global Controls</h3>
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+              <h3 style={{ fontWeight: 700, fontSize: 'clamp(13px, 3vw, 15px)', color: '#0F172A', marginBottom: 16 }}>Global Controls</h3>
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>Force Offline Mode</p>
-                    <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Block all sync across all clients</p>
+                  <div className="flex-1">
+                    <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, color: '#0F172A' }}>Force Offline Mode</p>
+                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', marginTop: 2 }}>Block all sync across all clients</p>
                   </div>
                   <Toggle on={forceOffline} onChange={setForceOffline} />
                 </div>
                 {forceOffline && (
                   <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: '8px 12px', display: 'flex', alignItems: 'center', gap: 8 }}>
                     <AlertTriangle size={14} style={{ color: '#DC2626', flexShrink: 0 }} />
-                    <p style={{ fontSize: 11, color: '#B91C1C' }}>All client syncing is paused. Field workers are in offline mode.</p>
+                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#B91C1C' }}>All client syncing is paused. Field workers are in offline mode.</p>
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>Auto-Sync Policies</p>
-                    <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Automatic background sync</p>
+                  <div className="flex-1">
+                    <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, color: '#0F172A' }}>Auto-Sync Policies</p>
+                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', marginTop: 2 }}>Automatic background sync</p>
                   </div>
                   <Toggle on={autoSync} onChange={setAutoSync} />
                 </div>
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>Data Residency Rules</p>
-                    <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Enforce regional data storage</p>
+                  <div className="flex-1">
+                    <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, color: '#0F172A' }}>Data Residency Rules</p>
+                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', marginTop: 2 }}>Enforce regional data storage</p>
                   </div>
                   <Toggle on={dataResidency} onChange={setDataResidency} />
                 </div>
@@ -214,15 +210,15 @@ export default function OfflineControlsPage() {
             </div>
 
             {/* Sync Policies */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', marginBottom: 14 }}>Sync Policies</h3>
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+              <h3 style={{ fontWeight: 700, fontSize: 'clamp(13px, 3vw, 15px)', color: '#0F172A', marginBottom: 14 }}>Sync Policies</h3>
               <div className="space-y-3">
                 {SYNC_POLICIES.map(p => (
                   <div key={p.id} className="flex items-start gap-3">
                     <Toggle on={policies[p.id]} onChange={v => setPolicies(pr => ({ ...pr, [p.id]: v }))} />
-                    <div>
-                      <p style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{p.label}</p>
-                      <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{p.desc}</p>
+                    <div className="flex-1">
+                      <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#0F172A' }}>{p.label}</p>
+                      <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', marginTop: 1 }}>{p.desc}</p>
                     </div>
                   </div>
                 ))}
@@ -230,44 +226,44 @@ export default function OfflineControlsPage() {
             </div>
 
             {/* Sync Rate */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5">
-              <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A', marginBottom: 14 }}>Sync Success Rate</h3>
+            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+              <h3 style={{ fontWeight: 700, fontSize: 'clamp(13px, 3vw, 15px)', color: '#0F172A', marginBottom: 14 }}>Sync Success Rate</h3>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 60 }}>
                 {[88, 92, 95, 91, 97, 94, 96].map((v, i) => (
                   <div key={i} style={{ flex: 1, backgroundColor: '#2563EB', opacity: 0.6 + i * 0.06, borderRadius: '3px 3px 0 0', height: `${v}%` }} />
                 ))}
               </div>
               <div className="flex justify-between mt-2">
-                <span style={{ fontSize: 11, color: '#94A3B8' }}>7 days ago</span>
-                <span style={{ fontSize: 11, color: '#94A3B8' }}>Today</span>
+                <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>7 days ago</span>
+                <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>Today</span>
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <CheckCircle size={14} style={{ color: '#16A34A' }} />
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#16A34A' }}>96.5% average this week</span>
+                <span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#16A34A' }}>96.5% average this week</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Currently Offline Clients */}
-        <div className="bg-white rounded-2xl border border-slate-100 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 style={{ fontWeight: 700, fontSize: 15, color: '#0F172A' }}>Currently Offline — {totalOffline} Devices</h3>
-            <button style={{ fontSize: 12, color: '#2563EB', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <h3 style={{ fontWeight: 700, fontSize: 'clamp(13px, 3vw, 15px)', color: '#0F172A' }}>Currently Offline — {totalOffline} Devices</h3>
+            <button style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#2563EB', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>
               View All Devices
             </button>
           </div>
           <div className="space-y-3">
             {CLIENTS_OFFLINE.map((c, i) => (
-              <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-4 py-3 rounded-xl" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}>
-                <div className="flex items-center gap-3">
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-4 py-3 rounded-xl" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}>
+                <div className="flex items-center gap-3 min-w-0">
                   <WifiOff size={14} style={{ color: '#DC2626', flexShrink: 0 }} />
                   <div className="min-w-0">
-                    <p style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{c.name}</p>
-                    <p style={{ fontSize: 11, color: '#94A3B8' }}>{c.region} · Last sync: {c.lastSync}</p>
+                    <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, color: '#0F172A' }}>{c.name}</p>
+                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>{c.region} · Last sync: {c.lastSync}</p>
                   </div>
                 </div>
-                <span style={{ background: '#FEE2E2', color: '#991B1B', fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>
+                <span style={{ background: '#FEE2E2', color: '#991B1B', fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 700, padding: '3px 10px', borderRadius: 20, whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>
                   {c.devices} offline
                 </span>
               </div>

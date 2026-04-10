@@ -74,26 +74,30 @@ export default function TeamPage() {
   ];
 
   return (
-    <div>
-      {/* Add Member Modal */}
+    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
+      {/* Add Member Modal - Responsive */}
       {showAdd && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-slate-800 text-lg">Add Team Member</h3>
-              <button onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
+        <>
+          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowAdd(false)} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <h3 className="font-bold text-slate-800 text-base sm:text-lg">Add Team Member</h3>
+              <button onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
+                <X size={16} className="sm:w-[18px] sm:h-[18px]" />
+              </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Full Name *</label>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Full Name *</label>
                 <input value={newMember.name} onChange={e => setNewMember(m => ({ ...m, name: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="Jane Smith" />
+                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
+                  placeholder="Jane Smith" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Role</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Role</label>
                   <select value={newMember.role} onChange={e => setNewMember(m => ({ ...m, role: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none">
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none">
                     <option>Campaign Manager</option>
                     <option>Canvasser</option>
                     <option>Runner</option>
@@ -102,9 +106,9 @@ export default function TeamPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1.5">Constituency</label>
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Constituency</label>
                   <select value={newMember.constituency} onChange={e => setNewMember(m => ({ ...m, constituency: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none">
+                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none">
                     <option>St. Christopher 1</option>
                     <option>St. Christopher 2</option>
                     <option>St. Christopher 3</option>
@@ -114,62 +118,63 @@ export default function TeamPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Phone</label>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Phone</label>
                 <input value={newMember.phone} onChange={e => setNewMember(m => ({ ...m, phone: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none" placeholder="+1-869-555-0100" />
+                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
+                  placeholder="+1-869-555-0100" />
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button onClick={() => { setShowAdd(false); setNewMember(EMPTY_MEMBER); }}
-                  className="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50">Cancel</button>
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Cancel</button>
                 <button onClick={handleAddMember}
-                  className="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ backgroundColor: '#E30613' }}>Add Member</button>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#0F172A', letterSpacing: '-0.02em' }}>Team Management</h1>
-          <p style={{ fontSize: 13, color: '#64748B', marginTop: 3 }}>St. Kitts and Nevis Labour Party</p>
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="min-w-0">
+          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(18px, 5vw, 24px)', color: '#0F172A', letterSpacing: '-0.02em' }} className="truncate">Team Management</h1>
+          <p style={{ fontSize: 'clamp(11px, 2.5vw, 13px)', color: '#64748B', marginTop: 3 }}>St. Kitts and Nevis Labour Party</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <div className="relative w-full sm:w-48">
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-700 focus:outline-none focus:border-red-400 w-full sm:w-48"
+              className="w-full bg-white border border-slate-200 rounded-lg sm:rounded-xl pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
               placeholder="Search team..."
             />
           </div>
-          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '9px 18px', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap' }}>
-            <Plus size={14} /> Add New Member
+          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap' }}>
+            <Plus size={13} className="sm:w-[14px] sm:h-[14px]" /> Add New Member
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {/* Stats - Responsive */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((s, i) => (
-          <div key={i} className="bg-white rounded-2xl border border-slate-100 p-4 flex items-center gap-4 cursor-pointer hover:shadow-sm transition-shadow"
+          <div key={i} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 cursor-pointer hover:shadow-md transition-shadow"
             onClick={() => setTab(['all', 'canvassers', 'runners', 'phone_bank'][i] as TabType)}>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: s.bg }}>
-              <s.icon size={18} style={{ color: s.color }} />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bg }}>
+              <s.icon size={14} className="sm:w-[18px] sm:h-[18px]" style={{ color: s.color }} />
             </div>
-            <div>
-              <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500, marginBottom: 2 }}>{s.label}</p>
-              <p style={{ fontSize: 22, fontWeight: 800, color: '#0F172A' }}>{s.value}</p>
+            <div className="min-w-0">
+              <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', fontWeight: 500, marginBottom: 2 }} className="truncate">{s.label}</p>
+              <p style={{ fontSize: 'clamp(18px, 4vw, 22px)', fontWeight: 800, color: '#0F172A' }}>{s.value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-1 mb-5 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full overflow-x-auto">
+      {/* Tabs - Responsive */}
+      <div className="flex flex-wrap gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full overflow-x-auto">
         {([
           { id: 'all', label: 'All Members' },
           { id: 'canvassers', label: 'Canvassers' },
@@ -179,8 +184,14 @@ export default function TeamPage() {
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
+            className="whitespace-nowrap"
             style={{
-              padding: '7px 18px', borderRadius: 8, border: 'none', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              padding: 'clamp(5px, 1.5vw, 7px) clamp(12px, 3vw, 18px)',
+              borderRadius: 8,
+              border: 'none',
+              fontSize: 'clamp(11px, 2.5vw, 13px)',
+              fontWeight: 600,
+              cursor: 'pointer',
               backgroundColor: tab === t.id ? '#E30613' : 'transparent',
               color: tab === t.id ? 'white' : '#64748B',
             }}
@@ -190,25 +201,25 @@ export default function TeamPage() {
         ))}
       </div>
 
-      {/* Team Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Team Grid - Responsive */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         {filtered.map((member, idx) => {
           const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length];
           const roleStyle = ROLE_COLORS[member.role] || { bg: '#F8FAFC', color: '#64748B' };
           return (
-            <div key={member.id} className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-sm transition-shadow">
-              <div className="flex items-start justify-between mb-4">
+            <div key={member.id} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3 sm:mb-4">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
                     style={{ backgroundColor: avatarColor }}
                   >
                     {member.avatar}
                   </div>
                   <div>
-                    <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{member.name}</p>
+                    <p style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }} className="truncate">{member.name}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 6, backgroundColor: roleStyle.bg, color: roleStyle.color }}>
+                      <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, padding: '2px 8px', borderRadius: 6, backgroundColor: roleStyle.bg, color: roleStyle.color }} className="whitespace-nowrap">
                         {member.role}
                       </span>
                     </div>
@@ -216,25 +227,25 @@ export default function TeamPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: member.status === 'Active' ? '#16A34A' : '#94A3B8' }} />
-                  <span style={{ fontSize: 11, color: member.status === 'Active' ? '#16A34A' : '#94A3B8', fontWeight: 500 }}>{member.status}</span>
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8' }}>
-                    <MoreVertical size={14} />
+                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: member.status === 'Active' ? '#16A34A' : '#94A3B8', fontWeight: 500 }}>{member.status}</span>
+                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }}>
+                    <MoreVertical size={12} className="sm:w-[14px] sm:h-[14px]" />
                   </button>
                 </div>
               </div>
-              <div className="flex items-center gap-4 mb-4" style={{ fontSize: 11, color: '#94A3B8' }}>
-                <span>📍 {member.constituency}</span>
-                <span>📞 {member.phone}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mb-3 sm:mb-4" style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>
+                <span className="truncate">📍 {member.constituency}</span>
+                <span className="truncate">📞 {member.phone}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <button style={{ flex: 1, backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 8, padding: '7px 0', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <UserCog size={12} /> Assign
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button style={{ flex: 1, backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  <UserCog size={11} className="sm:w-[12px] sm:h-[12px]" /> Assign
                 </button>
-                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '7px 0', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <MessageSquare size={12} /> Message
+                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  <MessageSquare size={11} className="sm:w-[12px] sm:h-[12px]" /> Message
                 </button>
-                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '7px 0', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <BarChart2 size={12} /> Performance
+                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                  <BarChart2 size={11} className="sm:w-[12px] sm:h-[12px]" /> Performance
                 </button>
               </div>
             </div>
@@ -242,10 +253,10 @@ export default function TeamPage() {
         })}
       </div>
 
-      {/* Add New Team Member Button at Bottom */}
-      <div className="mt-6 flex justify-center">
-        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 12, padding: '12px 32px', fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Plus size={16} /> Add New Team Member
+      {/* Add New Team Member Button at Bottom - Responsive */}
+      <div className="flex justify-center pt-2">
+        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 12, padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Plus size={14} className="sm:w-[16px] sm:h-[16px]" /> Add New Team Member
         </button>
       </div>
     </div>
