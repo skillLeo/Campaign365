@@ -25,7 +25,7 @@ export default function CommunicationsPage() {
   const [compose, setCompose] = useState(false);
   const [search, setSearch] = useState('');
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const filtered = MOCK_CAMPAIGNS.filter(c =>
     c.type === tab && c.name.toLowerCase().includes(search.toLowerCase())
@@ -52,9 +52,9 @@ export default function CommunicationsPage() {
       {/* Channel stats - Responsive */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[
-          { key: 'email', label: 'Email Campaigns', icon: Mail, sent: '24,100', openRate: '60%', color: '#E30613' },
-          { key: 'sms', label: 'SMS Campaigns', icon: MessageSquare, sent: '18,200', openRate: '99%', color: '#E30613' },
-          { key: 'whatsapp', label: 'WhatsApp', icon: Phone, sent: '5,400', openRate: '78%', color: '#E30613' },
+          { key: 'email', label: 'Email Campaigns', icon: Mail, sent: '24,100', openRate: '60%', color: 'var(--tenant-primary)' },
+          { key: 'sms', label: 'SMS Campaigns', icon: MessageSquare, sent: '18,200', openRate: '99%', color: 'var(--tenant-primary)' },
+          { key: 'whatsapp', label: 'WhatsApp', icon: Phone, sent: '5,400', openRate: '78%', color: 'var(--tenant-primary)' },
         ].map(({ key, label, icon: Icon, sent, openRate, color }) => (
           <button
             key={key}

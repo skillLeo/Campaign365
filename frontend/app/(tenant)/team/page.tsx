@@ -25,7 +25,7 @@ const ROLE_COLORS: Record<string, { bg: string; color: string }> = {
   'Outdoor Agent': { bg: '#FEF2F2', color: '#B91C1C' },
 };
 
-const AVATAR_COLORS = ['#E30613', '#1D4ED8', '#7C3AED', '#0891B2', '#D97706', '#059669', '#DB2777'];
+const AVATAR_COLORS = ['var(--tenant-primary)', '#1D4ED8', '#7C3AED', '#0891B2', '#D97706', '#059669', '#DB2777'];
 
 type TabType = 'all' | 'canvassers' | 'runners' | 'phone_bank';
 
@@ -67,10 +67,10 @@ export default function TeamPage() {
   });
 
   const stats = [
-    { label: 'All Members', value: team.length, icon: Users, color: '#E30613', bg: '#FEF2F2' },
+    { label: 'All Members', value: team.length, icon: Users, color: 'var(--tenant-primary)', bg: '#FEF2F2' },
     { label: 'Canvassers', value: team.filter(m => m.role === 'Canvasser').length, icon: UserCog, color: '#15803D', bg: '#F0FDF4' },
-    { label: 'Runners', value: team.filter(m => m.role === 'Runner').length, icon: Car, color: '#E30613', bg: '#FEE2E2' },
-    { label: 'Phone Bank', value: team.filter(m => m.role === 'Phone Bank').length, icon: Phone, color: '#E30613', bg: '#FEE2E2' },
+    { label: 'Runners', value: team.filter(m => m.role === 'Runner').length, icon: Car, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
+    { label: 'Phone Bank', value: team.filter(m => m.role === 'Phone Bank').length, icon: Phone, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
   ];
 
   return (
@@ -128,7 +128,7 @@ export default function TeamPage() {
                   className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Cancel</button>
                 <button onClick={handleAddMember}
                   className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: '#E30613' }}>Add Member</button>
+                  style={{ backgroundColor: 'var(--tenant-primary)' }}>Add Member</button>
               </div>
             </div>
           </div>
@@ -151,7 +151,7 @@ export default function TeamPage() {
               placeholder="Search team..."
             />
           </div>
-          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap' }}>
+          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap' }}>
             <Plus size={13} className="sm:w-[14px] sm:h-[14px]" /> Add New Member
           </button>
         </div>
@@ -192,7 +192,7 @@ export default function TeamPage() {
               fontSize: 'clamp(11px, 2.5vw, 13px)',
               fontWeight: 600,
               cursor: 'pointer',
-              backgroundColor: tab === t.id ? '#E30613' : 'transparent',
+              backgroundColor: tab === t.id ? 'var(--tenant-primary)' : 'transparent',
               color: tab === t.id ? 'white' : '#64748B',
             }}
           >
@@ -238,7 +238,7 @@ export default function TeamPage() {
                 <span className="truncate">📞 {member.phone}</span>
               </div>
               <div className="flex flex-col sm:flex-row gap-2">
-                <button style={{ flex: 1, backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+                <button style={{ flex: 1, backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
                   <UserCog size={11} className="sm:w-[12px] sm:h-[12px]" /> Assign
                 </button>
                 <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
@@ -255,7 +255,7 @@ export default function TeamPage() {
 
       {/* Add New Team Member Button at Bottom - Responsive */}
       <div className="flex justify-center pt-2">
-        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: '#E30613', color: 'white', border: 'none', borderRadius: 12, padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 12, padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Plus size={14} className="sm:w-[16px] sm:h-[16px]" /> Add New Team Member
         </button>
       </div>

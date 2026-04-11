@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Download, Filter, Search, ChevronDown } from 'lucide-react';
 
-const RED = '#E30613';
+const RED = 'var(--tenant-primary)';
 
 const pollData = [
   { name: 'Age 18-24', value: 62, color: RED },

@@ -18,7 +18,7 @@ export default function VoterImportPage() {
   const [done, setDone] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const csvHeaders = ['First Name', 'Last Name', 'Email', 'Phone', 'Address', 'Constituency', 'DOB', 'Gender'];
   const systemFields = ['first_name', 'last_name', 'email', 'phone', 'address', 'constituency', 'date_of_birth', 'gender'];

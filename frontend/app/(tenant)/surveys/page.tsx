@@ -34,7 +34,7 @@ const topIssuesData = [
 ];
 
 const sentimentData = [
-  { name: 'Positive', value: 52, color: '#E30613' },
+  { name: 'Positive', value: 52, color: 'var(--tenant-primary)' },
   { name: 'Neutral', value: 28, color: '#94A3B8' },
   { name: 'Negative', value: 20, color: '#EF4444' },
 ];
@@ -44,7 +44,7 @@ export default function SurveysPage() {
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'surveys' | 'results'>('surveys');
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const totalResponses = surveys.reduce((s, r) => s + r.responses, 0);
 
@@ -72,7 +72,7 @@ export default function SurveysPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Total Responses', value: totalResponses.toLocaleString(), icon: MessageSquare, color: primaryColor },
-          { label: 'Active Surveys', value: surveys.filter(s => s.status === 'active').length, icon: BarChart2, color: '#E30613' },
+          { label: 'Active Surveys', value: surveys.filter(s => s.status === 'active').length, icon: BarChart2, color: 'var(--tenant-primary)' },
           { label: 'Avg Sentiment', value: '52% +ve', icon: TrendingUp, color: '#3B82F6' },
           { label: 'Respondents', value: '4,892', icon: Users, color: '#F59E0B' },
         ].map(({ label, value, icon: Icon, color }) => (

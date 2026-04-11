@@ -4,7 +4,7 @@ import { useAuthStore } from '@/lib/store';
 
 export function TopBar({ title }: { title?: string }) {
   const { user, branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   return (
     <header className="h-16 bg-white border-b border-slate-200 flex items-center px-7 gap-4 sticky top-0 z-40">
@@ -31,7 +31,7 @@ export function TopBar({ title }: { title?: string }) {
       {/* Bell */}
       <button className="relative w-9 h-9 flex items-center justify-center rounded-full border border-slate-200 hover:bg-slate-50 transition-colors">
         <Bell size={16} className="text-slate-500" />
-        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white" style={{ backgroundColor: '#E30613' }} />
+        <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full border-2 border-white" style={{ backgroundColor: 'var(--tenant-primary)' }} />
       </button>
 
       {/* User avatar + name */}

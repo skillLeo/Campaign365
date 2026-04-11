@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { MessageCircle, Plus, Send, CheckCircle2, Users, BarChart3, X } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 const WA_GREEN = '#25D366';
 
 const BLASTS = [

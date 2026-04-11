@@ -17,7 +17,7 @@ export default function GOTVPage() {
   const [overallPct, setOverallPct] = useState(62);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
@@ -36,7 +36,7 @@ export default function GOTVPage() {
   return (
     <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
       {/* RED Header Banner - Responsive */}
-      <div style={{ backgroundColor: '#E30613', borderRadius: 'clamp(10px, 3vw, 12px)', padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px)' }} 
+      <div style={{ backgroundColor: 'var(--tenant-primary)', borderRadius: 'clamp(10px, 3vw, 12px)', padding: 'clamp(12px, 3vw, 16px) clamp(16px, 4vw, 24px)' }} 
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
           <span
@@ -75,7 +75,7 @@ export default function GOTVPage() {
           <p className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 sm:mb-3">Turnout Projection</p>
           <div className="flex items-end gap-2 mb-2 sm:mb-3">
             <span className="text-2xl sm:text-3xl lg:text-4xl font-bold" style={{ color: primaryColor }}>{overallPct}%</span>
-            <span className="text-[10px] sm:text-xs font-semibold mb-1" style={{ color: '#E30613' }}>↑ trending up</span>
+            <span className="text-[10px] sm:text-xs font-semibold mb-1" style={{ color: 'var(--tenant-primary)' }}>↑ trending up</span>
           </div>
           <div className="bg-slate-100 rounded-full h-2 sm:h-3 overflow-hidden">
             <div className="h-2 sm:h-3 rounded-full transition-all" style={{ width: `${overallPct}%`, backgroundColor: primaryColor }} />
@@ -106,7 +106,7 @@ export default function GOTVPage() {
               <p className="text-[9px] sm:text-xs text-slate-400 mt-0.5">Canvassers active</p>
             </div>
           </div>
-          <p className="text-[10px] sm:text-xs mt-2 sm:mt-3 font-medium" style={{ color: '#E30613' }}>● All teams reporting</p>
+          <p className="text-[10px] sm:text-xs mt-2 sm:mt-3 font-medium" style={{ color: 'var(--tenant-primary)' }}>● All teams reporting</p>
         </div>
       </div>
 
@@ -126,7 +126,7 @@ export default function GOTVPage() {
                     <span className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">{formatNumber(c.voted)} / {formatNumber(c.expected)}</span>
                     <span
                       className="font-bold text-xs sm:text-sm w-10 text-right"
-                      style={{ color: c.pct >= 65 ? '#E30613' : c.pct >= 45 ? primaryColor : '#EF4444' }}
+                      style={{ color: c.pct >= 65 ? 'var(--tenant-primary)' : c.pct >= 45 ? primaryColor : '#EF4444' }}
                     >
                       {c.pct}%
                     </span>
@@ -137,7 +137,7 @@ export default function GOTVPage() {
                     className="h-1.5 sm:h-2 rounded-full transition-all"
                     style={{
                       width: `${c.pct}%`,
-                      backgroundColor: c.pct >= 65 ? '#E30613' : c.pct >= 45 ? primaryColor : '#EF4444',
+                      backgroundColor: c.pct >= 65 ? 'var(--tenant-primary)' : c.pct >= 45 ? primaryColor : '#EF4444',
                     }}
                   />
                 </div>
@@ -186,7 +186,7 @@ export default function GOTVPage() {
             <h3 className="font-semibold text-xs sm:text-sm mb-2 sm:mb-3" style={{ color: '#94A3B8' }}>Live Metrics</h3>
             <div className="space-y-2 sm:space-y-3">
               {[
-                { label: 'Voters Contacted Today', value: formatNumber(18420), color: '#E30613' },
+                { label: 'Voters Contacted Today', value: formatNumber(18420), color: 'var(--tenant-primary)' },
                 { label: 'Turnout Goal', value: '72%', color: '#3B82F6' },
                 { label: 'SMS Sent', value: '24,100', color: '#F59E0B' },
               ].map(({ label, value, color }) => (

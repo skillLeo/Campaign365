@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
+import { tenantThemes } from '@/lib/tenantTheme';
 import { Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 
 const TENANTS = [
@@ -52,6 +53,19 @@ const SUPER_ADMIN = {
   redirect: '/super/dashboard',
 };
 
+function setBrandingForTenant(tenantKey: string, setBranding: (b: any) => void) {
+  const theme = tenantThemes[tenantKey] || tenantThemes.default;
+  setBranding({
+    name: theme.name,
+    party_name: theme.fullName,
+    logo_url: null,
+    primary_color: theme.primary,
+    secondary_color: theme.sidebar,
+    font: 'Inter',
+    subdomain: tenantKey,
+  });
+}
+
 export default function LoginPage() {
   const [email, setEmail]           = useState('');
   const [password, setPassword]     = useState('');
@@ -61,7 +75,7 @@ export default function LoginPage() {
   const [error, setError]           = useState('');
   const [activeTenant, setActiveTenant] = useState<string | null>('SKNLP');
   const router = useRouter();
-  const { setAuth } = useAuthStore();
+  const { setAuth, setBranding } = useAuthStore();
 
   const handleDevLogin = (
     role: { email: string; role: string; name: string; redirect: string },
@@ -73,6 +87,7 @@ export default function LoginPage() {
     localStorage.setItem('c365_role', role.role);
     localStorage.setItem('c365_user', JSON.stringify(user));
     localStorage.setItem('c365_tenant', tenantKey);
+    setBrandingForTenant(tenantKey, setBranding);
     setAuth(token, user);
     router.push(role.redirect);
   };
@@ -90,6 +105,7 @@ export default function LoginPage() {
       localStorage.setItem('c365_role', 'general_secretary');
       localStorage.setItem('c365_user', JSON.stringify(user));
       localStorage.setItem('c365_tenant', tenantKey);
+      setBrandingForTenant(tenantKey, setBranding);
       setAuth(token, user);
       router.push('/dashboard');
     } else {

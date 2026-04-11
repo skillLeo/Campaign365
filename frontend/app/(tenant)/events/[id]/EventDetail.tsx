@@ -7,7 +7,7 @@ import {
   MoreHorizontal, Edit2, Trash2, ChevronDown
 } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const MOCK_EVENTS: Record<string, any> = {
   '1': {
@@ -62,7 +62,7 @@ const MOCK_EVENTS: Record<string, any> = {
 const RSVP_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
   yes: { label: 'Confirmed', color: '#16A34A', bg: '#F0FDF4' },
   maybe: { label: 'Maybe', color: '#D97706', bg: '#FFFBEB' },
-  no: { label: 'Declined', color: '#E30613', bg: '#FEF2F2' },
+  no: { label: 'Declined', color: 'var(--tenant-primary)', bg: '#FEF2F2' },
 };
 
 export default function EventDetailPage() {
@@ -183,7 +183,7 @@ export default function EventDetailPage() {
               <p className="text-xs sm:text-sm text-slate-400 mb-1">/ {event.capacity} seats</p>
             </div>
             <div className="h-1.5 sm:h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
-              <div className="h-full rounded-full transition-all" style={{ width: `${capacityPct}%`, backgroundColor: capacityPct > 90 ? '#E30613' : capacityPct > 70 ? '#F59E0B' : '#16A34A' }} />
+              <div className="h-full rounded-full transition-all" style={{ width: `${capacityPct}%`, backgroundColor: capacityPct > 90 ? 'var(--tenant-primary)' : capacityPct > 70 ? '#F59E0B' : '#16A34A' }} />
             </div>
             <p className="text-[11px] sm:text-xs text-slate-500">{capacityPct}% capacity filled · {event.capacity - event.registered} seats remaining</p>
           </div>
@@ -194,7 +194,7 @@ export default function EventDetailPage() {
             {[
               { label: 'Confirmed', count: confirmed, color: '#16A34A', icon: CheckCircle2 },
               { label: 'Maybe', count: maybe, color: '#D97706', icon: Clock },
-              { label: 'Declined', count: declined, color: '#E30613', icon: XCircle },
+              { label: 'Declined', count: declined, color: 'var(--tenant-primary)', icon: XCircle },
             ].map(row => {
               const Icon = row.icon;
               return (

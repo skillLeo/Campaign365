@@ -32,7 +32,7 @@ const mockVoter = {
 };
 
 const supportColors: Record<string, string> = {
-  strong_support: '#E30613', leaning_support: '#3B82F6',
+  strong_support: 'var(--tenant-primary)', leaning_support: '#3B82F6',
   undecided: '#F59E0B', leaning_opposition: '#F97316', opposition: '#EF4444',
 };
 
@@ -41,7 +41,7 @@ export default function VoterProfile() {
   const params = useParams<{ id: string }>();
   const [voter] = useState(mockVoter);
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const supportLabel = voter.support_level.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const supportColor = supportColors[voter.support_level];

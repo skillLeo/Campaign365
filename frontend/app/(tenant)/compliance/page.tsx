@@ -72,7 +72,7 @@ export default function CompliancePage() {
           <p className="text-xs sm:text-sm text-slate-500 mt-1">Dashboard › Compliance</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: '#E30613' }}>
+          <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)' }}>
             <FileText size={13} className="sm:w-[14px] sm:h-[14px]" /> Generate Compliance Report
           </button>
           <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all whitespace-nowrap">
@@ -87,7 +87,7 @@ export default function CompliancePage() {
           <div className="relative w-16 h-16 sm:w-20 sm:h-20">
             <svg viewBox="0 0 36 36" className="w-full h-full" style={{ transform: 'rotate(-90deg)' }}>
               <circle cx="18" cy="18" r="15.9" fill="none" stroke="#F1F5F9" strokeWidth="3.5" />
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#E30613" strokeWidth="3.5"
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--tenant-primary)" strokeWidth="3.5"
                 strokeDasharray={`${score} ${100 - score}`} strokeLinecap="round" />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
@@ -126,7 +126,7 @@ export default function CompliancePage() {
             onClick={() => setTab(t.id)}
             className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-semibold transition-all whitespace-nowrap"
             style={{
-              backgroundColor: tab === t.id ? '#E30613' : 'transparent',
+              backgroundColor: tab === t.id ? 'var(--tenant-primary)' : 'transparent',
               color: tab === t.id ? 'white' : '#64748B',
             }}
           >
@@ -147,7 +147,7 @@ export default function CompliancePage() {
                 placeholder="Search requests..."
               />
             </div>
-            <button className="flex items-center justify-center gap-1.5 rounded-lg text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: '#E30613', border: 'none', padding: '6px 12px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
+            <button className="flex items-center justify-center gap-1.5 rounded-lg text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)', border: 'none', padding: '6px 12px', fontSize: '11px', fontWeight: 600, cursor: 'pointer' }}>
               <Plus size={11} className="sm:w-[12px] sm:h-[12px]" /> New Request
             </button>
           </div>
@@ -201,7 +201,7 @@ export default function CompliancePage() {
           <div className="flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-2 sm:gap-3 mb-4">
               <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-red-50 flex items-center justify-center">
-                <Shield size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: '#E30613' }} />
+                <Shield size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: 'var(--tenant-primary)' }} />
               </div>
               <h3 className="text-sm sm:text-base font-bold text-slate-800">Data Privacy Policy</h3>
             </div>
@@ -211,7 +211,7 @@ export default function CompliancePage() {
                   <div className="flex items-center gap-2 min-w-0">
                     {c.status === 'pass' ? <CheckCircle size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" style={{ color: '#16A34A' }} /> :
                       c.status === 'warning' ? <AlertCircle size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" style={{ color: '#F59E0B' }} /> :
-                        <AlertCircle size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" style={{ color: '#E30613' }} />}
+                        <AlertCircle size={12} className="sm:w-[14px] sm:h-[14px] flex-shrink-0" style={{ color: 'var(--tenant-primary)' }} />}
                     <span className="text-[11px] sm:text-xs text-slate-600 break-words">{c.label}</span>
                   </div>
                   <StatusBadge status={c.status} />
@@ -240,7 +240,7 @@ export default function CompliancePage() {
                 </div>
               ))}
             </div>
-            <button className="w-full mt-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90" style={{ backgroundColor: '#E30613', border: 'none', cursor: 'pointer' }}>
+            <button className="w-full mt-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90" style={{ backgroundColor: 'var(--tenant-primary)', border: 'none', cursor: 'pointer' }}>
               Generate Compliance Report
             </button>
           </div>

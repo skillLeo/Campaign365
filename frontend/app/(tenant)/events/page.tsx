@@ -32,7 +32,7 @@ const typeColors: Record<string, string> = {
   rally: '#EF4444',
   townhall: '#3B82F6',
   fundraiser: '#F59E0B',
-  canvass: '#E30613',
+  canvass: 'var(--tenant-primary)',
   debate: '#8B5CF6',
   meeting: '#6B7280',
 };
@@ -47,7 +47,7 @@ export default function EventsPage() {
   const [currentMonth, setCurrentMonth] = useState(9);
   const [currentYear, setCurrentYear] = useState(2025);
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -100,7 +100,7 @@ export default function EventsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Upcoming', value: events.filter(e => e.status === 'upcoming').length, color: '#3B82F6' },
-          { label: 'Live Now', value: events.filter(e => e.status === 'live').length, color: '#E30613' },
+          { label: 'Live Now', value: events.filter(e => e.status === 'live').length, color: 'var(--tenant-primary)' },
           { label: 'Completed', value: events.filter(e => e.status === 'completed').length, color: '#94A3B8' },
           { label: 'Total Expected', value: events.reduce((s, e) => s + e.attendees_expected, 0).toLocaleString(), color: primaryColor },
         ].map(({ label, value, color }) => (

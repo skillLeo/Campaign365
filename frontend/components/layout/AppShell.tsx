@@ -31,7 +31,7 @@ export function AppShell({
   onToggle,
   onClose,
   logoContent,
-  primaryColor = '#E30613',
+  primaryColor = 'var(--tenant-primary)',
   showBottomNav = false,
 }: AppShellProps) {
   const isDesktop = useIsDesktop();

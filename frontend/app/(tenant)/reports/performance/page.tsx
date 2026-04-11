@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Download, TrendingUp, Users, Target, Map, BarChart3, Calendar } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Cell } from 'recharts';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const CONTACT_TREND = [
   { week: 'Sep W1', contacts: 1820, doors: 940, sms: 3200 },

@@ -34,7 +34,7 @@ export default function VotersPage() {
   const [voterForm, setVoterForm] = useState(EMPTY_VOTER);
   const router = useRouter();
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const handleAddVoter = () => {
     if (!voterForm.first_name.trim() || !voterForm.last_name.trim()) return;

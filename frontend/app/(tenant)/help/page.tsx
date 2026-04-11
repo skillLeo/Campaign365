@@ -24,7 +24,7 @@ const TRAINING_VIDEOS = [
   { title: 'Compliance Reports for Electoral Commission', duration: '8:56', category: 'Compliance', thumb: '📋' },
 ];
 
-const SKNLP_RED = '#E30613';
+const SKNLP_RED = 'var(--tenant-primary)';
 
 export default function HelpPage() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
@@ -127,7 +127,7 @@ export default function HelpPage() {
       </div>
 
       {/* Call Support CTA - Responsive */}
-      <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ background: 'linear-gradient(135deg, #E30613, #991B1B)' }}>
+      <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ background: 'linear-gradient(135deg, var(--tenant-primary), var(--tenant-primary-dark))' }}>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
             <Phone size={18} className="sm:w-[20px] sm:h-[20px]" style={{ color: 'white' }} />

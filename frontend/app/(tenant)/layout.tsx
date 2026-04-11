@@ -13,7 +13,7 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
   const [checked, setChecked] = useState(false);
   const [theme, setTheme] = useState<TenantTheme>(tenantThemes.default);
   const { isOpen, toggle, close } = useSidebar();
-  const { branding } = useAuthStore();
+  const { branding, setBranding } = useAuthStore();
 
   // Auth check — runs once on mount
   useEffect(() => {
@@ -22,17 +22,38 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
     if (!token || !role || role === 'super_admin') {
       router.replace('/login');
     } else {
-      let t = getCurrentTenantTheme();
-      // Override with saved branding from store if available
+      const tenantKey = localStorage.getItem('c365_tenant') || 'sknlp';
+      let t = getCurrentTenantTheme(); // reads c365_tenant from localStorage
       const b = useAuthStore.getState().branding;
-      if (b?.primary_color) {
-        t = { ...t, primary: b.primary_color, sidebar: b.secondary_color || t.sidebar, name: b.name || t.name };
+
+      if (b?.primary_color && b?.subdomain === tenantKey) {
+        // Branding belongs to this tenant — use user's saved customisation
+        t = {
+          ...t,
+          primary:     b.primary_color,
+          primaryDark: b.primary_color,
+          sidebar:     b.secondary_color || t.sidebar,
+          name:        b.name || t.name,
+        };
+      } else {
+        // Stale / missing branding — reset Zustand to correct tenant defaults
+        // so every page reading branding?.primary_color gets the right color
+        setBranding({
+          name:            t.name,
+          party_name:      t.fullName,
+          logo_url:        b?.logo_url || null,
+          primary_color:   t.primary,
+          secondary_color: t.sidebar,
+          font:            'Inter',
+          subdomain:       tenantKey,
+        });
       }
+
       applyTenantTheme(t);
       setTheme(t);
       setChecked(true);
     }
-  }, [router]);
+  }, [router, setBranding]);
 
   // Reactively update theme + CSS variables whenever branding changes
   useEffect(() => {

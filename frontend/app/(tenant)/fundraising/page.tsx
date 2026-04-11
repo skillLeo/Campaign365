@@ -27,7 +27,7 @@ const DONORS = [
 export default function FundraisingPage() {
   const [showAddDonor, setShowAddDonor] = useState(false);
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const totalRaised = DONORS.filter(d => d.status === 'Paid').reduce((a, d) => a + d.amount, 0);
   const goal = 365000;
@@ -36,7 +36,7 @@ export default function FundraisingPage() {
   return (
     <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
       {/* Gradient Hero Banner - Responsive */}
-      <div style={{ background: 'linear-gradient(135deg, #E30613 0%, #8B0000 50%, #1A1A1A 100%)', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px)' }} 
+      <div style={{ background: 'linear-gradient(135deg, var(--tenant-primary) 0%, var(--tenant-primary-dark) 50%, #1A1A1A 100%)', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px)' }}
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'clamp(10px, 2.5vw, 12px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>SKNLP Campaign Finance</p>
@@ -50,7 +50,7 @@ export default function FundraisingPage() {
           </button>
           <button
             onClick={() => setShowAddDonor(true)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '7px 14px', borderRadius: 10, fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 700, background: 'white', color: '#E30613', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '7px 14px', borderRadius: 10, fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 700, background: 'white', color: 'var(--tenant-primary)', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             <Plus size={12} className="sm:w-[14px] sm:h-[14px]" />
             Launch New Campaign
           </button>
@@ -63,16 +63,16 @@ export default function FundraisingPage() {
         <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 hover:shadow-md transition-shadow" style={{ backgroundColor: '#0F172A' }}>
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E293B' }}>
-              <DollarSign size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: '#E30613' }} />
+              <DollarSign size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
             </div>
             <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Total Raised</p>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-white">{formatCurrency(totalRaised)}</p>
           <div className="mt-2 sm:mt-3 rounded-full h-1.5 sm:h-2" style={{ backgroundColor: '#1E293B' }}>
-            <div className="h-1.5 sm:h-2 rounded-full" style={{ width: `${pct}%`, backgroundColor: '#E30613' }} />
+            <div className="h-1.5 sm:h-2 rounded-full" style={{ width: `${pct}%`, backgroundColor: 'var(--tenant-primary)' }} />
           </div>
           <div className="flex justify-between text-[10px] sm:text-xs mt-1.5">
-            <span style={{ color: '#E30613' }}>{pct}% of goal</span>
+            <span style={{ color: 'var(--tenant-primary)' }}>{pct}% of goal</span>
             <span style={{ color: '#64748B' }}>Goal: {formatCurrency(goal)}</span>
           </div>
         </div>
@@ -80,12 +80,12 @@ export default function FundraisingPage() {
         <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-2 mb-2 sm:mb-3">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ECFDF5' }}>
-              <TrendingUp size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: '#E30613' }} />
+              <TrendingUp size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
             </div>
             <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-slate-400">This Month</p>
           </div>
           <p className="text-2xl sm:text-3xl font-bold text-slate-800">{formatCurrency(38000)}</p>
-          <p className="text-[10px] sm:text-xs mt-1" style={{ color: '#E30613' }}>↑ 12% ahead of schedule</p>
+          <p className="text-[10px] sm:text-xs mt-1" style={{ color: 'var(--tenant-primary)' }}>↑ 12% ahead of schedule</p>
         </div>
 
         <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
@@ -160,7 +160,7 @@ export default function FundraisingPage() {
                     </td>
                     <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
                       <div className="flex items-center gap-1">
-                        <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View Donor" style={{ color: '#E30613' }}>
+                        <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View Donor" style={{ color: 'var(--tenant-primary)' }}>
                           <Eye size={11} className="sm:w-[13px] sm:h-[13px]" />
                         </button>
                         <button className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit Donor">

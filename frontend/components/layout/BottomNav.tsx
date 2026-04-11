@@ -15,7 +15,7 @@ interface BottomNavProps {
   primaryColor?: string;
 }
 
-export function BottomNav({ primaryColor = '#E30613' }: BottomNavProps) {
+export function BottomNav({ primaryColor = 'var(--tenant-primary)' }: BottomNavProps) {
   const pathname = usePathname();
 
   return (

@@ -21,7 +21,7 @@ const statusStyle = (s: string) => {
 };
 
 const typeColors: Record<string, string> = {
-  gotv: '#E30613',
+  gotv: 'var(--tenant-primary)',
   canvassing: '#3B82F6',
   outreach: '#8B5CF6',
   communications: '#F59E0B',
@@ -38,7 +38,7 @@ export default function CampaignsPage() {
   const [form, setForm] = useState(EMPTY_FORM);
   const router = useRouter();
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const handleCreate = () => {
     if (!form.name.trim()) return;
@@ -93,7 +93,7 @@ export default function CampaignsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: 'Total Campaigns', value: campaigns.length, color: primaryColor },
-          { label: 'Active', value: campaigns.filter(c => c.status === 'active').length, color: '#E30613' },
+          { label: 'Active', value: campaigns.filter(c => c.status === 'active').length, color: 'var(--tenant-primary)' },
           { label: 'Completed', value: campaigns.filter(c => c.status === 'completed').length, color: '#3B82F6' },
           { label: 'Draft', value: campaigns.filter(c => c.status === 'draft').length, color: '#94A3B8' },
         ].map(({ label, value, color }) => (
