@@ -246,7 +246,7 @@ export default function LoginPage() {
                   >
                     <div style={{ width: 7, height: 7, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
                     <span style={{ fontSize: 12, fontWeight: 700, color: t.color, flex: 1, textAlign: 'left' }}>{t.label}</span>
-                    <span style={{ fontSize: 10, color: '#9CA3AF', display: 'none', sm: 'inline' }}>{t.fullName}</span>
+                    <span style={{ fontSize: 10, color: '#9CA3AF' }}>{t.fullName}</span>
                     {activeTenant === t.label
                       ? <ChevronUp size={12} color={t.color} />
                       : <ChevronDown size={12} color="#9CA3AF" />}
