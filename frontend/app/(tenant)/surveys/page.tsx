@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
-import { useAuthStore } from '@/lib/store';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Plus, BarChart2, Users, TrendingUp, MessageSquare, Eye, Copy, Trash2 } from 'lucide-react';
 
@@ -43,8 +42,7 @@ export default function SurveysPage() {
   const [surveys, setSurveys] = useState<Survey[]>(mockSurveys);
   const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'surveys' | 'results'>('surveys');
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const totalResponses = surveys.reduce((s, r) => s + r.responses, 0);
 

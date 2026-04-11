@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal } from '@/components/ui/Modal';
-import { useAuthStore } from '@/lib/store';
 import { Calendar, MapPin, Users, Plus, Clock, ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface CampaignEvent {
@@ -46,8 +45,7 @@ export default function EventsPage() {
   const [view, setView] = useState<'calendar' | 'list'>('list');
   const [currentMonth, setCurrentMonth] = useState(9);
   const [currentYear, setCurrentYear] = useState(2025);
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();

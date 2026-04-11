@@ -3,7 +3,6 @@ import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { useAuthStore } from '@/lib/store';
 import { ArrowLeft, Upload, CheckCircle, AlertCircle, FileText, Download, ArrowRight, Users } from 'lucide-react';
 import type {} from 'react'; // satisfy lint
 
@@ -17,8 +16,7 @@ export default function VoterImportPage() {
   const [importing, setImporting] = useState(false);
   const [done, setDone] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const csvHeaders = ['First Name', 'Last Name', 'Email', 'Phone', 'Address', 'Constituency', 'DOB', 'Gender'];
   const systemFields = ['first_name', 'last_name', 'email', 'phone', 'address', 'constituency', 'date_of_birth', 'gender'];

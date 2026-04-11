@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { useAuthStore } from '@/lib/store';
 import { MapPin, Plus, Users, CheckCircle, Clock, Smartphone, Download, Search, Eye, Edit2, Trash2, X } from 'lucide-react';
 
 const WALK_LISTS = [
@@ -32,8 +31,7 @@ export default function CanvassingPage() {
     constituency: 'Kingston Central',
     team: 'Team Alpha'
   });
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const totalDoors = WALK_LISTS.reduce((s, w) => s + w.total, 0);
   const totalKnocked = WALK_LISTS.reduce((s, w) => s + w.knocked, 0);

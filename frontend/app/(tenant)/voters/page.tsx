@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { Plus, Upload, Eye, UserCheck, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/store';
 import { formatNumber } from '@/lib/utils';
 
 const MOCK_VOTERS = [
@@ -33,8 +32,7 @@ export default function VotersPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [voterForm, setVoterForm] = useState(EMPTY_VOTER);
   const router = useRouter();
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const handleAddVoter = () => {
     if (!voterForm.first_name.trim() || !voterForm.last_name.trim()) return;
