@@ -264,7 +264,7 @@ export default function RunnersPage() {
                       key={label} 
                       onClick={() => setNewTask({ ...newTask, priority: value as any })}
                       className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold transition-all ${newTask.priority === value ? 'ring-2 ring-offset-1' : ''}`}
-                      style={{ ...style, ringColor: style.color }}
+                      style={{ ...style, '--ring-color': style.color } as React.CSSProperties}
                     >
                       {label}
                     </button>
