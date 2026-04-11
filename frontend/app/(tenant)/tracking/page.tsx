@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { useAuthStore } from '@/lib/store';
 import { MapPin, Radio, AlertTriangle, Users, Activity, Clock } from 'lucide-react';
 
 interface Agent {
@@ -30,8 +29,7 @@ export default function TrackingPage() {
   const [agents] = useState<Agent[]>(AGENTS);
   const [selected, setSelected] = useState<Agent | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'offline'>('all');
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const filtered = filter === 'all' ? agents : agents.filter(a => a.status === filter);
 

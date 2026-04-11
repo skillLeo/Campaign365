@@ -41,7 +41,7 @@ export default function VoterProfile() {
   const params = useParams<{ id: string }>();
   const [voter] = useState(mockVoter);
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const supportLabel = voter.support_level.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   const supportColor = supportColors[voter.support_level];

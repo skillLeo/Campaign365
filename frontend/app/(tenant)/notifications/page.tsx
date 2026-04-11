@@ -36,7 +36,7 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const unreadCount = notifications.filter(n => !n.read).length;
 

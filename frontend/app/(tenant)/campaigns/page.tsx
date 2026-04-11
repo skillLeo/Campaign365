@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { Plus, Target, Users, Calendar, ChevronRight, Search, X, Eye, Edit2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/store';
 import { formatNumber } from '@/lib/utils';
 
 const MOCK_CAMPAIGNS = [
@@ -37,8 +36,7 @@ export default function CampaignsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const router = useRouter();
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const handleCreate = () => {
     if (!form.name.trim()) return;

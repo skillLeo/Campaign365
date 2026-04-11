@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/lib/store';
 import { Target, Users, Car, MapPin, Send, FileText, AlertTriangle, TrendingUp } from 'lucide-react';
 import { formatNumber } from '@/lib/utils';
 
@@ -16,8 +15,7 @@ const CONSTITUENCIES = [
 export default function GOTVPage() {
   const [overallPct, setOverallPct] = useState(62);
   const [time, setTime] = useState(new Date().toLocaleTimeString());
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);

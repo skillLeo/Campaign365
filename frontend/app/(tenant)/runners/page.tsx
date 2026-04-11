@@ -47,8 +47,7 @@ export default function RunnersPage() {
     priority: 'normal' as const,
     items: ''
   });
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const counts = {
     in_transit: tasks.filter(t => t.status === 'in_transit').length,

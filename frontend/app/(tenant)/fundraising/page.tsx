@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { useAuthStore } from '@/lib/store';
 import { Plus, DollarSign, Users, TrendingUp, Send, Download, Eye, Edit2, Trash2, X } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
@@ -26,8 +25,7 @@ const DONORS = [
 
 export default function FundraisingPage() {
   const [showAddDonor, setShowAddDonor] = useState(false);
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const totalRaised = DONORS.filter(d => d.status === 'Paid').reduce((a, d) => a + d.amount, 0);
   const goal = 365000;

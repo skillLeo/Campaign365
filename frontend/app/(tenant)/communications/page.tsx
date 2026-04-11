@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { Mail, MessageSquare, Phone, Send, Plus, Search, Eye, Edit2, Trash2, X } from 'lucide-react';
-import { useAuthStore } from '@/lib/store';
 
 type Tab = 'email' | 'sms' | 'whatsapp';
 
@@ -24,8 +23,7 @@ export default function CommunicationsPage() {
   const [tab, setTab] = useState<Tab>('email');
   const [compose, setCompose] = useState(false);
   const [search, setSearch] = useState('');
-  const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
+  const primaryColor = 'var(--tenant-primary)';
 
   const filtered = MOCK_CAMPAIGNS.filter(c =>
     c.type === tab && c.name.toLowerCase().includes(search.toLowerCase())
