@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
@@ -103,34 +103,27 @@ export default function LoginPage() {
       className="min-h-screen relative flex flex-col items-center justify-center"
       style={{ backgroundColor: '#F0F2F5', fontFamily: "'Inter', sans-serif", padding: '32px 16px' }}
     >
-      {/* Split background — same as super admin */}
+      {/* Split background */}
       <div className="absolute inset-x-0 top-0 h-1/2" style={{ backgroundColor: '#0F172A' }} />
       <div className="absolute inset-x-0 bottom-0 h-1/2" style={{ backgroundColor: '#F0F2F5' }} />
 
-      {/* Top-left brand */}
-      <div className="absolute top-6 left-8 z-10">
-        <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 18, color: 'white', letterSpacing: '-0.025em' }}>
-          Campaign <span style={{ color: '#2563EB' }}>365</span>
-        </span>
-      </div>
-
-      {/* Top-right status */}
-      <div className="absolute top-6 right-8 z-10 flex items-center gap-2">
+      {/* Top-right status only - Removed top-left brand */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-8 z-10 hidden xs:flex items-center gap-2">
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22C55E' }} />
-        <span style={{ fontWeight: 500, fontSize: 13, color: '#94A3B8' }}>All systems operational</span>
+        <span style={{ fontWeight: 500, fontSize: 'clamp(10px, 3vw, 13px)', color: '#94A3B8' }}>All systems operational</span>
       </div>
 
       {/* Card */}
       <div className="relative z-10 w-full" style={{ maxWidth: 440 }}>
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
 
-          {/* ── Header ── */}
-          <div style={{ padding: '40px 40px 32px' }}>
+          {/* Header - Removed duplicate Campaign 365 text, only logo in card */}
+          <div style={{ padding: 'clamp(24px, 6vw, 40px) clamp(20px, 5vw, 40px) 32px' }}>
             <div style={{ textAlign: 'center', marginBottom: 32 }}>
-              <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 28, letterSpacing: '-0.03em', color: '#0F172A', marginBottom: 6 }}>
+              <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(28px, 7vw, 32px)', letterSpacing: '-0.03em', color: '#0F172A', marginBottom: 8 }}>
                 Campaign <span style={{ color: '#2563EB' }}>365</span>
               </h1>
-              <p style={{ fontWeight: 400, fontSize: 15, color: '#64748B', margin: 0 }}>
+              <p style={{ fontWeight: 400, fontSize: 'clamp(13px, 4vw, 15px)', color: '#64748B', margin: 0 }}>
                 Sign in to your account
               </p>
             </div>
@@ -170,7 +163,6 @@ export default function LoginPage() {
                     onChange={e => setPassword(e.target.value)} placeholder="••••••••" required
                     style={{ flex: 1, border: 'none', padding: '10px 14px', fontSize: 14, color: '#0F172A', outline: 'none', fontFamily: 'inherit' }}
                   />
-                  {/* iOS-style toggle — same as super admin */}
                   <div style={{ paddingRight: 12 }}>
                     <button
                       type="button"
@@ -184,7 +176,7 @@ export default function LoginPage() {
               </div>
 
               {/* Remember + Forgot */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <button
                     type="button"
@@ -217,8 +209,8 @@ export default function LoginPage() {
             </form>
           </div>
 
-          {/* ── Dev Quick Login ── */}
-          <div style={{ background: '#F8FAFC', borderTop: '1px solid #F1F5F9', padding: '16px 40px 24px' }}>
+          {/* Dev Quick Login */}
+          <div style={{ background: '#F8FAFC', borderTop: '1px solid #F1F5F9', padding: 'clamp(12px, 4vw, 16px) clamp(16px, 5vw, 40px) clamp(20px, 5vw, 24px)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 12 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#F59E0B' }} />
               <span style={{ fontSize: 9.5, fontWeight: 700, color: '#92400E', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>Dev Quick Login</span>
@@ -239,7 +231,7 @@ export default function LoginPage() {
               </div>
               <div style={{ flex: 1, textAlign: 'left' }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#1E40AF', margin: 0 }}>Super Admin</p>
-                <p style={{ fontSize: 10, color: '#60A5FA', margin: 0 }}>admin@campaign365.app</p>
+                <p style={{ fontSize: 10, color: '#60A5FA', margin: 0, wordBreak: 'break-all' }}>admin@campaign365.app</p>
               </div>
               <ChevronDown size={13} color="#93C5FD" />
             </button>
@@ -254,13 +246,13 @@ export default function LoginPage() {
                   >
                     <div style={{ width: 7, height: 7, borderRadius: '50%', background: t.color, flexShrink: 0 }} />
                     <span style={{ fontSize: 12, fontWeight: 700, color: t.color, flex: 1, textAlign: 'left' }}>{t.label}</span>
-                    <span style={{ fontSize: 10, color: '#9CA3AF' }}>{t.fullName}</span>
+                    <span style={{ fontSize: 10, color: '#9CA3AF', display: 'none', sm: 'inline' }}>{t.fullName}</span>
                     {activeTenant === t.label
                       ? <ChevronUp size={12} color={t.color} />
                       : <ChevronDown size={12} color="#9CA3AF" />}
                   </button>
                   {activeTenant === t.label && (
-                    <div style={{ padding: 8, background: '#fff', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 5 }}>
+                    <div style={{ padding: 8, background: '#fff', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 5 }}>
                       {t.roles.map(r => (
                         <button
                           key={r.role}
@@ -282,7 +274,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Footer — same as super admin */}
+          {/* Footer */}
           <div style={{ padding: '12px 40px', borderTop: '1px solid #F1F5F9', backgroundColor: '#F8FAFC', textAlign: 'center' }}>
             <p style={{ fontWeight: 400, fontSize: 12, color: '#94A3B8', margin: 0 }}>
               Powered by Campaign 365 · All passwords:{' '}
@@ -291,6 +283,14 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Add keyframes for spin animation */}
+      <style jsx global>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }
