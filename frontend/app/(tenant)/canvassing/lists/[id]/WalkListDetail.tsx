@@ -7,7 +7,7 @@ import {
   FileText, User, Mic, AlertCircle
 } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const MOCK_LISTS: Record<string, any> = {
   '1': {
@@ -56,7 +56,7 @@ const MOCK_LISTS: Record<string, any> = {
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
   support: { label: 'Supporter', color: '#16A34A', bg: '#F0FDF4', icon: CheckCircle2 },
   undecided: { label: 'Undecided', color: '#D97706', bg: '#FFFBEB', icon: Clock },
-  oppose: { label: 'Opposition', color: '#E30613', bg: '#FEF2F2', icon: XCircle },
+  oppose: { label: 'Opposition', color: '#DC2626', bg: '#FEF2F2', icon: XCircle },
   not_home: { label: 'Not Home', color: '#64748B', bg: '#F8FAFC', icon: Home },
 };
 
@@ -153,7 +153,7 @@ export default function WalkListDetail() {
         {[
           { label: 'Supporters', count: supportCount, color: '#16A34A', bg: '#F0FDF4' },
           { label: 'Undecided', count: undecidedCount, color: '#D97706', bg: '#FFFBEB' },
-          { label: 'Opposition', count: opposeCount, color: '#E30613', bg: '#FEF2F2' },
+          { label: 'Opposition', count: opposeCount, color: '#DC2626', bg: '#FEF2F2' },
           { label: 'Not Home', count: notHomeCount, color: '#64748B', bg: '#F8FAFC' },
         ].map(s => (
           <button

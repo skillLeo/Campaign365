@@ -10,7 +10,7 @@ import {
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const MOCK_SURVEYS: Record<string, any> = {
   '1': {
@@ -27,7 +27,7 @@ const MOCK_SURVEYS: Record<string, any> = {
         text: 'How would you rate the current government\'s performance?',
         type: 'scale',
         data: [
-          { label: 'Very Poor', value: 89, color: '#E30613' },
+          { label: 'Very Poor', value: 89, color: 'var(--tenant-primary)' },
           { label: 'Poor', value: 134, color: '#F97316' },
           { label: 'Fair', value: 298, color: '#F59E0B' },
           { label: 'Good', value: 412, color: '#22C55E' },
@@ -56,7 +56,7 @@ const MOCK_SURVEYS: Record<string, any> = {
           { label: 'Probably Yes', value: 312, color: '#22C55E' },
           { label: 'Unsure', value: 187, color: '#F59E0B' },
           { label: 'Probably Not', value: 48, color: '#F97316' },
-          { label: 'Definitely No', value: 22, color: '#E30613' },
+          { label: 'Definitely No', value: 22, color: 'var(--tenant-primary)' },
         ],
       },
     ],
@@ -85,7 +85,7 @@ const MOCK_SURVEYS: Record<string, any> = {
   },
 };
 
-const CROSSTAB_COLORS = { support: '#16A34A', undecided: '#F59E0B', oppose: '#E30613' };
+const CROSSTAB_COLORS = { support: '#16A34A', undecided: '#F59E0B', oppose: 'var(--tenant-primary)' };
 
 export default function SurveyResultsPage() {
   const params = useParams();

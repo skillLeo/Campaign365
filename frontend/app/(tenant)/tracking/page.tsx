@@ -23,15 +23,15 @@ const AGENTS: Agent[] = [
   { id: 5, name: 'Patrick Grant', role: 'Branch Manager', constituency: 'Clarendon Central', lat: 17.988, lng: -76.776, last_seen: '45 min ago', status: 'offline', battery: 18 },
 ];
 
-const batteryColor = (b: number) => b > 50 ? '#E30613' : b > 20 ? '#F59E0B' : '#EF4444';
-const statusColors = { active: '#E30613', idle: '#F59E0B', offline: '#94A3B8' };
+const batteryColor = (b: number) => b > 50 ? 'var(--tenant-primary)' : b > 20 ? '#F59E0B' : '#EF4444';
+const statusColors = { active: 'var(--tenant-primary)', idle: '#F59E0B', offline: '#94A3B8' };
 
 export default function TrackingPage() {
   const [agents] = useState<Agent[]>(AGENTS);
   const [selected, setSelected] = useState<Agent | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'offline'>('all');
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const filtered = filter === 'all' ? agents : agents.filter(a => a.status === filter);
 
@@ -62,7 +62,7 @@ export default function TrackingPage() {
       {/* Stats Cards - Responsive */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, color: '#E30613', bg: '#ECFDF5', icon: Activity },
+          { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, color: 'var(--tenant-primary)', bg: '#ECFDF5', icon: Activity },
           { label: 'Idle', value: agents.filter(a => a.status === 'idle').length, color: '#F59E0B', bg: '#FFFBEB', icon: Clock },
           { label: 'Offline', value: agents.filter(a => a.status === 'offline').length, color: '#94A3B8', bg: '#F1F5F9', icon: Radio },
           { label: 'Total Tracked', value: agents.length, color: primaryColor, bg: '#F0FDFA', icon: Users },

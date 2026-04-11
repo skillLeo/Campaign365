@@ -25,7 +25,7 @@ const AI_INSIGHTS = [
     body: '2,847 undecided voters in St. Christopher 3 match the profile of likely persuadable voters based on age (25–34), voting history (skipped 2020), and recent canvassing interactions. Recommend targeted outreach this week.',
     priority: 'high',
     action: 'Apply AI Suggestion',
-    color: '#E30613',
+    color: 'var(--tenant-primary)',
     bg: '#FEF2F2',
     icon: Target,
   },
@@ -89,17 +89,17 @@ export default function AIInsightsPage() {
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#FEF2F2' }}>
-              <Brain size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: '#E30613' }} />
+              <Brain size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color: 'var(--tenant-primary)' }} />
             </div>
             <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '-0.02em' }}>AI Campaign Insights</h1>
-            <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: '#FEF2F2', color: '#E30613' }}>Powered by Campaign 365</span>
+            <span className="text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: '#FEF2F2', color: 'var(--tenant-primary)' }}>Powered by Campaign 365</span>
           </div>
           <p className="text-[11px] sm:text-xs text-slate-500">GPT-4o analysis of your campaign data · Last updated just now</p>
         </div>
         <button
           onClick={handleGenerate}
           className="flex items-center justify-center gap-1.5 rounded-xl text-white transition-all hover:opacity-90 whitespace-nowrap"
-          style={{ backgroundColor: '#E30613', border: 'none', padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}
+          style={{ backgroundColor: 'var(--tenant-primary)', border: 'none', padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}
         >
           {generating ? <><RefreshCw size={13} className="animate-spin" /> Analyzing...</> : <><Brain size={13} /> Refresh AI Analysis</>}
         </button>
@@ -108,10 +108,10 @@ export default function AIInsightsPage() {
       {/* Key Metrics - Responsive */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: 'Persuasion Rate', value: '+18%', sub: 'vs last week', color: '#E30613', bg: '#FEF2F2', trend: 'up' },
-          { label: 'Predicted Turnout', value: '72%', sub: 'St. Christopher', color: '#E30613', bg: '#FEE2E2', trend: 'up' },
+          { label: 'Persuasion Rate', value: '+18%', sub: 'vs last week', color: 'var(--tenant-primary)', bg: '#FEF2F2', trend: 'up' },
+          { label: 'Predicted Turnout', value: '72%', sub: 'St. Christopher', color: 'var(--tenant-primary)', bg: '#FEE2E2', trend: 'up' },
           { label: 'Voter Sentiment Score', value: '7.4/10', sub: 'Avg across all', color: '#15803D', bg: '#F0FDF4', trend: 'up' },
-          { label: 'AI Actions Pending', value: '4', sub: 'Awaiting approval', color: '#E30613', bg: '#FEE2E2', trend: null },
+          { label: 'AI Actions Pending', value: '4', sub: 'Awaiting approval', color: 'var(--tenant-primary)', bg: '#FEE2E2', trend: null },
         ].map((m, i) => (
           <div key={i} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-1 sm:mb-2">
@@ -137,7 +137,7 @@ export default function AIInsightsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <h3 className="text-xs sm:text-sm font-bold text-slate-800">{insight.title}</h3>
-                    <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase whitespace-nowrap" style={{ backgroundColor: insight.priority === 'high' ? '#FEF2F2' : '#F8FAFC', color: insight.priority === 'high' ? '#E30613' : '#94A3B8' }}>
+                    <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full uppercase whitespace-nowrap" style={{ backgroundColor: insight.priority === 'high' ? '#FEF2F2' : '#F8FAFC', color: insight.priority === 'high' ? 'var(--tenant-primary)' : '#94A3B8' }}>
                       {insight.priority}
                     </span>
                   </div>
@@ -168,18 +168,18 @@ export default function AIInsightsPage() {
           {/* Recommended Next Action */}
           <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
             <div className="flex items-center gap-2 mb-3">
-              <Star size={13} className="sm:w-[14px] sm:h-[14px]" style={{ color: '#E30613' }} />
+              <Star size={13} className="sm:w-[14px] sm:h-[14px]" style={{ color: 'var(--tenant-primary)' }} />
               <h3 className="text-xs sm:text-sm font-bold text-slate-800">Recommended Next Action</h3>
             </div>
             <div className="rounded-xl p-3 sm:p-4 mb-3" style={{ background: '#FEF2F2' }}>
               <p className="text-[10px] sm:text-xs text-slate-400 mb-1">Target Group</p>
-              <p className="text-base sm:text-lg font-extrabold" style={{ color: '#E30613' }}>Age 25–34</p>
+              <p className="text-base sm:text-lg font-extrabold" style={{ color: 'var(--tenant-primary)' }}>Age 25–34</p>
               <p className="text-[10px] sm:text-xs text-slate-500 mt-1">in St. Christopher Nevis</p>
             </div>
             <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed mb-3">
               With 1,240 targeted messages ready, deploying to this age group could move the persuasion needle by an estimated 12–18 percentage points based on historical patterns.
             </p>
-            <button className="w-full flex items-center justify-center gap-1.5 rounded-xl text-white font-semibold transition-all hover:opacity-90" style={{ backgroundColor: '#E30613', border: 'none', padding: '9px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}>
+            <button className="w-full flex items-center justify-center gap-1.5 rounded-xl text-white font-semibold transition-all hover:opacity-90" style={{ backgroundColor: 'var(--tenant-primary)', border: 'none', padding: '9px', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}>
               <Zap size={12} className="sm:w-[13px] sm:h-[13px]" /> Apply AI Suggestion
             </button>
           </div>
@@ -221,7 +221,7 @@ export default function AIInsightsPage() {
                     <p className="text-[10px] text-slate-400 truncate">{inf.type} · {inf.constituency}</p>
                   </div>
                   <div className="text-right flex-shrink-0 ml-2">
-                    <p className="text-[11px] sm:text-xs font-bold" style={{ color: '#E30613' }}>{inf.reach}</p>
+                    <p className="text-[11px] sm:text-xs font-bold" style={{ color: 'var(--tenant-primary)' }}>{inf.reach}</p>
                     <p className="text-[9px] text-slate-400">reach</p>
                   </div>
                 </div>
@@ -238,11 +238,11 @@ export default function AIInsightsPage() {
                 <AreaChart data={TURNOUT_TREND} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                   <defs>
                     <linearGradient id="tpGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#E30613" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#E30613" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--tenant-primary)" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="var(--tenant-primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <Area type="monotone" dataKey="predicted" stroke="#E30613" strokeWidth={2} fill="url(#tpGrad)" dot={false} strokeDasharray="4 2" />
+                  <Area type="monotone" dataKey="predicted" stroke="var(--tenant-primary)" strokeWidth={2} fill="url(#tpGrad)" dot={false} strokeDasharray="4 2" />
                   <Area type="monotone" dataKey="actual" stroke="#16A34A" strokeWidth={2} fill="none" dot={false} />
                   <Tooltip contentStyle={{ borderRadius: 8, border: 'none', fontSize: 10 }} formatter={(v) => v ? `${v}%` : 'N/A'} />
                 </AreaChart>

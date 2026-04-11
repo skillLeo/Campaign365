@@ -26,17 +26,17 @@ const typeConfig: Record<string, { icon: any; color: string; bg: string }> = {
   panic:       { icon: AlertTriangle, color: '#EF4444', bg: '#FEF2F2' },
   import:      { icon: Users, color: '#3B82F6', bg: '#EFF6FF' },
   system:      { icon: Info, color: '#6B7280', bg: '#F9FAFB' },
-  campaign:    { icon: CheckCircle, color: '#E30613', bg: '#ECFDF5' },
+  campaign:    { icon: CheckCircle, color: 'var(--tenant-primary)', bg: '#ECFDF5' },
   gps:         { icon: MapPin, color: '#F59E0B', bg: '#FFFBEB' },
   fundraising: { icon: DollarSign, color: '#8B5CF6', bg: '#F5F3FF' },
-  survey:      { icon: MessageSquare, color: '#E30613', bg: '#F0FDFA' },
+  survey:      { icon: MessageSquare, color: 'var(--tenant-primary)', bg: '#F0FDFA' },
 };
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -71,7 +71,7 @@ export default function NotificationsPage() {
             <button
               onClick={markAllRead}
               className="flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-medium text-white transition-all hover:opacity-90 whitespace-nowrap"
-              style={{ backgroundColor: '#E30613' }}
+              style={{ backgroundColor: 'var(--tenant-primary)' }}
             >
               <Check size={11} className="sm:w-[12px] sm:h-[12px]" />
               Mark All Read
@@ -112,7 +112,7 @@ export default function NotificationsPage() {
                           {notification.title}
                         </p>
                         {!notification.read && (
-                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#E30613' }} />
+                          <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: 'var(--tenant-primary)' }} />
                         )}
                       </div>
                       <span className="text-[10px] sm:text-xs text-slate-400 flex-shrink-0">{notification.time}</span>
@@ -123,19 +123,19 @@ export default function NotificationsPage() {
                     <div className="flex flex-wrap items-center gap-2 mt-2">
                       {/* Location badges */}
                       {notification.type === 'panic' && (
-                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: '#E30613', color: 'white' }}>Basseterre</span>
+                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)', color: 'white' }}>Basseterre</span>
                       )}
                       {notification.type === 'gps' && (
-                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: '#E30613', color: 'white' }}>Nevis</span>
+                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)', color: 'white' }}>Nevis</span>
                       )}
                       {notification.type === 'fundraising' && (
-                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: '#E30613', color: 'white' }}>Online</span>
+                        <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)', color: 'white' }}>Online</span>
                       )}
                       
                       {/* Quick Reply button */}
                       <button
                         className="text-[10px] sm:text-xs font-semibold px-2 sm:px-3 py-1 rounded-lg transition-all hover:bg-red-50"
-                        style={{ border: `1px solid #E30613`, color: '#E30613', background: 'white', cursor: 'pointer' }}
+                        style={{ border: `1px solid var(--tenant-primary)`, color: 'var(--tenant-primary)', background: 'white', cursor: 'pointer' }}
                       >
                         Quick Reply
                       </button>

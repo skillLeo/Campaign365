@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { MessageSquare, Plus, Send, Clock, CheckCircle2, Users, BarChart3, Search, ChevronRight, Smartphone, X } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const SMS_CAMPAIGNS = [
   { id: 1, name: 'GOTV Reminder — Election Day', message: "Don't forget to vote today! Polls are open until 6PM. Your vote matters. — SKNLP", status: 'sent', recipients: 9200, delivered: 8740, failed: 460, date: '2025-11-14' },
@@ -148,7 +148,7 @@ export default function SMSCampaignsPage() {
                   placeholder="Type your SMS message. Use {{first_name}} to personalize. Reply STOP to opt out."
                   className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-2 text-xs sm:text-sm outline-none resize-none font-inherit focus:border-red-400" />
                 <div className="flex flex-wrap justify-between gap-2 mt-1.5">
-                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: charsLeft < 20 ? '#E30613' : '#94A3B8' }}>{charsLeft} characters remaining</span>
+                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: charsLeft < 20 ? 'var(--tenant-primary)' : '#94A3B8' }}>{charsLeft} characters remaining</span>
                   <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>{smsCount} SMS message{smsCount > 1 ? 's' : ''}</span>
                 </div>
               </div>

@@ -24,9 +24,9 @@ const TASKS: RunnerTask[] = [
 ];
 
 const statusMeta = (s: RunnerTask['status']) => ({
-  in_transit: { label: 'In Transit', color: '#E30613', bg: '#FEE2E2', icon: Navigation },
+  in_transit: { label: 'In Transit', color: 'var(--tenant-primary)', bg: '#FEE2E2', icon: Navigation },
   delivered: { label: 'Delivered', color: '#065F46', bg: '#D1FAE5', icon: CheckCircle },
-  pending: { label: 'Pending', color: '#E30613', bg: '#FEE2E2', icon: Clock },
+  pending: { label: 'Pending', color: 'var(--tenant-primary)', bg: '#FEE2E2', icon: Clock },
   failed: { label: 'Failed', color: '#EF4444', bg: '#FEF2F2', icon: AlertCircle },
 }[s]);
 
@@ -48,7 +48,7 @@ export default function RunnersPage() {
     items: ''
   });
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const counts = {
     in_transit: tasks.filter(t => t.status === 'in_transit').length,

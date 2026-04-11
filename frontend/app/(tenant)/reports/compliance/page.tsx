@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Shield, Download, CheckCircle2, AlertTriangle, Clock, FileText, Upload, Eye, ChevronDown, ChevronUp } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const REQUIREMENTS = [
   { id: 1, name: 'Financial Disclosure Statement', due: '2025-12-01', status: 'complete', jurisdiction: 'St. Kitts Electoral Commission', notes: 'All donations over $1,000 reported' },

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Smartphone, Download, Users, UserCog, Car, MapPin, Activity, CheckCircle, Clock, Plus, QrCode, X } from 'lucide-react';
 
 const TEAM_MEMBERS = [
-  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', lastActivity: '2 min ago', canvasApp: 'Installed · 2 days ago', candidateApp: 'Installed · 2 days ago', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#E30613' },
+  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', lastActivity: '2 min ago', canvasApp: 'Installed · 2 days ago', candidateApp: 'Installed · 2 days ago', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: 'var(--tenant-primary)' },
   { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', lastActivity: '5 min ago', canvasApp: 'Installed · 3 days ago', candidateApp: '—', runnerApp: '—', outdoorApp: '—', avatar: 'J', avatarColor: '#1D4ED8' },
   { id: 3, name: 'Michael Johnson', role: 'Runner', status: 'Active', lastActivity: '1 min ago', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 1 day ago', outdoorApp: '—', avatar: 'M', avatarColor: '#7C3AED' },
   { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', lastActivity: '8 min ago', canvasApp: '—', candidateApp: '—', runnerApp: 'Installed · 5 days ago', outdoorApp: '—', avatar: 'S', avatarColor: '#0891B2' },
@@ -16,7 +16,7 @@ const APPS = [
     id: 'canvass',
     name: 'Canvass App',
     icon: MapPin,
-    color: '#E30613',
+    color: 'var(--tenant-primary)',
     bg: '#FEF2F2',
     description: 'For canvassers doing door-to-door voter outreach',
     features: ['Offline door knock recording', 'Voice note transcription', 'GPS tracking', 'Walk list navigation'],
@@ -117,7 +117,7 @@ export default function MobileAppsPage() {
                 <button
                   onClick={() => { setShowAdd(false); setNewMember({ name: '', role: 'Canvasser', email: '' }); }}
                   className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: '#E30613' }}
+                  style={{ backgroundColor: 'var(--tenant-primary)' }}
                 >
                   Send Invite
                 </button>
@@ -136,7 +136,7 @@ export default function MobileAppsPage() {
         <button
           onClick={() => setShowAdd(true)}
           className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
-          style={{ backgroundColor: '#E30613' }}
+          style={{ backgroundColor: 'var(--tenant-primary)' }}
         >
           <Plus size={13} className="sm:w-[14px] sm:h-[14px]" /> Add New Team Member
         </button>
@@ -190,7 +190,7 @@ export default function MobileAppsPage() {
             onClick={() => setTab(t.id)}
             className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold transition-all whitespace-nowrap"
             style={{
-              backgroundColor: tab === t.id ? '#E30613' : 'transparent',
+              backgroundColor: tab === t.id ? 'var(--tenant-primary)' : 'transparent',
               color: tab === t.id ? 'white' : '#64748B',
             }}
           >

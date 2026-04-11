@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Mail, Plus, Send, Clock, CheckCircle2, Eye, BarChart3, Users, ChevronRight, Search, Filter, Trash2, Copy, X } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const CAMPAIGNS = [
   { id: 1, name: 'GOTV Final Push — Nov 14', subject: 'Your vote matters this Thursday', status: 'sent', recipients: 8420, opens: 4210, clicks: 1893, date: '2025-11-12', openRate: 50, clickRate: 22 },

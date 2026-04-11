@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Upload, Check, AlertCircle, Globe, Mail, Smartphone, Lock } from 'lucide-react';
 
-const SKNLP_RED = '#E30613';
+const SKNLP_RED = 'var(--tenant-primary)';
 
 export default function BrandingPage() {
   const [partyName, setPartyName] = useState('St. Kitts and Nevis Labour Party');
@@ -28,7 +28,7 @@ export default function BrandingPage() {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 rounded-lg px-2 sm:px-3 py-1.5" style={{ background: '#FEF2F2', border: '1px solid #FECACA' }}>
-            <Lock size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: '#E30613' }} />
+            <Lock size={11} className="sm:w-[12px] sm:h-[12px]" style={{ color: 'var(--tenant-primary)' }} />
             <span className="text-[10px] sm:text-xs font-medium whitespace-nowrap" style={{ color: '#B91C1C' }}>Colors locked by your administrator</span>
           </div>
         </div>

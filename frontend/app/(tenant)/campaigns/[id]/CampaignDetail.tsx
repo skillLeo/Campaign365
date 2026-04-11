@@ -119,7 +119,7 @@ export default function CampaignDetail() {
             {campaign.status === 'active' ? <><Pause size={12} /> Pause</> : <><Play size={12} /> Activate</>}
           </button>
           <button className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
-            style={{ background: '#E30613' }}>
+            style={{ background: 'var(--tenant-primary)' }}>
             <MessageSquare size={12} className="sm:w-[13px] sm:h-[13px]" /> Send GOTV SMS
           </button>
         </div>
@@ -128,7 +128,7 @@ export default function CampaignDetail() {
       {/* KPI Row - Responsive */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
         {[
-          { label: 'Voters Contacted', value: campaign.voters_contacted.toLocaleString(), sub: `of ${campaign.voters_targeted.toLocaleString()}`, icon: Users, color: '#E30613', bg: '#FEF2F2' },
+          { label: 'Voters Contacted', value: campaign.voters_contacted.toLocaleString(), sub: `of ${campaign.voters_targeted.toLocaleString()}`, icon: Users, color: 'var(--tenant-primary)', bg: '#FEF2F2' },
           { label: 'Doors Knocked', value: campaign.doors_knocked.toLocaleString(), sub: `${progress}% complete`, icon: Target, color: '#1D4ED8', bg: '#EFF6FF' },
           { label: 'Active Canvassers', value: campaign.active_canvassers, sub: 'On the ground', icon: Map, color: '#7C3AED', bg: '#F5F3FF' },
           { label: 'Runners Deployed', value: campaign.runners, sub: 'On assignment', icon: TrendingUp, color: '#D97706', bg: '#FFFBEB' },
@@ -155,7 +155,7 @@ export default function CampaignDetail() {
             onClick={() => setTab(t)} 
             className="px-3 sm:px-5 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-semibold capitalize transition-all whitespace-nowrap"
             style={{ 
-              backgroundColor: tab === t ? '#E30613' : 'transparent', 
+              backgroundColor: tab === t ? 'var(--tenant-primary)' : 'transparent', 
               color: tab === t ? 'white' : '#64748B' 
             }}
           >
@@ -174,14 +174,14 @@ export default function CampaignDetail() {
                 <AreaChart data={campaign.progress_data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                   <defs>
                     <linearGradient id="progGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#E30613" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#E30613" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--tenant-primary)" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="var(--tenant-primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', fontSize: 11 }} />
-                  <Area type="monotone" dataKey="contacted" stroke="#E30613" strokeWidth={2.5} fill="url(#progGrad)" dot={false} />
+                  <Area type="monotone" dataKey="contacted" stroke="var(--tenant-primary)" strokeWidth={2.5} fill="url(#progGrad)" dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -218,7 +218,7 @@ export default function CampaignDetail() {
               <p className="text-xl sm:text-2xl font-extrabold text-slate-800">${campaign.budget_used.toLocaleString()}</p>
               <p className="text-[10px] sm:text-xs text-slate-400 mb-2">of ${campaign.budget_total.toLocaleString()} total</p>
               <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full rounded-full transition-all" style={{ width: `${budgetPct}%`, backgroundColor: budgetPct > 85 ? '#E30613' : '#16A34A' }} />
+                <div className="h-full rounded-full transition-all" style={{ width: `${budgetPct}%`, backgroundColor: budgetPct > 85 ? 'var(--tenant-primary)' : '#16A34A' }} />
               </div>
               <p className="text-[10px] sm:text-xs text-slate-400 mt-1.5">{budgetPct}% used</p>
             </div>
@@ -238,7 +238,7 @@ export default function CampaignDetail() {
             <button 
               onClick={() => setShowWalkListModal(true)}
               className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap" 
-              style={{ background: '#E30613' }}
+              style={{ background: 'var(--tenant-primary)' }}
             >
               <Plus size={12} className="sm:w-[13px] sm:h-[13px]" /> New Walk List
             </button>
@@ -263,7 +263,7 @@ export default function CampaignDetail() {
                       <td className="py-2 sm:py-3 px-3 sm:px-5 min-w-[140px]">
                         <div className="flex items-center gap-2">
                           <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full rounded-full" style={{ width: `${wl.progress}%`, backgroundColor: '#E30613' }} />
+                            <div className="h-full rounded-full" style={{ width: `${wl.progress}%`, backgroundColor: 'var(--tenant-primary)' }} />
                           </div>
                           <span className="text-[11px] sm:text-xs font-semibold text-slate-800 w-8">{wl.progress}%</span>
                         </div>
@@ -288,7 +288,7 @@ export default function CampaignDetail() {
       {tab === 'communications' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {[
-            { label: 'SMS Sent', value: campaign.sms_sent.toLocaleString(), color: '#E30613', bg: '#FEF2F2', sub: 'This campaign' },
+            { label: 'SMS Sent', value: campaign.sms_sent.toLocaleString(), color: 'var(--tenant-primary)', bg: '#FEF2F2', sub: 'This campaign' },
             { label: 'Emails Sent', value: campaign.emails_sent.toLocaleString(), color: '#1D4ED8', bg: '#EFF6FF', sub: 'This campaign' },
             { label: 'WhatsApp Blasts', value: '3', color: '#16A34A', bg: '#F0FDF4', sub: 'Sent' },
           ].map((s, i) => (
@@ -311,7 +311,7 @@ export default function CampaignDetail() {
                   <XAxis dataKey="area" tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ borderRadius: 8, border: 'none', fontSize: 11 }} formatter={(v) => `${v}%`} />
-                  <Bar dataKey="rate" fill="#E30613" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="rate" fill="var(--tenant-primary)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -423,7 +423,7 @@ export default function CampaignDetail() {
                   onClick={handleAddWalkList}
                   disabled={!newWalkList.name.trim() || !newWalkList.canvasser.trim()}
                   className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: '#E30613' }}
+                  style={{ backgroundColor: 'var(--tenant-primary)' }}
                 >
                   Create Walk List
                 </button>

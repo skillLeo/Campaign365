@@ -7,12 +7,12 @@ import {
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const OUTCOMES = [
   { key: 'answered_support', label: 'Answered — Supporter', color: '#16A34A', icon: CheckCircle2 },
   { key: 'answered_undecided', label: 'Answered — Undecided', color: '#F59E0B', icon: Phone },
-  { key: 'answered_oppose', label: 'Answered — Opposition', color: '#E30613', icon: PhoneOff },
+  { key: 'answered_oppose', label: 'Answered — Opposition', color: '#DC2626', icon: PhoneOff },
   { key: 'not_home', label: 'Not Home / No Answer', color: '#94A3B8', icon: PhoneMissed },
   { key: 'callback', label: 'Requested Callback', color: '#2563EB', icon: RefreshCw },
   { key: 'wrong_number', label: 'Wrong Number', color: '#CBD5E1', icon: Flag },
@@ -86,7 +86,7 @@ export default function PhoneBankPage() {
     setIsCallActive(false);
   };
 
-  const priorityColor = (p: string) => p === 'high' ? '#E30613' : p === 'medium' ? '#F59E0B' : '#94A3B8';
+  const priorityColor = (p: string) => p === 'high' ? 'var(--tenant-primary)' : p === 'medium' ? '#F59E0B' : '#94A3B8';
 
   return (
     <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">

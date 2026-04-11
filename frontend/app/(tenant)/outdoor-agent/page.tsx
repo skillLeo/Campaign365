@@ -6,7 +6,7 @@ import {
   Car, Phone, Wifi, WifiOff, Plus, Minus
 } from 'lucide-react';
 
-const PRIMARY = '#E30613';
+const PRIMARY = 'var(--tenant-primary)';
 
 const POLLING_STATIONS = [
   { id: 1, name: 'Basseterre Primary School', constituency: 'Central Basseterre', registered: 842, active: true },
@@ -74,7 +74,7 @@ export default function OutdoorAgentPage() {
           <button
             onClick={() => setIsOnline(!isOnline)}
             className="flex items-center justify-center gap-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all whitespace-nowrap"
-            style={{ background: isOnline ? '#F0FDF4' : '#FEF2F2', border: `1px solid ${isOnline ? '#BBF7D0' : '#FECACA'}`, padding: '6px 12px', color: isOnline ? '#16A34A' : '#E30613', cursor: 'pointer' }}
+            style={{ background: isOnline ? '#F0FDF4' : '#FEF2F2', border: `1px solid ${isOnline ? '#BBF7D0' : '#FECACA'}`, padding: '6px 12px', color: isOnline ? '#16A34A' : 'var(--tenant-primary)', cursor: 'pointer' }}
           >
             {isOnline ? <Wifi size={12} className="sm:w-[14px] sm:h-[14px]" /> : <WifiOff size={12} className="sm:w-[14px] sm:h-[14px]" />}
             {isOnline ? 'Online' : 'Offline Mode'}

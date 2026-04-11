@@ -21,7 +21,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const { branding, user, setBranding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   // State variables
   const [partyName, setPartyName] = useState(branding?.party_name || 'SKNLP');
@@ -31,11 +31,13 @@ export default function SettingsPage() {
   const [contactEmail, setContactEmail] = useState('info@sknlp.org');
   const [phoneNumber, setPhoneNumber] = useState('+1 (869) 555-0100');
   const [aboutParty, setAboutParty] = useState('The St. Kitts-Nevis Labour Party has been serving the people since 1932...');
-  const [subdomain, setSubdomain] = useState(branding?.subdomain || 'sknlp');
+  const [subdomain, setSubdomain] = useState(
+    branding?.subdomain || (typeof window !== 'undefined' ? localStorage.getItem('c365_tenant') || 'sknlp' : 'sknlp')
+  );
 
   // Local branding state
-  const [localPrimaryColor, setLocalPrimaryColor] = useState(branding?.primary_color || '#E30613');
-  const [localHexInput, setLocalHexInput] = useState(branding?.primary_color || '#E30613');
+  const [localPrimaryColor, setLocalPrimaryColor] = useState(branding?.primary_color || 'var(--tenant-primary)');
+  const [localHexInput, setLocalHexInput] = useState(branding?.primary_color || 'var(--tenant-primary)');
   const [localLogoUrl, setLocalLogoUrl] = useState<string | null>(branding?.logo_url || null);
   const logoInputRef = useRef<HTMLInputElement>(null);
 
@@ -248,7 +250,7 @@ export default function SettingsPage() {
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-2">Color Presets</label>
                   <div className="flex flex-wrap gap-2">
-                    {['#CC0000', '#E30613', '#006400', '#1D4ED8', '#7C3AED', '#F59E0B'].map(c => (
+                    {['#CC0000', 'var(--tenant-primary)', '#006400', '#1D4ED8', '#7C3AED', '#F59E0B'].map(c => (
                       <button
                         key={c}
                         onClick={() => handleColorChange(c)}

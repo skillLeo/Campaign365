@@ -36,7 +36,7 @@ export function ResponsiveTable<T extends Record<string, unknown>>({
   keyField = 'id',
   loading = false,
   emptyMessage = 'No data found.',
-  primaryColor = '#E30613',
+  primaryColor = 'var(--tenant-primary)',
 }: ResponsiveTableProps<T>) {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [openMenu, setOpenMenu] = useState<number | null>(null);

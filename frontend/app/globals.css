@@ -20,6 +20,11 @@
   --color-text-muted: #94A3B8;
   --color-amber: #F59E0B;
 
+  /* Tenant dynamic theme vars — overridden by JS on mount */
+  --tenant-primary: #E30613;
+  --tenant-primary-dark: #B30000;
+  --tenant-sidebar: #1A1A1A;
+
   /* Font families */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;

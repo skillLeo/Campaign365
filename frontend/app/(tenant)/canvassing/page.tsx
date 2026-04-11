@@ -12,8 +12,8 @@ const WALK_LISTS = [
 ];
 
 const statusStyle = (s: string) => {
-  if (s === 'active') return { backgroundColor: '#E30613', color: 'white' };
-  if (s === 'completed') return { backgroundColor: '#FEE2E2', color: '#E30613' };
+  if (s === 'active') return { backgroundColor: 'var(--tenant-primary)', color: 'white' };
+  if (s === 'completed') return { backgroundColor: '#FEE2E2', color: 'var(--tenant-primary)' };
   return { backgroundColor: '#FEF3C7', color: '#92400E' };
 };
 
@@ -33,7 +33,7 @@ export default function CanvassingPage() {
     team: 'Team Alpha'
   });
   const { branding } = useAuthStore();
-  const primaryColor = branding?.primary_color || '#E30613';
+  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
 
   const totalDoors = WALK_LISTS.reduce((s, w) => s + w.total, 0);
   const totalKnocked = WALK_LISTS.reduce((s, w) => s + w.knocked, 0);
@@ -78,10 +78,10 @@ export default function CanvassingPage() {
       {/* Stats Cards - Responsive */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: 'Total Doors', value: totalDoors.toLocaleString(), icon: MapPin, color: '#E30613', bg: '#FEE2E2' },
-          { label: 'Doors Knocked', value: totalKnocked.toLocaleString(), icon: CheckCircle, color: '#E30613', bg: '#FEE2E2' },
-          { label: 'Active Teams', value: WALK_LISTS.filter(w => w.status === 'active').length, icon: Users, color: '#E30613', bg: '#FEE2E2' },
-          { label: 'Completion Rate', value: `${Math.round((totalKnocked / totalDoors) * 100)}%`, icon: Clock, color: '#E30613', bg: '#FEE2E2' },
+          { label: 'Total Doors', value: totalDoors.toLocaleString(), icon: MapPin, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
+          { label: 'Doors Knocked', value: totalKnocked.toLocaleString(), icon: CheckCircle, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
+          { label: 'Active Teams', value: WALK_LISTS.filter(w => w.status === 'active').length, icon: Users, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
+          { label: 'Completion Rate', value: `${Math.round((totalKnocked / totalDoors) * 100)}%`, icon: Clock, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
         ].map(({ label, value, icon: Icon, color, bg }) => (
           <div key={label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-2 sm:gap-3 mb-2">
@@ -115,7 +115,7 @@ export default function CanvassingPage() {
                 style={{
                   top: `${15 + i * 20}%`,
                   left: `${10 + (i % 2) * 45}%`,
-                  color: z.pct >= 80 ? '#E30613' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B',
+                  color: z.pct >= 80 ? 'var(--tenant-primary)' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B',
                 }}
               >
                 {z.label} — {z.pct}%
@@ -128,7 +128,7 @@ export default function CanvassingPage() {
                 <div className="flex-1">
                   <div className="flex justify-between text-[10px] sm:text-xs mb-1">
                     <span className="text-slate-600 truncate">{z.label}</span>
-                    <span className="font-semibold whitespace-nowrap ml-2" style={{ color: z.pct >= 80 ? '#E30613' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B' }}>
+                    <span className="font-semibold whitespace-nowrap ml-2" style={{ color: z.pct >= 80 ? 'var(--tenant-primary)' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B' }}>
                       {z.pct}%
                     </span>
                   </div>
@@ -137,7 +137,7 @@ export default function CanvassingPage() {
                       className="h-full rounded-full transition-all"
                       style={{
                         width: `${z.pct}%`,
-                        backgroundColor: '#E30613',
+                        backgroundColor: 'var(--tenant-primary)',
                       }}
                     />
                   </div>
@@ -179,7 +179,7 @@ export default function CanvassingPage() {
                     <div className="flex-1 bg-slate-100 rounded-full h-1.5 sm:h-2">
                       <div
                         className="h-1.5 sm:h-2 rounded-full transition-all"
-                        style={{ width: `${pct}%`, backgroundColor: '#E30613' }}
+                        style={{ width: `${pct}%`, backgroundColor: 'var(--tenant-primary)' }}
                       />
                     </div>
                     <span className="text-[10px] sm:text-xs font-semibold text-slate-600 shrink-0 whitespace-nowrap">{list.knocked}/{list.total}</span>
