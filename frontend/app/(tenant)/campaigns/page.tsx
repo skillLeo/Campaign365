@@ -21,9 +21,9 @@ const statusStyle = (s: string) => {
 
 const typeColors: Record<string, string> = {
   gotv: 'var(--tenant-primary)',
-  canvassing: '#3B82F6',
-  outreach: '#8B5CF6',
-  communications: '#F59E0B',
+  canvassing: 'var(--tenant-primary)',
+  outreach: 'var(--tenant-primary)',
+  communications: 'var(--tenant-primary)',
 };
 
 const EMPTY_FORM = { name: '', type: 'gotv', constituency: 'All', start_date: '', end_date: '', turnout_goal: '' };
