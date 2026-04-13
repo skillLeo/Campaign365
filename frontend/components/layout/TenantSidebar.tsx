@@ -16,22 +16,8 @@ import { TenantTheme } from '@/lib/tenantTheme';
 const navItems = [
   { href: '/dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
   { href: '/campaigns',     label: 'Campaigns',       icon: Megaphone },
-  {
-    href: '/voters',        label: 'Voters',          icon: Users,
-    children: [
-      { href: '/voters/targeting', label: 'Targeting Map' },
-      { href: '/voters/segments',  label: 'Segment Builder' },
-    ],
-  },
-  {
-    href: '/canvassing',    label: 'Canvassing',      icon: Map,
-    children: [
-      { href: '/canvassing/generate',     label: 'Walk List Generator' },
-      { href: '/canvassing/analytics',    label: 'Analytics' },
-      { href: '/canvassing/turf-cutter',  label: 'Turf Cutter' },
-      { href: '/canvassing/leaderboard',  label: 'Leaderboard' },
-    ],
-  },
+  { href: '/voters',        label: 'Voters',          icon: Users },
+  { href: '/canvassing',    label: 'Canvassing',      icon: Map },
   { href: '/tracking',      label: 'Live Tracking',   icon: Navigation },
   { href: '/runners',       label: 'Runners',         icon: Car },
   { href: '/gotv',          label: 'GOTV Command',    icon: Target },
@@ -44,24 +30,12 @@ const navItems = [
       { href: '/communications/email',    label: 'Email' },
       { href: '/communications/sms',      label: 'SMS' },
       { href: '/communications/whatsapp', label: 'WhatsApp' },
-      { href: '/communications/social-scheduler', label: 'Social Scheduler' },
     ],
   },
   { href: '/fundraising',   label: 'Fundraising',     icon: DollarSign },
   { href: '/events',        label: 'Events',          icon: CalendarDays },
   { href: '/polling',       label: 'Polling',         icon: ClipboardList },
-  {
-    href: '/ai',            label: 'AI Insights',     icon: Brain,
-    children: [
-      { href: '/ai/chatbot', label: 'AI Chatbot' },
-    ],
-  },
-  {
-    href: '/surveys',       label: 'Surveys',         icon: BarChart3,
-    children: [
-      { href: '/surveys/builder', label: 'Survey Builder' },
-    ],
-  },
+  { href: '/ai',            label: 'AI Insights',     icon: Brain },
   {
     href: '/reports', label: 'Reports', icon: BarChart3,
     children: [
@@ -90,7 +64,7 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
 
   const logoUrl = branding?.logo_url;
   const partyName = branding?.name || theme.name;
-  const [expanded, setExpanded] = useState<string[]>(['/voters', '/canvassing', '/communications', '/surveys', '/reports']);
+  const [expanded, setExpanded] = useState<string[]>(['/communications', '/reports']);
 
   const storedUser = typeof window !== 'undefined'
     ? (() => { try { return JSON.parse(localStorage.getItem('c365_user') || '{}'); } catch { return {}; } })()
