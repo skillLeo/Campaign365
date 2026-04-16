@@ -7,7 +7,9 @@ import { useState, useEffect } from 'react';
  * Use this instead of Tailwind lg: responsive classes for critical layout logic.
  */
 export function useIsDesktop(breakpoint = 1024): boolean {
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= breakpoint : false
+  );
 
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= breakpoint);

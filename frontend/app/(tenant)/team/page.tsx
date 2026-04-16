@@ -1,263 +1,623 @@
 'use client';
 import { useState } from 'react';
-import { Search, Plus, UserCog, Car, Phone, Users, MoreVertical, Activity, MessageSquare, BarChart2, Filter, X } from 'lucide-react';
 
-const EMPTY_MEMBER = { name: '', role: 'Canvasser', constituency: 'St. Christopher 1', phone: '' };
-
-const TEAM = [
-  { id: 1, name: 'John Doe', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '2 min ago', constituency: 'St. Christopher 1', phone: '+1-869-555-0101' },
-  { id: 2, name: 'Jane Smith', role: 'Canvasser', status: 'Active', avatar: 'J', lastActive: '5 min ago', constituency: 'St. Christopher 2', phone: '+1-869-555-0102' },
-  { id: 3, name: 'Michael Johnson', role: 'Canvasser', status: 'Active', avatar: 'M', lastActive: '12 min ago', constituency: 'Nevis 1', phone: '+1-869-555-0103' },
-  { id: 4, name: 'Sarah Williams', role: 'Runner', status: 'Active', avatar: 'S', lastActive: '1 hr ago', constituency: 'St. Christopher 3', phone: '+1-869-555-0104' },
-  { id: 5, name: 'David Brown', role: 'Runner', status: 'Active', avatar: 'D', lastActive: '45 min ago', constituency: 'St. Christopher 4', phone: '+1-869-555-0105' },
-  { id: 6, name: 'Emily Davis', role: 'Phone Bank', status: 'Active', avatar: 'E', lastActive: '30 min ago', constituency: 'Nevis 2', phone: '+1-869-555-0106' },
-  { id: 7, name: 'Robert Wilson', role: 'Outdoor Agent', status: 'Active', avatar: 'R', lastActive: '3 hrs ago', constituency: 'St. Christopher 5', phone: '+1-869-555-0107' },
-  { id: 8, name: 'Lisa Martinez', role: 'Canvasser', status: 'Inactive', avatar: 'L', lastActive: '2 days ago', constituency: 'Nevis 3', phone: '+1-869-555-0108' },
-  { id: 9, name: 'James Taylor', role: 'Campaign Manager', status: 'Active', avatar: 'J', lastActive: '8 min ago', constituency: 'St. Christopher 6', phone: '+1-869-555-0109' },
-  { id: 10, name: 'Nancy Anderson', role: 'Phone Bank', status: 'Active', avatar: 'N', lastActive: '1 day ago', constituency: 'St. Christopher 7', phone: '+1-869-555-0110' },
-];
-
-const ROLE_COLORS: Record<string, { bg: string; color: string }> = {
-  'Campaign Manager': { bg: '#EFF6FF', color: '#1D4ED8' },
-  'Canvasser': { bg: '#F0FDF4', color: '#15803D' },
-  'Runner': { bg: '#FFFBEB', color: '#B45309' },
-  'Phone Bank': { bg: '#F5F3FF', color: '#6D28D9' },
-  'Outdoor Agent': { bg: '#FEF2F2', color: '#B91C1C' },
-};
-
-const AVATAR_COLORS = ['var(--tenant-primary)', '#1D4ED8', '#7C3AED', '#0891B2', '#D97706', '#059669', '#DB2777'];
-
-type TabType = 'all' | 'canvassers' | 'runners' | 'phone_bank';
-
-export default function TeamPage() {
-  const [tab, setTab] = useState<TabType>('all');
-  const [search, setSearch] = useState('');
-  const [selectedMember, setSelectedMember] = useState<typeof TEAM[0] | null>(null);
-  const [showAdd, setShowAdd] = useState(false);
-  const [newMember, setNewMember] = useState(EMPTY_MEMBER);
-  const [team, setTeam] = useState(TEAM);
-
-  const handleAddMember = () => {
-    if (!newMember.name.trim()) return;
-    setTeam(prev => [...prev, {
-      id: prev.length + 1,
-      name: newMember.name,
-      role: newMember.role,
-      status: 'Active',
-      avatar: newMember.name[0].toUpperCase(),
-      lastActive: 'Just now',
-      constituency: newMember.constituency,
-      phone: newMember.phone,
-    }]);
-    setNewMember(EMPTY_MEMBER);
-    setShowAdd(false);
-  };
-
-  const filterMap: Record<TabType, string[]> = {
-    all: [],
-    canvassers: ['Canvasser', 'Outdoor Agent'],
-    runners: ['Runner'],
-    phone_bank: ['Phone Bank'],
-  };
-
-  const filtered = team.filter(m => {
-    const matchRole = filterMap[tab].length === 0 || filterMap[tab].includes(m.role);
-    const matchSearch = search === '' || m.name.toLowerCase().includes(search.toLowerCase()) || m.role.toLowerCase().includes(search.toLowerCase());
-    return matchRole && matchSearch;
-  });
-
-  const stats = [
-    { label: 'All Members', value: team.length, icon: Users, color: 'var(--tenant-primary)', bg: '#FEF2F2' },
-    { label: 'Canvassers', value: team.filter(m => m.role === 'Canvasser').length, icon: UserCog, color: '#15803D', bg: '#F0FDF4' },
-    { label: 'Runners', value: team.filter(m => m.role === 'Runner').length, icon: Car, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
-    { label: 'Phone Bank', value: team.filter(m => m.role === 'Phone Bank').length, icon: Phone, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
+// ── Person Face Avatar — photo-realistic SVG faces ────────────────────────────
+function PersonAvatar({ n, sz = 46 }: { n: number; sz?: number }) {
+  // Each config: photo-realistic skin gradient, natural hair, shirt collar
+  const configs = [
+    // 0: Middle-aged man, light skin, silver-grey hair (Canvasser)
+    { skinL: '#D4A882', skinD: '#B8845A', hairTop: '#8A8A8A', hairSide: '#707070',
+      bg: '#1A2840', shirt: '#2E4A7A', beard: false, glasses: false, female: false },
+    // 1: Black man, dark skin, short natural hair (Runner)
+    { skinL: '#6B4030', skinD: '#4A2818', hairTop: '#0A0808', hairSide: '#080606',
+      bg: '#0E1E10', shirt: '#1A4A28', beard: false, glasses: false, female: false },
+    // 2: Older man, brown skin, grey-brown hair (St. Kitts Nevis)
+    { skinL: '#8B6040', skinD: '#6A4428', hairTop: '#4A3828', hairSide: '#3A2A1A',
+      bg: '#1A1420', shirt: '#3A1A4A', beard: true, glasses: false, female: false },
+    // 3: Bald man, medium-dark skin (Cluster Manager)
+    { skinL: '#9A7050', skinD: '#785438', hairTop: '#1A1210', hairSide: '#1A1210',
+      bg: '#101830', shirt: '#1E3A6A', beard: false, glasses: false, female: false },
+    // 4: Young man, medium brown skin, dark hair (Runner row3)
+    { skinL: '#C07840', skinD: '#9A5828', hairTop: '#180E08', hairSide: '#140C06',
+      bg: '#220C18', shirt: '#8B1818', beard: false, glasses: false, female: false },
+    // 5: Man, lighter medium skin, brown hair (Cluster Manager row3)
+    { skinL: '#D4A068', skinD: '#B07840', hairTop: '#3A2010', hairSide: '#2E180A',
+      bg: '#102030', shirt: '#1A3A5A', beard: false, glasses: false, female: false },
+    // 6: Woman, dark warm skin, natural hair (Splh Party)
+    { skinL: '#7A5038', skinD: '#5A3420', hairTop: '#0E0A08', hairSide: '#0A0806',
+      bg: '#18102A', shirt: '#4A1A7A', beard: false, glasses: false, female: true },
+    // 7: Person, light-medium skin, light hair (Vaicen)
+    { skinL: '#DEB878', skinD: '#C09050', hairTop: '#8A6030', hairSide: '#705022',
+      bg: '#0C2218', shirt: '#1A5030', beard: false, glasses: false, female: false },
+    // 8: Man, olive skin, dark hair (PotriY SKNLP)
+    { skinL: '#C09060', skinD: '#9A6838', hairTop: '#1E1208', hairSide: '#180E06',
+      bg: '#200808', shirt: '#7A1818', beard: true, glasses: false, female: false },
+    // 9: Man, dark brown skin, black hair (Colten)
+    { skinL: '#6A4228', skinD: '#4A2A18', hairTop: '#0C0A08', hairSide: '#080806',
+      bg: '#101428', shirt: '#1A1A5A', beard: false, glasses: true, female: false },
   ];
+  const c = configs[n % configs.length];
+  const uid = `av_${n}`;
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Add Member Modal - Responsive */}
-      {showAdd && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-50" onClick={() => setShowAdd(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-4 sm:mb-5">
-              <h3 className="font-bold text-slate-800 text-base sm:text-lg">Add Team Member</h3>
-              <button onClick={() => setShowAdd(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
-                <X size={16} className="sm:w-[18px] sm:h-[18px]" />
-              </button>
-            </div>
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Full Name *</label>
-                <input value={newMember.name} onChange={e => setNewMember(m => ({ ...m, name: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
-                  placeholder="Jane Smith" />
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Role</label>
-                  <select value={newMember.role} onChange={e => setNewMember(m => ({ ...m, role: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none">
-                    <option>Campaign Manager</option>
-                    <option>Canvasser</option>
-                    <option>Runner</option>
-                    <option>Phone Bank</option>
-                    <option>Outdoor Agent</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Constituency</label>
-                  <select value={newMember.constituency} onChange={e => setNewMember(m => ({ ...m, constituency: e.target.value }))}
-                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none">
-                    <option>St. Christopher 1</option>
-                    <option>St. Christopher 2</option>
-                    <option>St. Christopher 3</option>
-                    <option>Nevis 1</option>
-                    <option>Nevis 2</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Phone</label>
-                <input value={newMember.phone} onChange={e => setNewMember(m => ({ ...m, phone: e.target.value }))}
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
-                  placeholder="+1-869-555-0100" />
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button onClick={() => { setShowAdd(false); setNewMember(EMPTY_MEMBER); }}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">Cancel</button>
-                <button onClick={handleAddMember}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: 'var(--tenant-primary)' }}>Add Member</button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+    <svg viewBox="0 0 100 100" width={sz} height={sz}
+      style={{ display: 'block', borderRadius: '50%', flexShrink: 0 }}>
+      <defs>
+        <radialGradient id={`${uid}_skin`} cx="45%" cy="40%" r="60%">
+          <stop offset="0%"   stopColor={c.skinL} />
+          <stop offset="100%" stopColor={c.skinD} />
+        </radialGradient>
+        <radialGradient id={`${uid}_bg`} cx="50%" cy="30%" r="70%">
+          <stop offset="0%"   stopColor={c.bg} stopOpacity="0.7" />
+          <stop offset="100%" stopColor={c.bg} />
+        </radialGradient>
+        <clipPath id={`${uid}_clip`}>
+          <circle cx="50" cy="50" r="50" />
+        </clipPath>
+      </defs>
 
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="min-w-0">
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(18px, 5vw, 24px)', color: '#0F172A', letterSpacing: '-0.02em' }} className="truncate">Team Management</h1>
-          <p style={{ fontSize: 'clamp(11px, 2.5vw, 13px)', color: '#64748B', marginTop: 3 }}>St. Kitts and Nevis Labour Party</p>
+      {/* Background */}
+      <circle cx="50" cy="50" r="50" fill={c.bg} />
+
+      <g clipPath={`url(#${uid}_clip)`}>
+        {/* Shirt / shoulders */}
+        <ellipse cx="50" cy="108" rx="50" ry="36" fill={c.shirt} />
+        {/* Collar */}
+        {!c.female && (
+          <>
+            <rect x="44" y="82" width="5" height="18" fill="white" opacity="0.85" />
+            <rect x="51" y="82" width="5" height="18" fill="white" opacity="0.85" />
+          </>
+        )}
+
+        {/* Neck */}
+        <rect x="42" y="74" width="16" height="16" fill={`url(#${uid}_skin)`} />
+
+        {/* Head */}
+        <ellipse cx="50" cy="54" rx="26" ry="28" fill={`url(#${uid}_skin)`} />
+
+        {/* Hair top */}
+        <ellipse cx="50" cy="30" rx={c.female ? 28 : 26} ry={c.female ? 16 : 11}
+          fill={c.hairTop} />
+        {/* Hair sides */}
+        <ellipse cx="25" cy="48" rx="5" ry={c.female ? 18 : 14} fill={c.hairSide} />
+        <ellipse cx="75" cy="48" rx="5" ry={c.female ? 18 : 14} fill={c.hairSide} />
+        {/* Female longer hair */}
+        {c.female && (
+          <>
+            <ellipse cx="22" cy="65" rx="7" ry="18" fill={c.hairSide} />
+            <ellipse cx="78" cy="65" rx="7" ry="18" fill={c.hairSide} />
+          </>
+        )}
+
+        {/* Ear shadow */}
+        <ellipse cx="24" cy="55" rx="4" ry="5" fill={c.skinD} />
+        <ellipse cx="76" cy="55" rx="4" ry="5" fill={c.skinD} />
+
+        {/* Eyebrows */}
+        <path d="M33,46 Q39,43 45,46" stroke={c.hairTop} strokeWidth="2" fill="none" strokeLinecap="round" />
+        <path d="M55,46 Q61,43 67,46" stroke={c.hairTop} strokeWidth="2" fill="none" strokeLinecap="round" />
+
+        {/* Eyes — whites */}
+        <ellipse cx="38" cy="52" rx="6" ry="5.5" fill="white" />
+        <ellipse cx="62" cy="52" rx="6" ry="5.5" fill="white" />
+        {/* Iris */}
+        <circle cx="39" cy="53" r="3.8" fill={c.hairTop} />
+        <circle cx="63" cy="53" r="3.8" fill={c.hairTop} />
+        {/* Pupil */}
+        <circle cx="39.5" cy="53" r="2" fill="#0A0808" />
+        <circle cx="63.5" cy="53" r="2" fill="#0A0808" />
+        {/* Eye shine */}
+        <circle cx="41" cy="51.5" r="1.2" fill="white" opacity="0.85" />
+        <circle cx="65" cy="51.5" r="1.2" fill="white" opacity="0.85" />
+        {/* Eyelids top */}
+        <path d="M32,49 Q38,46 44,49" stroke={c.skinD} strokeWidth="1" fill="none" />
+        <path d="M56,49 Q62,46 68,49" stroke={c.skinD} strokeWidth="1" fill="none" />
+
+        {/* Glasses */}
+        {c.glasses && (
+          <>
+            <rect x="30" y="47.5" width="16" height="11" rx="4" fill="none"
+              stroke="#555" strokeWidth="1.8" />
+            <rect x="54" y="47.5" width="16" height="11" rx="4" fill="none"
+              stroke="#555" strokeWidth="1.8" />
+            <line x1="46" y1="52.5" x2="54" y2="52.5" stroke="#555" strokeWidth="1.5" />
+            <line x1="20" y1="51" x2="30" y2="52" stroke="#555" strokeWidth="1.5" />
+            <line x1="70" y1="52" x2="80" y2="51" stroke="#555" strokeWidth="1.5" />
+          </>
+        )}
+
+        {/* Nose */}
+        <path d="M46,62 Q48,68 50,68 Q52,68 54,62" stroke={c.skinD} strokeWidth="1.2"
+          fill="none" strokeLinecap="round" />
+        <ellipse cx="46" cy="66" rx="3" ry="2" fill={c.skinD} opacity="0.4" />
+        <ellipse cx="54" cy="66" rx="3" ry="2" fill={c.skinD} opacity="0.4" />
+
+        {/* Mouth */}
+        <path d="M40,73 Q50,79 60,73" stroke="rgba(0,0,0,0.4)" strokeWidth="1.8"
+          fill="none" strokeLinecap="round" />
+        {/* Lip line */}
+        <path d="M42,73 Q50,70 58,73" stroke="rgba(0,0,0,0.15)" strokeWidth="1"
+          fill="none" />
+
+        {/* Beard */}
+        {c.beard && (
+          <ellipse cx="50" cy="76" rx="20" ry="8" fill={c.hairTop} opacity="0.6" />
+        )}
+
+        {/* Subtle face shading */}
+        <ellipse cx="34" cy="62" rx="6" ry="8" fill={c.skinD} opacity="0.15" />
+        <ellipse cx="66" cy="62" rx="6" ry="8" fill={c.skinD} opacity="0.15" />
+      </g>
+    </svg>
+  );
+}
+
+// ── Mini Dark Street Map with Red Route ──────────────────────────────────────
+function MiniMap({ seed = 0 }: { seed?: number }) {
+  // Different route paths per row seed
+  const routes = [
+    { d: 'M6,72 C14,64 22,58 32,50 C42,42 54,34 66,26 C74,20 80,16 86,12', ex: 86, ey: 12 },
+    { d: 'M6,68 C18,60 30,54 42,46 C52,38 62,30 72,22 C78,18 84,14 88,10', ex: 88, ey: 10 },
+    { d: 'M6,74 C16,66 26,60 38,52 C50,44 60,36 70,28 C78,22 84,16 88,12', ex: 88, ey: 12 },
+    { d: 'M6,70 C18,62 28,56 40,48 C52,40 62,32 72,24 C80,18 86,14 88,11', ex: 88, ey: 11 },
+    { d: 'M6,66 C16,58 28,52 40,44 C52,36 62,28 72,22 C80,16 86,12 88,8',  ex: 88, ey: 8  },
+  ];
+  const { d, ex, ey } = routes[seed % routes.length];
+
+  return (
+    <div style={{ flex: '0 0 92px', borderRadius: '0 7px 7px 0', overflow: 'hidden' }}>
+      <svg viewBox="0 0 94 78" width="94" height="100%" preserveAspectRatio="xMidYMid slice"
+        style={{ display: 'block' }}>
+        {/* Dark base — like dark map tiles */}
+        <rect width="94" height="78" fill="#0D1525" />
+
+        {/* City blocks — slightly lighter rectangles */}
+        <rect x="0"  y="0"  width="18" height="14" fill="#111E30" />
+        <rect x="20" y="0"  width="22" height="14" fill="#0F1C2C" />
+        <rect x="44" y="0"  width="18" height="14" fill="#111E30" />
+        <rect x="64" y="0"  width="16" height="14" fill="#0F1C2C" />
+        <rect x="0"  y="16" width="18" height="16" fill="#0F1C2C" />
+        <rect x="20" y="16" width="22" height="16" fill="#111E30" />
+        <rect x="44" y="16" width="18" height="16" fill="#111E30" />
+        <rect x="64" y="16" width="16" height="16" fill="#0F1C2C" />
+        <rect x="82" y="0"  width="12" height="30" fill="#111E30" />
+        <rect x="0"  y="34" width="18" height="16" fill="#111E30" />
+        <rect x="20" y="34" width="22" height="16" fill="#0F1C2C" />
+        <rect x="44" y="34" width="18" height="16" fill="#0F1C2C" />
+        <rect x="64" y="34" width="16" height="16" fill="#111E30" />
+        <rect x="82" y="32" width="12" height="18" fill="#0F1C2C" />
+        <rect x="0"  y="52" width="18" height="26" fill="#0F1C2C" />
+        <rect x="20" y="52" width="22" height="26" fill="#111E30" />
+        <rect x="44" y="52" width="18" height="26" fill="#0F1C2C" />
+        <rect x="64" y="52" width="16" height="26" fill="#111E30" />
+        <rect x="82" y="52" width="12" height="26" fill="#0F1C2C" />
+
+        {/* Major roads — horizontal (slightly lighter grey) */}
+        <rect x="0" y="14" width="94" height="2" fill="#1A2C44" />
+        <rect x="0" y="32" width="94" height="2.5" fill="#1E3250" />
+        <rect x="0" y="50" width="94" height="2" fill="#1A2C44" />
+
+        {/* Major roads — vertical */}
+        <rect x="18" y="0" width="2"   height="78" fill="#1A2C44" />
+        <rect x="42" y="0" width="2.5" height="78" fill="#1E3250" />
+        <rect x="62" y="0" width="2"   height="78" fill="#1A2C44" />
+        <rect x="80" y="0" width="2"   height="78" fill="#1A2C44" />
+
+        {/* Minor roads — thinner */}
+        <rect x="0" y="23" width="94" height="1" fill="#162238" />
+        <rect x="0" y="42" width="94" height="1" fill="#162238" />
+        <rect x="0" y="62" width="94" height="1" fill="#162238" />
+        <rect x="30" y="0" width="1" height="78" fill="#162238" />
+        <rect x="52" y="0" width="1" height="78" fill="#162238" />
+        <rect x="72" y="0" width="1" height="78" fill="#162238" />
+
+        {/* Diagonal avenue */}
+        <line x1="0" y1="40" x2="50" y2="0"   stroke="#162238" strokeWidth="1.5" />
+        <line x1="44" y1="78" x2="94" y2="38"  stroke="#162238" strokeWidth="1.5" />
+
+        {/* Red route — outer glow */}
+        <path d={d} stroke="#AA0000" strokeWidth="6" fill="none"
+          strokeLinecap="round" strokeLinejoin="round" opacity="0.35" />
+        {/* Red route — mid glow */}
+        <path d={d} stroke="#DD1111" strokeWidth="3.5" fill="none"
+          strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+        {/* Red route — crisp line */}
+        <path d={d} stroke="#FF3333" strokeWidth="2" fill="none"
+          strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* End marker — glow halo */}
+        <circle cx={ex} cy={ey} r={8}  fill="#FF0000" opacity="0.25" />
+        <circle cx={ex} cy={ey} r={5}  fill="#FF2222" opacity="0.6" />
+        <circle cx={ex} cy={ey} r={3.5} fill="#FF4444" />
+        <circle cx={ex} cy={ey} r={1.8} fill="white" />
+      </svg>
+    </div>
+  );
+}
+
+// ── Caribbean Flag Circles ────────────────────────────────────────────────────
+type FlagType = 'skn' | 'ag' | 'jm' | 'tt' | 'bb';
+
+function FlagCircle({ type }: { type: FlagType }) {
+  return (
+    <div style={{ width: 28, height: 28, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #0F172A' }}>
+      <svg viewBox="0 0 30 30" width="28" height="28">
+        {type === 'skn' && (
+          <>
+            <polygon points="0,30 30,30 0,0"    fill="#009E60" />
+            <polygon points="30,0 30,30 0,0"    fill="#CC1126" />
+            <polygon points="0,0 24,30 30,30 6,0"  fill="#000000" />
+            <polygon points="0,0 3,0 27,30 24,30" fill="#FCD116" />
+            <polygon points="6,0 9,0 30,27 30,30 27,30" fill="#FCD116" />
+            <polygon points="10,6 11.5,10.5 16,10.5 12.5,13 14,17.5 10,15 6,17.5 7.5,13 4,10.5 8.5,10.5"
+              fill="white" transform="translate(1,4) scale(0.55)" />
+            <polygon points="10,6 11.5,10.5 16,10.5 12.5,13 14,17.5 10,15 6,17.5 7.5,13 4,10.5 8.5,10.5"
+              fill="white" transform="translate(12,14) scale(0.55)" />
+          </>
+        )}
+        {type === 'ag' && (
+          <>
+            <rect width="30" height="30" fill="#CE1126" />
+            <polygon points="15,2 30,28 0,28" fill="#000000" />
+            <polygon points="15,5 28,27 2,27"  fill="#0073CF" />
+            <polygon points="15,10 24,27 6,27"  fill="#FFFFFF" />
+            <polygon points="15,13 22,27 8,27"  fill="#CE1126" />
+            <polygon points="15,10 16.5,15 21,15 17.5,17.5 19,22 15,19.5 11,22 12.5,17.5 9,15 13.5,15"
+              fill="#FCD116" />
+          </>
+        )}
+        {type === 'jm' && (
+          <>
+            <polygon points="0,0 30,0 15,15"    fill="#009B3A" />
+            <polygon points="0,30 30,30 15,15"  fill="#009B3A" />
+            <polygon points="0,0 15,15 0,30"    fill="#000000" />
+            <polygon points="30,0 15,15 30,30"  fill="#000000" />
+            <line x1="0" y1="0" x2="30" y2="30" stroke="#FED100" strokeWidth="5" />
+            <line x1="30" y1="0" x2="0" y2="30" stroke="#FED100" strokeWidth="5" />
+            <polygon points="0,0 30,0 15,12"    fill="#009B3A" />
+            <polygon points="0,30 30,30 15,18"  fill="#009B3A" />
+            <polygon points="0,0 12,15 0,30"    fill="#000000" />
+            <polygon points="30,0 18,15 30,30"  fill="#000000" />
+          </>
+        )}
+        {type === 'tt' && (
+          <>
+            <rect width="30" height="30" fill="#CE1126" />
+            <polygon points="4,0 16,0 26,30 14,30" fill="#000000" />
+            <polygon points="4,0 7,0 17,30 14,30" fill="#FFFFFF" />
+            <polygon points="13,0 16,0 26,30 23,30" fill="#FFFFFF" />
+          </>
+        )}
+        {type === 'bb' && (
+          <>
+            <rect x="0"  y="0" width="10" height="30" fill="#00267F" />
+            <rect x="10" y="0" width="10" height="30" fill="#FFC726" />
+            <rect x="20" y="0" width="10" height="30" fill="#00267F" />
+            {/* Trident */}
+            <line x1="15" y1="8"  x2="15" y2="22" stroke="#00267F" strokeWidth="1.5" />
+            <line x1="12" y1="8"  x2="12" y2="16" stroke="#00267F" strokeWidth="1.5" />
+            <line x1="18" y1="8"  x2="18" y2="16" stroke="#00267F" strokeWidth="1.5" />
+            <line x1="12" y1="8"  x2="15" y2="12" stroke="#00267F" strokeWidth="1.5" />
+            <line x1="18" y1="8"  x2="15" y2="12" stroke="#00267F" strokeWidth="1.5" />
+          </>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const TEAM_ROWS = [
+  {
+    p1: { n: 0, name: 'Canvasser',       sub: 'Iucter',                   showStatus: false },
+    p2: { n: 1, name: 'Runner',          sub: 'Ivacre',                   showStatus: false },
+    col3: { title: 'Honin Manager',      subtitle: 'Constituencies' },
+  },
+  {
+    p1: { n: 2, name: 'St. Kitts Nevis', sub: 'Online • Last Sync 3m ago', showStatus: true },
+    p2: { n: 3, name: 'Cluster Manager', sub: 'Online • Last Sync 3m ago', showStatus: true },
+    col3: { title: 'Flin Rerarh',        subtitle: 'Rolus' },
+  },
+  {
+    p1: { n: 4, name: 'Runner',          sub: 'Online • Last Sync 3m ago', showStatus: true },
+    p2: { n: 5, name: 'Cluster Manager', sub: 'Online • Last Sync 3m ago', showStatus: true },
+    col3: { title: 'Hopin Manager',      subtitle: 'Oolus' },
+  },
+  {
+    p1: { n: 6, name: 'Splh Party',      sub: 'Online • Last Sync 3m ago', showStatus: true },
+    p2: { n: 7, name: 'Vaicen',          sub: 'Online • Last Sync 3m ago', showStatus: true },
+    col3: { title: 'Hopin Buakger',      subtitle: 'Relus' },
+  },
+  {
+    p1: { n: 8, name: 'PotriY SKNLP',   sub: 'Online • Last Sync 3m ago', showStatus: true },
+    p2: { n: 9, name: 'Colten',          sub: 'Online • Last Sync 3m ago', showStatus: true },
+    col3: { title: 'Png Chiup',          subtitle: 'Condory' },
+  },
+];
+
+const TABLE_ROWS: {
+  flag: FlagType; avatarIds: number[];
+  role: string; turf: string; today: string; status: string;
+}[] = [
+  { flag: 'skn', avatarIds: [0,1,2,3,4], role: 'SKNLP', turf: 'St. Kitts Nevis Labour',       today: '#065.201', status: '2 Mian' },
+  { flag: 'ag',  avatarIds: [5,6,7,8,0], role: 'SKNLP', turf: 'St. Kitts Nevis Labour Party',  today: '#465 202', status: '3 Mian' },
+  { flag: 'jm',  avatarIds: [2,3,4,5,6], role: 'SKNLP', turf: 'St. Kitts Nevis LParty',        today: '#025.203', status: '4 Mian' },
+  { flag: 'tt',  avatarIds: [7,8,9,0,1], role: 'SKNLP', turf: 'Jt. Kitts Nevis Labour Party',  today: '#495 206', status: '2 Mian' },
+  { flag: 'bb',  avatarIds: [3,4,5,6,7], role: 'SKNLP', turf: 'Kitts Nevis Labour Party',      today: '#199.209', status: '2 Mian' },
+];
+
+const TABS = ['All Members', 'Online Now', 'By Role'] as const;
+
+const CARD: React.CSSProperties = {
+  backgroundColor: '#161D2E',
+  borderRadius: 8,
+  border: '1px solid rgba(255,255,255,0.06)',
+};
+
+// ── Page ─────────────────────────────────────────────────────────────────────
+export default function TeamPage() {
+  const [activeTab, setActiveTab] = useState<typeof TABS[number]>('All Members');
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'rgb(11, 19, 32)', fontFamily: "'Inter', sans-serif" }}>
+
+      {/* ── Crimson red header bar ── */}
+      <div style={{
+        background: '#7C1A1A',
+        padding: '15px 24px',
+        display: 'flex', alignItems: 'center',
+      }}>
+        <h1 style={{
+          fontFamily: "'Barlow', sans-serif",
+          fontWeight: 800, fontSize: 22,
+          color: '#FFFFFF', margin: 0,
+          letterSpacing: '0.005em',
+        }}>
+          Team Management &amp; Roles
+        </h1>
+      </div>
+
+      {/* ── Tab bar ── */}
+      <div style={{
+        backgroundColor: '#111827',
+        padding: '0 24px',
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+      }}>
+        {/* Tabs */}
+        <div style={{ display: 'flex' }}>
+          {TABS.map(tab => (
+            <button key={tab} onClick={() => setActiveTab(tab)} style={{
+              padding: '12px 20px 13px',
+              border: 'none', background: 'none', cursor: 'pointer',
+              fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
+              color: activeTab === tab ? '#FFFFFF' : '#6B7280',
+              borderBottom: activeTab === tab
+                ? '2.5px solid #DC2626' : '2.5px solid transparent',
+              transition: 'color 0.15s',
+            }}>
+              {tab}
+            </button>
+          ))}
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-          <div className="relative w-full sm:w-48">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full bg-white border border-slate-200 rounded-lg sm:rounded-xl pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
-              placeholder="Search team..."
-            />
+        {/* Hire button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{
+            width: 30, height: 30, borderRadius: 6,
+            backgroundColor: '#1E2A3E',
+            border: '1px solid rgba(255,255,255,0.12)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="#9CA3AF" strokeWidth="2.2" strokeLinecap="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
           </div>
-          <button onClick={() => setShowAdd(true)} style={{ backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 10, padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, whiteSpace: 'nowrap' }}>
-            <Plus size={13} className="sm:w-[14px] sm:h-[14px]" /> Add New Member
+          <button style={{
+            padding: '7px 18px', borderRadius: 7,
+            border: '1px solid rgba(255,255,255,0.14)',
+            backgroundColor: '#1E2A3E', color: '#E2E8F0',
+            fontSize: 12, fontWeight: 700,
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            Hire Tash
           </button>
         </div>
       </div>
 
-      {/* Stats - Responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {stats.map((s, i) => (
-          <div key={i} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setTab(['all', 'canvassers', 'runners', 'phone_bank'][i] as TabType)}>
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: s.bg }}>
-              <s.icon size={14} className="sm:w-[18px] sm:h-[18px]" style={{ color: s.color }} />
-            </div>
-            <div className="min-w-0">
-              <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8', fontWeight: 500, marginBottom: 2 }} className="truncate">{s.label}</p>
-              <p style={{ fontSize: 'clamp(18px, 4vw, 22px)', fontWeight: 800, color: '#0F172A' }}>{s.value}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ── Main content ── */}
+      <div style={{ padding: '14px 24px', display: 'flex', flexDirection: 'column', gap: 12 }}>
 
-      {/* Tabs - Responsive */}
-      <div className="flex flex-wrap gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit max-w-full overflow-x-auto">
-        {([
-          { id: 'all', label: 'All Members' },
-          { id: 'canvassers', label: 'Canvassers' },
-          { id: 'runners', label: 'Runners' },
-          { id: 'phone_bank', label: 'Phone Bank' },
-        ] as { id: TabType; label: string }[]).map(t => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className="whitespace-nowrap"
-            style={{
-              padding: 'clamp(5px, 1.5vw, 7px) clamp(12px, 3vw, 18px)',
-              borderRadius: 8,
-              border: 'none',
-              fontSize: 'clamp(11px, 2.5vw, 13px)',
-              fontWeight: 600,
-              cursor: 'pointer',
-              backgroundColor: tab === t.id ? 'var(--tenant-primary)' : 'transparent',
-              color: tab === t.id ? 'white' : '#64748B',
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+        {/* ── Team member grid — 5 rows × 4 cols ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {TEAM_ROWS.map((row, ri) => (
+            <div key={ri} style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr 1fr',
+              gap: 4,
+              minHeight: 65,
+              maxHeight: 65,
+            }}>
+              {/* ── Person card 1 ── */}
+              <div style={{ ...CARD, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 9, overflow: 'hidden' }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <PersonAvatar n={row.p1.n} sz={42} />
+                  <div style={{
+                    position: 'absolute', bottom: 0, right: 0,
+                    width: 10, height: 10, borderRadius: '50%',
+                    backgroundColor: '#22C55E',
+                    border: '2px solid #161D2E',
+                  }} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{
+                    fontSize: 14, fontWeight: 700, color: '#FFFFFF',
+                    margin: 0, lineHeight: 1.3,
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                  }}>{row.p1.name}</p>
+                  <p style={{
+                    fontSize: 11,
+                    color: row.p1.showStatus ? '#FFFFFF' : '#8892A4',
+                    margin: 0, lineHeight: 1.3,
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                    display: 'flex', alignItems: 'center', gap: 4,
+                  }}>
+                    {row.p1.showStatus && (
+                      <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', backgroundColor: '#22C55E', flexShrink: 0 }} />
+                    )}
+                    {row.p1.sub}
+                  </p>
+                </div>
+              </div>
 
-      {/* Team Grid - Responsive */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-        {filtered.map((member, idx) => {
-          const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length];
-          const roleStyle = ROLE_COLORS[member.role] || { bg: '#F8FAFC', color: '#64748B' };
-          return (
-            <div key={member.id} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3 sm:mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-                    style={{ backgroundColor: avatarColor }}
-                  >
-                    {member.avatar}
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }} className="truncate">{member.name}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, padding: '2px 8px', borderRadius: 6, backgroundColor: roleStyle.bg, color: roleStyle.color }} className="whitespace-nowrap">
-                        {member.role}
-                      </span>
+              {/* ── Person card 2 ── */}
+              <div style={{ ...CARD, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 9, overflow: 'hidden' }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <PersonAvatar n={row.p2.n} sz={42} />
+                  <div style={{
+                    position: 'absolute', bottom: 0, right: 0,
+                    width: 10, height: 10, borderRadius: '50%',
+                    backgroundColor: '#22C55E',
+                    border: '2px solid #161D2E',
+                  }} />
+                </div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{
+                    fontSize: 14, fontWeight: 700, color: '#FFFFFF',
+                    margin: 0, lineHeight: 1.3,
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                  }}>{row.p2.name}</p>
+                  <p style={{
+                    fontSize: 11,
+                    color: row.p2.showStatus ? '#FFFFFF' : '#8892A4',
+                    margin: 0, lineHeight: 1.3,
+                    whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+                    display: 'flex', alignItems: 'center', gap: 4,
+                  }}>
+                    {row.p2.showStatus && (
+                      <span style={{ display: 'inline-block', width: 5, height: 5, borderRadius: '50%', backgroundColor: '#22C55E', flexShrink: 0 }} />
+                    )}
+                    {row.p2.sub}
+                  </p>
+                </div>
+              </div>
+
+              {/* ── Title / role card (no avatar) ── */}
+              <div style={{
+                ...CARD, padding: '10px 14px',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                overflow: 'hidden',
+              }}>
+                <p style={{ fontSize: 14, fontWeight: 700, color: '#FFFFFF', margin: 0, lineHeight: 1.3 }}>
+                  {row.col3.title}
+                </p>
+                <p style={{ fontSize: 12, color: '#8892A4', margin: 0, lineHeight: 1.3 }}>
+                  {row.col3.subtitle}
+                </p>
+              </div>
+
+              {/* ── Status + Mini Map card ── */}
+              <div style={{
+                ...CARD, padding: 0,
+                display: 'flex', alignItems: 'stretch', overflow: 'hidden',
+                height: 65,
+              }}>
+                <div style={{
+                  flex: 1, padding: '10px 12px',
+                  display: 'flex', alignItems: 'center',
+                }}>
+                  <p style={{
+                    fontSize: 11, color: '#FFFFFF',
+                    margin: 0, fontWeight: 400, lineHeight: 1.3,
+                  }}>
+                    Online • Last Sync 3m ago
+                  </p>
+                </div>
+                <MiniMap seed={ri} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Panic Button Alert ── */}
+        <div style={{
+          backgroundColor: '#F97316',
+          borderRadius: 8, padding: '13px 20px',
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <div style={{
+            width: 12, height: 12, borderRadius: '50%',
+            backgroundColor: '#CC2200', flexShrink: 0,
+          }} />
+          <p style={{ fontSize: 14, fontWeight: 700, color: 'white', margin: 0 }}>
+            Panic Button Alerts:&nbsp;&nbsp;1 Active
+          </p>
+        </div>
+
+        {/* ── Data Table ── */}
+        <div style={{
+          backgroundColor: '#161D2E',
+          borderRadius: 10,
+          border: '1px solid rgba(255,255,255,0.07)',
+          overflow: 'hidden',
+        }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#0F172A' }}>
+                {['Name', 'Role', 'Assigned Turf', 'Voters Contacted Today', 'Tracking Status'].map(h => (
+                  <th key={h} style={{
+                    padding: '11px 16px', textAlign: 'left',
+                    fontSize: 11, fontWeight: 700, color: '#64748B',
+                    textTransform: 'uppercase', letterSpacing: '0.05em',
+                  }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {TABLE_ROWS.map((r, i) => (
+                <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+
+                  {/* Name: flag + overlapping face avatars */}
+                  <td style={{ padding: '10px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <FlagCircle type={r.flag} />
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        {r.avatarIds.map((id, j) => (
+                          <div key={j} style={{
+                            marginLeft: j > 0 ? -9 : 0,
+                            borderRadius: '50%',
+                            border: '2px solid #161D2E',
+                            flexShrink: 0,
+                          }}>
+                            <PersonAvatar n={id} sz={28} />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: member.status === 'Active' ? '#16A34A' : '#94A3B8' }} />
-                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: member.status === 'Active' ? '#16A34A' : '#94A3B8', fontWeight: 500 }}>{member.status}</span>
-                  <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: 4 }}>
-                    <MoreVertical size={12} className="sm:w-[14px] sm:h-[14px]" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mb-3 sm:mb-4" style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>
-                <span className="truncate">📍 {member.constituency}</span>
-                <span className="truncate">📞 {member.phone}</span>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <button style={{ flex: 1, backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <UserCog size={11} className="sm:w-[12px] sm:h-[12px]" /> Assign
-                </button>
-                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <MessageSquare size={11} className="sm:w-[12px] sm:h-[12px]" /> Message
-                </button>
-                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 8, padding: '8px 0', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                  <BarChart2 size={11} className="sm:w-[12px] sm:h-[12px]" /> Performance
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+                  </td>
 
-      {/* Add New Team Member Button at Bottom - Responsive */}
-      <div className="flex justify-center pt-2">
-        <button onClick={() => setShowAdd(true)} style={{ backgroundColor: 'var(--tenant-primary)', color: 'white', border: 'none', borderRadius: 12, padding: 'clamp(10px, 2.5vw, 12px) clamp(24px, 6vw, 32px)', fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Plus size={14} className="sm:w-[16px] sm:h-[16px]" /> Add New Team Member
-        </button>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>
+                    {r.role}
+                  </td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
+                    {r.turf}
+                  </td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
+                    {r.today}
+                  </td>
+                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#E2E8F0', fontWeight: 500 }}>
+                    {r.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   );

@@ -3,68 +3,242 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/store';
 import { useIsDesktop } from '@/hooks/useIsDesktop';
+import { useState, useEffect } from 'react';
 import {
-  LayoutDashboard, Users, Megaphone, Map, Navigation, Car,
-  Target, Mail, DollarSign, CalendarDays, ClipboardList,
-  BarChart3, Settings, LogOut, BellRing, ShieldCheck, Brain,
-  UserCog, Smartphone, HelpCircle, Palette, Phone, Signpost,
-  ChevronRight,
+  LayoutDashboard, Users, Map, BarChart2, DollarSign,
+  MessageSquare, UsersRound, ShieldCheck, Settings, Bell,
+  LogOut, Megaphone, Navigation, Car, Target, Phone,
+  Sparkles, FileBarChart, Calendar, ChevronDown, ChevronRight, HelpCircle,
 } from 'lucide-react';
-import { useState } from 'react';
 import { TenantTheme } from '@/lib/tenantTheme';
 
-const navItems = [
-  { href: '/dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
-  { href: '/campaigns',     label: 'Campaigns',       icon: Megaphone },
-  { href: '/voters',        label: 'Voters',          icon: Users },
-  { href: '/canvassing',    label: 'Canvassing',      icon: Map },
-  { href: '/tracking',      label: 'Live Tracking',   icon: Navigation },
-  { href: '/runners',       label: 'Runners',         icon: Car },
-  { href: '/gotv',          label: 'GOTV Command',    icon: Target },
-  { href: '/phone-bank',    label: 'Phone Bank',      icon: Phone },
-  { href: '/outdoor-agent', label: 'Outdoor Agent',   icon: Signpost },
-  { href: '/team',          label: 'Team',            icon: UserCog },
+// ─── Nav structure ────────────────────────────────────────────────────────────
+
+interface SubItem {
+  href: string;
+  label: string;
+}
+
+interface NavItem {
+  key: string;
+  href?: string;           // direct link (no dropdown)
+  label: string;
+  icon: React.ElementType;
+  children?: SubItem[];    // dropdown items
+}
+
+const NAV_ITEMS: NavItem[] = [
   {
-    href: '/communications', label: 'Communications', icon: Mail,
+    key: 'dashboard',
+    href: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+  },
+  {
+    key: 'campaigns',
+    href: '/campaigns',
+    label: 'Campaigns',
+    icon: Megaphone,
+  },
+  {
+    key: 'voters',
+    label: 'Voters',
+    icon: Users,
     children: [
-      { href: '/communications/email',    label: 'Email' },
-      { href: '/communications/sms',      label: 'SMS' },
-      { href: '/communications/whatsapp', label: 'WhatsApp' },
+      { href: '/voters',            label: 'Voter List' },
+      { href: '/voters/import',     label: 'Import Voters' },
+      { href: '/voters/targeting',  label: 'Voter Targeting' },
+      { href: '/voters/segments',   label: 'Segments' },
     ],
   },
-  { href: '/fundraising',   label: 'Fundraising',     icon: DollarSign },
-  { href: '/events',        label: 'Events',          icon: CalendarDays },
-  { href: '/polling',       label: 'Polling',         icon: ClipboardList },
-  { href: '/ai',            label: 'AI Insights',     icon: Brain },
   {
-    href: '/reports', label: 'Reports', icon: BarChart3,
+    key: 'canvassing',
+    label: 'Canvassing',
+    icon: Map,
     children: [
-      { href: '/reports/performance', label: 'Performance' },
-      { href: '/reports/compliance',  label: 'Compliance' },
+      { href: '/canvassing',           label: 'Field Operations' },
+      { href: '/canvassing/lists',     label: 'Walk Lists' },
+      { href: '/canvassing/turf',      label: 'Turf Management' },
+      { href: '/canvassing/analytics', label: 'Canvassing Analytics' },
     ],
   },
-  { href: '/compliance',    label: 'Data Compliance', icon: ShieldCheck },
-  { href: '/mobile-apps',   label: 'Mobile Apps',     icon: Smartphone },
-  { href: '/notifications', label: 'Notifications',   icon: BellRing },
-  { href: '/branding',      label: 'Party Profile',   icon: Palette },
-  { href: '/help',          label: 'Help & Support',  icon: HelpCircle },
-  { href: '/settings',      label: 'Settings',        icon: Settings },
+  {
+    key: 'tracking',
+    label: 'Live Tracking',
+    icon: Navigation,
+    children: [
+      { href: '/tracking',       label: 'Live Map' },
+      { href: '/tracking/panic', label: 'Panic Alerts' },
+    ],
+  },
+  {
+    key: 'runners',
+    href: '/runners',
+    label: 'Runners',
+    icon: Car,
+  },
+  {
+    key: 'gotv',
+    label: 'GOTV Command',
+    icon: Target,
+    children: [
+      { href: '/gotv',                 label: 'Election Day Live' },
+      { href: '/gotv/outdoor-agents',  label: 'Outdoor Agents' },
+      { href: '/gotv/turnout',         label: 'Turnout Dashboard' },
+    ],
+  },
+  {
+    key: 'phone-bank',
+    href: '/phone-bank',
+    label: 'Phone Bank',
+    icon: Phone,
+  },
+  {
+    key: 'communications',
+    label: 'Communications',
+    icon: MessageSquare,
+    children: [
+      { href: '/communications/email',            label: 'Email' },
+      { href: '/communications/sms',              label: 'SMS' },
+      { href: '/communications/whatsapp',         label: 'WhatsApp' },
+      { href: '/communications/social',           label: 'Social Media' },
+      { href: '/communications/push',             label: 'Push Notifications' },
+      { href: '/communications/social-listening', label: 'Social Listening' },
+    ],
+  },
+  {
+    key: 'fundraising',
+    label: 'Fundraising',
+    icon: DollarSign,
+    children: [
+      { href: '/fundraising',               label: 'Dashboard' },
+      { href: '/fundraising/donors',        label: 'Donors' },
+      { href: '/fundraising/events',        label: 'Events' },
+      { href: '/fundraising/merchandise',   label: 'Merchandise' },
+      { href: '/fundraising/expenditure',   label: 'Expenditure' },
+    ],
+  },
+  {
+    key: 'polling',
+    label: 'Polling',
+    icon: BarChart2,
+    children: [
+      { href: '/polling',          label: 'Live Polls' },
+      { href: '/polling/builder',  label: 'Survey Builder' },
+      { href: '/polling/history',  label: 'Historical Data' },
+    ],
+  },
+  {
+    key: 'ai',
+    label: 'AI Insights',
+    icon: Sparkles,
+    children: [
+      { href: '/ai-insights',                 label: 'Campaign Insights' },
+      { href: '/ai-insights/sentiment',      label: 'Sentiment Analysis' },
+      { href: '/ai-insights/predictions',    label: 'Voter Predictions' },
+      { href: '/ai-insights/talking-points', label: 'Talking Points' },
+    ],
+  },
+  {
+    key: 'reports',
+    label: 'Reports',
+    icon: FileBarChart,
+    children: [
+      { href: '/reports',               label: 'Party Performance' },
+      { href: '/reports/analytics',    label: 'Campaign Analytics' },
+      { href: '/reports/fundraising',  label: 'Fundraising Reports' },
+      { href: '/reports/leaderboards', label: 'Leaderboards' },
+    ],
+  },
+  {
+    key: 'compliance',
+    label: 'Compliance',
+    icon: ShieldCheck,
+    children: [
+      { href: '/compliance',           label: 'Data Privacy' },
+      { href: '/compliance/election',  label: 'Election Compliance' },
+      { href: '/compliance/exports',   label: 'Export Requests' },
+    ],
+  },
+  {
+    key: 'team',
+    label: 'Team',
+    icon: UsersRound,
+    children: [
+      { href: '/team',                  label: 'All Members' },
+      { href: '/team/canvassers',       label: 'Canvassers' },
+      { href: '/team/runners',          label: 'Runners' },
+      { href: '/team/outdoor-agents',   label: 'Outdoor Agents' },
+      { href: '/team/mobile-stats',     label: 'Mobile App Stats' },
+    ],
+  },
+  {
+    key: 'events',
+    href: '/events',
+    label: 'Calendar & Events',
+    icon: Calendar,
+  },
+  {
+    key: 'notifications',
+    href: '/notifications',
+    label: 'Notifications',
+    icon: Bell,
+  },
+  {
+    key: 'help',
+    href: '/help',
+    label: 'Help & Support',
+    icon: HelpCircle,
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
+    icon: Settings,
+    children: [
+      { href: '/settings',               label: 'Party Profile' },
+      { href: '/settings/branding',      label: 'Branding' },
+      { href: '/settings/features',      label: 'Feature Flags' },
+      { href: '/settings/roles',         label: 'Team & Roles' },
+      { href: '/settings/integrations',  label: 'API & Integrations' },
+    ],
+  },
 ];
 
+// ─── Helper: which dropdown key contains the current pathname ─────────────────
+function getActiveDropdownKey(pathname: string): string | null {
+  for (const item of NAV_ITEMS) {
+    if (item.children) {
+      for (const child of item.children) {
+        if (pathname === child.href || pathname.startsWith(child.href + '/')) {
+          return item.key;
+        }
+      }
+    }
+  }
+  return null;
+}
+
+// ─── Props ────────────────────────────────────────────────────────────────────
 interface TenantSidebarProps {
   theme: TenantTheme;
   onClose: () => void;
 }
 
-export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const { user, logout, branding } = useAuthStore();
-  const isDesktop = useIsDesktop();
+// ─── Component ────────────────────────────────────────────────────────────────
+export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
+  const pathname   = usePathname();
+  const router     = useRouter();
+  const { user, logout } = useAuthStore();
+  const isDesktop  = useIsDesktop();
 
-  const logoUrl = branding?.logo_url;
-  const partyName = branding?.name || theme.name;
-  const [expanded, setExpanded] = useState<string[]>(['/communications', '/reports']);
+  // Initialise open dropdown to whichever section the current page belongs to
+  const [openKey, setOpenKey] = useState<string | null>(() => getActiveDropdownKey(pathname));
+
+  // Keep dropdown in sync if pathname changes (e.g. browser back/forward)
+  useEffect(() => {
+    const active = getActiveDropdownKey(pathname);
+    if (active) setOpenKey(active);
+  }, [pathname]);
 
   const storedUser = typeof window !== 'undefined'
     ? (() => { try { return JSON.parse(localStorage.getItem('c365_user') || '{}'); } catch { return {}; } })()
@@ -72,15 +246,11 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
   const storedRole = typeof window !== 'undefined'
     ? (localStorage.getItem('c365_role') || 'general_secretary')
     : 'general_secretary';
-  const displayName = storedUser?.name || user?.name || 'General Secretary';
-
-  const primaryColor = theme.primary || '#2563EB';
-  const sidebarBg = '#0F172A';
+  const displayName = storedUser?.name || user?.name || 'Marcus Liburd';
 
   const roleLabel: Record<string, string> = {
     general_secretary: 'General Secretary',
     campaign_manager:  'Campaign Manager',
-    campaign_director: 'Campaign Director',
     region_manager:    'Region Manager',
     branch_manager:    'Branch Manager',
     data_manager:      'Data Manager',
@@ -89,186 +259,223 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
     canvasser:         'Canvasser',
     candidate:         'Political Candidate',
     outdoor_agent:     'Outdoor Agent',
-    field_organizer:   'Field Organizer',
     super_admin:       'Super Admin',
   };
 
-  const handleLogout = () => { logout(); router.push('/login'); };
+  const handleLogout   = () => { logout(); router.push('/login'); };
   const handleNavClick = () => { if (!isDesktop) onClose(); };
-  const toggleExpand = (h: string) =>
-    setExpanded(p => p.includes(h) ? p.filter(x => x !== h) : [...p, h]);
+
+  const PRIMARY    = '#DC143C';
+  const SIDEBAR_BG = '#0F172A';
+
+  // Is a direct-link item currently active?
+  const isDirectActive = (href: string) =>
+    href === '/dashboard'
+      ? (pathname === '/dashboard' || pathname === '/')
+      : pathname === href || pathname.startsWith(href + '/');
+
+  // Is a child route currently active?
+  const isChildActive = (childHref: string) =>
+    pathname === childHref || pathname.startsWith(childHref + '/');
+
+  // Is a parent dropdown's group active (any child matches)?
+  const isGroupActive = (item: NavItem) =>
+    item.children?.some(c => isChildActive(c.href)) ?? false;
+
+  const toggleDropdown = (key: string) => {
+    setOpenKey(prev => (prev === key ? null : key));
+  };
 
   return (
-    <div style={{ height: '100%', backgroundColor: sidebarBg, display: 'flex', flexDirection: 'column', color: '#E2E8F0' }}>
-      {/* Simple Branding - Just Canvass */}
-      <div style={{ padding: '20px 16px', borderBottom: '1px solid #1E293B', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ 
-            width: 36, 
-            height: 36, 
-            borderRadius: 10, 
-            backgroundColor: primaryColor, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            flexShrink: 0, 
-            overflow: 'hidden' 
-          }}>
-            {logoUrl
-              ? <img src={logoUrl} alt={partyName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              : <span style={{ color: 'white', fontSize: 14, fontWeight: 900 }}>
-                  {partyName.slice(0, 2).toUpperCase()}
-                </span>}
-          </div>
-          <p style={{ color: 'white', fontWeight: 700, fontSize: 16, margin: 0 }}>{partyName}</p>
-        </div>
+    <div style={{
+      height: '100%',
+      backgroundColor: SIDEBAR_BG,
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: "'Inter', sans-serif",
+      userSelect: 'none',
+    }}>
+
+      {/* ── Logo ── */}
+      <div style={{
+        padding: '22px 20px 18px',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        flexShrink: 0,
+      }}>
+        <p style={{
+          fontFamily: "'Barlow', sans-serif",
+          fontWeight: 900,
+          fontSize: 34,
+          color: '#FFFFFF',
+          margin: 0,
+          lineHeight: 1,
+          letterSpacing: '0.03em',
+        }}>
+          SKNLP
+        </p>
+        <p style={{
+          fontFamily: "'Barlow', sans-serif",
+          fontWeight: 700,
+          fontSize: 15,
+          color: PRIMARY,
+          margin: '3px 0 0',
+          letterSpacing: '0.02em',
+        }}>
+          Campaign 365
+        </p>
       </div>
 
-      {/* User Profile - Just General Secretary SKNLP with role */}
-      <div style={{ padding: '16px 16px 20px', borderBottom: '1px solid #1E293B', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ 
-            width: 40, 
-            height: 40, 
-            borderRadius: '50%', 
-            backgroundColor: primaryColor, 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            fontSize: 15, 
-            fontWeight: 700, 
-            color: 'white', 
-            flexShrink: 0 
-          }}>
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ color: 'white', fontSize: 13, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {displayName}
-            </p>
-            <p style={{ color: '#64748B', fontSize: 11, margin: '2px 0 0' }}>
-              {roleLabel[storedRole] || storedRole}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* ── Nav ── */}
+      <nav style={{
+        flex: 1,
+        padding: '10px 10px',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        scrollbarWidth: 'none',
+      }}>
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const hasChildren = !!item.children?.length;
+          const isOpen = openKey === item.key;
+          const groupActive = hasChildren && isGroupActive(item);
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'thin' }}>
-        {navItems.map(({ href, label, icon: Icon, children }) => {
-          const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href));
-          const isExpanded = expanded.includes(href);
-          const hasChildren = !!(children?.length);
+          // ── Direct link (no children) ─────────────────────────────────────
+          if (!hasChildren && item.href) {
+            const active = isDirectActive(item.href);
+            return (
+              <Link
+                key={item.key}
+                href={item.href}
+                onClick={handleNavClick}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 11,
+                  padding: '9px 12px',
+                  borderRadius: 8,
+                  textDecoration: 'none',
+                  fontSize: 14,
+                  fontWeight: active ? 600 : 400,
+                  marginBottom: 2,
+                  transition: 'all 0.15s ease',
+                  ...(active
+                    ? { backgroundColor: PRIMARY, color: '#FFFFFF' }
+                    : { color: '#94A3B8', backgroundColor: 'transparent' }),
+                }}
+                onMouseEnter={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(220,20,60,0.10)';
+                    (e.currentTarget as HTMLAnchorElement).style.color = '#E2E8F0';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!active) {
+                    (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent';
+                    (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8';
+                  }
+                }}
+              >
+                <Icon size={16} style={{ flexShrink: 0 }} />
+                <span style={{ flex: 1 }}>{item.label}</span>
+              </Link>
+            );
+          }
 
+          // ── Dropdown parent + children ────────────────────────────────────
           return (
-            <div key={href} style={{ marginBottom: 2 }}>
-              {hasChildren ? (
-                <button
-                  onClick={() => toggleExpand(href)}
-                  style={{ 
-                    width: '100%', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 12, 
-                    padding: '10px 12px', 
-                    borderRadius: 10, 
-                    border: 'none', 
-                    cursor: 'pointer', 
-                    backgroundColor: active ? `${primaryColor}20` : 'transparent', 
-                    color: active ? primaryColor : '#94A3B8', 
-                    textAlign: 'left',
-                    transition: 'all 0.2s ease'
-                  }}
-                  onMouseEnter={e => { 
-                    if (!active) { 
-                      e.currentTarget.style.backgroundColor = '#1E293B'; 
-                      e.currentTarget.style.color = '#F1F5F9'; 
-                    } 
-                  }}
-                  onMouseLeave={e => { 
-                    if (!active) { 
-                      e.currentTarget.style.backgroundColor = 'transparent'; 
-                      e.currentTarget.style.color = '#94A3B8'; 
-                    } 
-                  }}
-                >
-                  <Icon size={18} style={{ flexShrink: 0 }} />
-                  <span style={{ flex: 1, fontSize: 13, fontWeight: 500 }}>{label}</span>
-                  <ChevronRight size={14} style={{ flexShrink: 0, transition: 'transform 0.2s', transform: isExpanded ? 'rotate(90deg)' : 'none' }} />
-                </button>
-              ) : (
-                <Link
-                  href={href}
-                  onClick={handleNavClick}
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 12, 
-                    padding: '10px 12px', 
-                    borderRadius: 10, 
-                    textDecoration: 'none', 
-                    fontSize: 13, 
-                    fontWeight: 500,
-                    transition: 'all 0.2s ease',
-                    ...(active 
-                      ? { backgroundColor: primaryColor, color: 'white' } 
-                      : { color: '#94A3B8' })
-                  }}
-                  onMouseEnter={e => { 
-                    if (!active) { 
-                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E293B'; 
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#F1F5F9'; 
-                    } 
-                  }}
-                  onMouseLeave={e => { 
-                    if (!active) { 
-                      (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; 
-                      (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8'; 
-                    } 
-                  }}
-                >
-                  <Icon size={18} style={{ flexShrink: 0 }} />
-                  <span>{label}</span>
-                </Link>
-              )}
+            <div key={item.key} style={{ marginBottom: 2 }}>
+              {/* Parent row */}
+              <button
+                onClick={() => toggleDropdown(item.key)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 11,
+                  padding: '9px 12px',
+                  borderRadius: 8,
+                  width: '100%',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: groupActive ? 600 : 400,
+                  fontFamily: 'inherit',
+                  transition: 'all 0.15s ease',
+                  ...(groupActive
+                    ? { backgroundColor: 'rgba(220,20,60,0.18)', color: '#FFFFFF' }
+                    : { color: '#94A3B8', backgroundColor: 'transparent' }),
+                }}
+                onMouseEnter={e => {
+                  if (!groupActive) {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(220,20,60,0.10)';
+                    (e.currentTarget as HTMLButtonElement).style.color = '#E2E8F0';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!groupActive) {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+                    (e.currentTarget as HTMLButtonElement).style.color = '#94A3B8';
+                  }
+                }}
+              >
+                <Icon size={16} style={{ flexShrink: 0 }} />
+                <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
+                {isOpen
+                  ? <ChevronDown size={13} style={{ flexShrink: 0, opacity: 0.6 }} />
+                  : <ChevronRight size={13} style={{ flexShrink: 0, opacity: 0.6 }} />
+                }
+              </button>
 
-              {hasChildren && isExpanded && (
-                <div style={{ paddingLeft: 38, marginTop: 4, marginBottom: 4 }}>
-                  {children!.map(child => {
-                    const ca = pathname === child.href || pathname.startsWith(child.href);
+              {/* Children */}
+              {isOpen && (
+                <div style={{
+                  marginLeft: 16,
+                  marginTop: 2,
+                  borderLeft: '1px solid rgba(220,20,60,0.25)',
+                  paddingLeft: 8,
+                }}>
+                  {item.children!.map(child => {
+                    const childActive = isChildActive(child.href);
                     return (
-                      <Link 
-                        key={child.href} 
-                        href={child.href} 
+                      <Link
+                        key={child.href}
+                        href={child.href}
                         onClick={handleNavClick}
-                        style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: 10, 
-                          padding: '8px 12px', 
-                          borderRadius: 8, 
-                          textDecoration: 'none', 
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '7px 10px',
+                          borderRadius: 6,
+                          textDecoration: 'none',
                           fontSize: 12,
-                          transition: 'all 0.2s ease',
-                          ...(ca 
-                            ? { backgroundColor: primaryColor, color: 'white' } 
-                            : { color: '#64748B' })
+                          fontWeight: childActive ? 600 : 400,
+                          marginBottom: 1,
+                          transition: 'all 0.15s ease',
+                          ...(childActive
+                            ? { backgroundColor: PRIMARY, color: '#FFFFFF' }
+                            : { color: '#94A3B8', backgroundColor: 'transparent' }),
                         }}
-                        onMouseEnter={e => { 
-                          if (!ca) { 
-                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1E293B'; 
-                            (e.currentTarget as HTMLAnchorElement).style.color = '#F1F5F9'; 
-                          } 
+                        onMouseEnter={e => {
+                          if (!childActive) {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'rgba(220,20,60,0.10)';
+                            (e.currentTarget as HTMLAnchorElement).style.color = '#E2E8F0';
+                          }
                         }}
-                        onMouseLeave={e => { 
-                          if (!ca) { 
-                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent'; 
-                            (e.currentTarget as HTMLAnchorElement).style.color = '#64748B'; 
-                          } 
+                        onMouseLeave={e => {
+                          if (!childActive) {
+                            (e.currentTarget as HTMLAnchorElement).style.backgroundColor = 'transparent';
+                            (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8';
+                          }
                         }}
                       >
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'currentColor', opacity: 0.6, flexShrink: 0 }} />
-                        <span>{child.label}</span>
+                        <span style={{
+                          width: 5,
+                          height: 5,
+                          borderRadius: '50%',
+                          backgroundColor: childActive ? '#FFFFFF' : '#475569',
+                          flexShrink: 0,
+                          marginRight: 8,
+                        }} />
+                        {child.label}
                       </Link>
                     );
                   })}
@@ -279,36 +486,50 @@ export function TenantSidebar({ theme, onClose }: TenantSidebarProps) {
         })}
       </nav>
 
-      {/* Logout */}
-      <div style={{ padding: '12px 8px', borderTop: '1px solid #1E293B', flexShrink: 0 }}>
-        <button 
+      {/* ── User ── */}
+      <div style={{
+        padding: '12px 10px 14px',
+        borderTop: '1px solid rgba(255,255,255,0.06)',
+        flexShrink: 0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 12px', marginBottom: 4 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: '50%',
+            backgroundColor: PRIMARY,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 13, fontWeight: 700, color: 'white', flexShrink: 0,
+          }}>
+            {displayName.charAt(0).toUpperCase()}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ color: '#E2E8F0', fontSize: 12, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {displayName}
+            </p>
+            <p style={{ color: '#475569', fontSize: 10, margin: '1px 0 0' }}>
+              {roleLabel[storedRole] || storedRole}
+            </p>
+          </div>
+        </div>
+        <button
           onClick={handleLogout}
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 12, 
-            padding: '10px 12px', 
-            width: '100%', 
-            borderRadius: 10, 
-            border: 'none', 
-            background: 'none', 
-            cursor: 'pointer', 
-            color: '#94A3B8', 
-            fontSize: 13, 
-            fontWeight: 500,
-            transition: 'all 0.2s ease'
+          style={{
+            display: 'flex', alignItems: 'center', gap: 11,
+            padding: '8px 12px', width: '100%', borderRadius: 8,
+            border: 'none', background: 'none', cursor: 'pointer',
+            color: '#64748B', fontSize: 13, fontWeight: 500,
+            fontFamily: 'inherit', transition: 'all 0.15s',
           }}
-          onMouseEnter={e => { 
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#1E293B'; 
-            (e.currentTarget as HTMLButtonElement).style.color = '#F1F5F9'; 
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.05)';
+            (e.currentTarget as HTMLButtonElement).style.color = '#E2E8F0';
           }}
-          onMouseLeave={e => { 
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; 
-            (e.currentTarget as HTMLButtonElement).style.color = '#94A3B8'; 
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent';
+            (e.currentTarget as HTMLButtonElement).style.color = '#64748B';
           }}
         >
-          <LogOut size={18} style={{ flexShrink: 0 }} />
-          <span>Logout</span>
+          <LogOut size={15} style={{ flexShrink: 0 }} />
+          <span>Log Out</span>
         </button>
       </div>
     </div>

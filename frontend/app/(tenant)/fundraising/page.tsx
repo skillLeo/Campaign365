@@ -1,232 +1,435 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { api } from '@/lib/api';
-import { Plus, DollarSign, Users, TrendingUp, Send, Download, Eye, Edit2, Trash2, X } from 'lucide-react';
-import { formatCurrency } from '@/lib/utils';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, ResponsiveContainer, Cell } from 'recharts';
 
-const lineData = [
-  { month: 'May', amount: 18000 },
-  { month: 'Jun', amount: 24000 },
-  { month: 'Jul', amount: 21000 },
-  { month: 'Aug', amount: 32000 },
-  { month: 'Sep', amount: 28000 },
-  { month: 'Oct', amount: 38000 },
+const DONOR_CRM = [
+  { name: 'Appor/10agn', amount: '$509pm', date: '00pm', constituency: 'Constifivity' },
+  { name: 'Appor/11agn', amount: '$40ppm',  date: '00pm', constituency: 'Constifivity' },
+  { name: 'Appor/11agn', amount: '$56ppm',  date: '00pm', constituency: 'Constifivity' },
+  { name: 'Appor/11agn', amount: '$20ppm',  date: '00pm', constituency: 'Constifivity' },
 ];
 
-const DONORS = [
-  { id: 1, name: 'Richard Morris', amount: 8500, date: 'Oct 5', method: 'Stripe', status: 'Paid' },
-  { id: 2, name: 'Sandra Clarke', amount: 5000, date: 'Oct 4', method: 'Cheque', status: 'Paid' },
-  { id: 3, name: 'James Brown', amount: 3200, date: 'Oct 3', method: 'Cash', status: 'Paid' },
-  { id: 4, name: 'Michelle Thompson', amount: 2800, date: 'Oct 2', method: 'Stripe', status: 'Overdue' },
-  { id: 5, name: 'Devon Williams', amount: 1500, date: 'Oct 1', method: 'Powertranz', status: 'Paid' },
-  { id: 6, name: 'Patricia Davis', amount: 1200, date: 'Sep 30', method: 'Cash', status: 'Paid' },
+const BAR_DATA = [
+  { x: 1,  v: 18,  trend: 22  },
+  { x: 2,  v: 38,  trend: 33  },
+  { x: 3,  v: 52,  trend: 43  },
+  { x: 4,  v: 33,  trend: 53  },
+  { x: 5,  v: 68,  trend: 62  },
+  { x: 8,  v: 78,  trend: 76  },
+  { x: 9,  v: 108, trend: 100 },
+  { x: 10, v: 148, trend: 108 },
 ];
+
+/* Gold glowing dot for the trend line — highlight at x=9 */
+function TrendDot(props: any) {
+  const { cx, cy, index } = props;
+  if (!cx || !cy) return null;
+  if (index === 6) { // x=9
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={14} fill="#FFD700" fillOpacity={0.18} />
+        <circle cx={cx} cy={cy} r={9}  fill="#FFD700" fillOpacity={0.35} />
+        <circle cx={cx} cy={cy} r={6}  fill="#FFD700" />
+        <circle cx={cx} cy={cy} r={3}  fill="white" />
+      </g>
+    );
+  }
+  return null;
+}
+
+/* Flying dollar bills SVG illustration */
+function FlyingMoney() {
+  return (
+    <svg viewBox="0 0 220 160" width="220" height="160" style={{ display: 'block' }}>
+      {/* Bill 1 — center, slight tilt */}
+      <g transform="rotate(-15, 110, 80)">
+        <rect x="60" y="55" width="80" height="40" rx="4" fill="#1A7A2E" stroke="#2E9E42" strokeWidth="1"/>
+        <rect x="65" y="60" width="70" height="30" rx="2" fill="none" stroke="#2E9E42" strokeWidth="0.5" opacity="0.5"/>
+        <text x="100" y="79" textAnchor="middle" fill="#98F5A0" fontSize="11" fontWeight="bold">$100</text>
+        <circle cx="76" cy="75" r="6" fill="none" stroke="#2E9E42" strokeWidth="0.8"/>
+        <circle cx="124" cy="75" r="6" fill="none" stroke="#2E9E42" strokeWidth="0.8"/>
+      </g>
+      {/* Bill 2 — top right, more tilt */}
+      <g transform="rotate(12, 155, 45)">
+        <rect x="115" y="20" width="72" height="36" rx="3" fill="#1A7A2E" stroke="#2E9E42" strokeWidth="1"/>
+        <rect x="119" y="24" width="64" height="28" rx="2" fill="none" stroke="#2E9E42" strokeWidth="0.5" opacity="0.5"/>
+        <text x="151" y="41" textAnchor="middle" fill="#98F5A0" fontSize="10" fontWeight="bold">$100</text>
+      </g>
+      {/* Bill 3 — left, falling */}
+      <g transform="rotate(-25, 70, 60)">
+        <rect x="30" y="30" width="68" height="34" rx="3" fill="#1A7A2E" stroke="#2E9E42" strokeWidth="1"/>
+        <rect x="34" y="34" width="60" height="26" rx="2" fill="none" stroke="#2E9E42" strokeWidth="0.5" opacity="0.5"/>
+        <text x="64" y="50" textAnchor="middle" fill="#98F5A0" fontSize="9" fontWeight="bold">$100</text>
+      </g>
+      {/* Bill 4 — bottom right */}
+      <g transform="rotate(20, 160, 110)">
+        <rect x="130" y="90" width="65" height="32" rx="3" fill="#1A7A2E" stroke="#2E9E42" strokeWidth="1"/>
+        <rect x="134" y="94" width="57" height="24" rx="2" fill="none" stroke="#2E9E42" strokeWidth="0.5" opacity="0.5"/>
+        <text x="162" y="109" textAnchor="middle" fill="#98F5A0" fontSize="9" fontWeight="bold">$100</text>
+      </g>
+      {/* Coin 1 */}
+      <circle cx="50" cy="100" r="12" fill="#FFD700" stroke="#FFA000" strokeWidth="1.5"/>
+      <text x="50" y="105" textAnchor="middle" fill="#7A5000" fontSize="10" fontWeight="bold">$</text>
+      {/* Coin 2 */}
+      <circle cx="185" cy="65" r="9" fill="#FFD700" stroke="#FFA000" strokeWidth="1"/>
+      <text x="185" y="69" textAnchor="middle" fill="#7A5000" fontSize="8" fontWeight="bold">$</text>
+      {/* Coin 3 */}
+      <circle cx="95" cy="130" r="8" fill="#FFD700" stroke="#FFA000" strokeWidth="1"/>
+      <text x="95" y="134" textAnchor="middle" fill="#7A5000" fontSize="7" fontWeight="bold">$</text>
+    </svg>
+  );
+}
+
+/* Gold stacked dollar icon for stat cards */
+function GoldDollarStack({ size = 40 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 40 40" width={size} height={size}>
+      {/* Stack of bills */}
+      <rect x="4" y="22" width="32" height="14" rx="3" fill="#B8860B" />
+      <rect x="4" y="18" width="32" height="14" rx="3" fill="#DAA520" />
+      <rect x="4" y="14" width="32" height="14" rx="3" fill="#FFD700" stroke="#DAA520" strokeWidth="0.5"/>
+      <text x="20" y="25" textAnchor="middle" fill="#7A5000" fontSize="10" fontWeight="bold">$</text>
+    </svg>
+  );
+}
 
 export default function FundraisingPage() {
-  const [showAddDonor, setShowAddDonor] = useState(false);
-  const primaryColor = 'var(--tenant-primary)';
-
-  const totalRaised = DONORS.filter(d => d.status === 'Paid').reduce((a, d) => a + d.amount, 0);
-  const goal = 365000;
-  const pct = Math.round((totalRaised / goal) * 100);
-
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Gradient Hero Banner - Responsive */}
-      <div style={{ background: 'linear-gradient(135deg, var(--tenant-primary) 0%, var(--tenant-primary-dark) 50%, #1A1A1A 100%)', borderRadius: 'clamp(12px, 3vw, 16px)', padding: 'clamp(16px, 4vw, 20px) clamp(16px, 4vw, 24px)' }}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'clamp(10px, 2.5vw, 12px)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', margin: '0 0 6px' }}>SKNLP Campaign Finance</p>
-          <h1 style={{ color: 'white', fontWeight: 800, fontSize: 'clamp(20px, 5vw, 26px)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Fundraising Dashboard</h1>
-          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 'clamp(11px, 2.5vw, 13px)', margin: 0 }}>{DONORS.length} donors this cycle · Goal: $365,000</p>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0B1320',
+      fontFamily: "'Inter', sans-serif",
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+
+      {/* ── Internal top bar ── */}
+      <div style={{
+        backgroundColor: '#0F172A',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        height: 52,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 22px',
+        flexShrink: 0,
+      }}>
+        {/* Left: search + breadcrumbs */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span style={{ fontSize: 13, color: '#CBD5E1', fontWeight: 600 }}>Client</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          <span style={{ color: '#475569', fontSize: 12, margin: '0 4px' }}>|</span>
+          <span style={{ fontSize: 13, color: '#CBD5E1', fontWeight: 600 }}>Web Dashboard</span>
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <div className="flex flex-wrap gap-2 shrink-0">
-          <button style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '7px 14px', borderRadius: 10, fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, background: 'rgba(255,255,255,0.15)', color: 'white', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-            <Download size={12} className="sm:w-[14px] sm:h-[14px]" />
-            Export Donors
-          </button>
-          <button
-            onClick={() => setShowAddDonor(true)}
-            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '7px 14px', borderRadius: 10, fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 700, background: 'white', color: 'var(--tenant-primary)', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-            <Plus size={12} className="sm:w-[14px] sm:h-[14px]" />
-            Launch New Campaign
-          </button>
+        <div style={{ flex: 1 }} />
+        {/* Right: bell + user */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ position: 'relative' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <div style={{
+              position: 'absolute', top: -5, right: -5,
+              width: 14, height: 14, borderRadius: '50%',
+              backgroundColor: '#DC143C', color: 'white',
+              fontSize: 8, fontWeight: 800,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>1</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: 13, color: '#CBD5E1', fontWeight: 600 }}>Apilis</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div style={{
+            width: 30, height: 30, borderRadius: '50%',
+            backgroundColor: '#DC143C',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 12, fontWeight: 700, color: 'white',
+            border: '2px solid rgba(255,255,255,0.2)',
+          }}>A</div>
         </div>
       </div>
 
-      {/* KPI cards - Responsive */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {/* Total raised with progress */}
-        <div className="rounded-xl sm:rounded-2xl p-4 sm:p-5 hover:shadow-md transition-shadow" style={{ backgroundColor: '#0F172A' }}>
-          <div className="flex items-center gap-2 mb-2 sm:mb-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#1E293B' }}>
-              <DollarSign size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
-            </div>
-            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide" style={{ color: '#94A3B8' }}>Total Raised</p>
-          </div>
-          <p className="text-2xl sm:text-3xl font-bold text-white">{formatCurrency(totalRaised)}</p>
-          <div className="mt-2 sm:mt-3 rounded-full h-1.5 sm:h-2" style={{ backgroundColor: '#1E293B' }}>
-            <div className="h-1.5 sm:h-2 rounded-full" style={{ width: `${pct}%`, backgroundColor: 'var(--tenant-primary)' }} />
-          </div>
-          <div className="flex justify-between text-[10px] sm:text-xs mt-1.5">
-            <span style={{ color: 'var(--tenant-primary)' }}>{pct}% of goal</span>
-            <span style={{ color: '#64748B' }}>Goal: {formatCurrency(goal)}</span>
+      {/* ── Main content ── */}
+      <div style={{ flex: 1, padding: '22px 24px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+
+        {/* Title row: red title left + flying money right */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+          <h1 style={{
+            fontFamily: "'Barlow', sans-serif",
+            fontWeight: 900,
+            fontSize: 36,
+            color: '#E53E3E',
+            margin: 0,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.1,
+          }}>
+            Fundraising Dashboard
+          </h1>
+          <div style={{ flexShrink: 0, marginTop: -10 }}>
+            <FlyingMoney />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 mb-2 sm:mb-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ECFDF5' }}>
-              <TrendingUp size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
-            </div>
-            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-slate-400">This Month</p>
-          </div>
-          <p className="text-2xl sm:text-3xl font-bold text-slate-800">{formatCurrency(38000)}</p>
-          <p className="text-[10px] sm:text-xs mt-1" style={{ color: 'var(--tenant-primary)' }}>↑ 12% ahead of schedule</p>
-        </div>
+        {/* ── 3 Stat Cards ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr 1fr', gap: 14 }}>
 
-        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 mb-2 sm:mb-3">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#EFF6FF' }}>
-              <Users size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: '#3B82F6' }} />
-            </div>
-            <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-slate-400">Total Donors</p>
-          </div>
-          <p className="text-2xl sm:text-3xl font-bold text-slate-800">{DONORS.length}</p>
-          <p className="text-[10px] sm:text-xs text-slate-400 mt-1">Avg. {formatCurrency(totalRaised / DONORS.length)} per donor</p>
-        </div>
-      </div>
-
-      {/* Chart + Donors - Responsive */}
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-        {/* Chart */}
-        <div className="lg:w-2/5 bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5">
-          <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-3 sm:mb-4">Fundraising Trend</h3>
-          <ResponsiveContainer width="100%" height={150}>
-            <AreaChart data={lineData}>
-              <defs>
-                <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={primaryColor} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={primaryColor} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" tick={{ fontSize: 9, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-              <YAxis hide />
-              <Tooltip
-                contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid #E2E8F0' }}
-                formatter={(v: any) => [formatCurrency(v), 'Raised']}
-              />
-              <Area type="monotone" dataKey="amount" stroke={primaryColor} strokeWidth={2.5} fill="url(#fg)" dot={false} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Donors table */}
-        <div className="lg:flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Top Donors</h3>
-            <button className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs font-medium hover:opacity-70 transition-opacity whitespace-nowrap" style={{ color: primaryColor }}>
-              <Send size={10} className="sm:w-[11px] sm:h-[11px]" /> Send Thank-You Emails
-            </button>
-          </div>
-          <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <table className="w-full text-xs" style={{ minWidth: '600px' }}>
-              <thead style={{ backgroundColor: '#F8FAFC' }}>
-                <tr>
-                  {['Donor', 'Amount', 'Date', 'Method', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left py-2 sm:py-2.5 px-3 sm:px-4 font-semibold text-slate-500 text-[11px] sm:text-xs whitespace-nowrap">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {DONORS.map(d => (
-                  <tr key={d.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-semibold text-slate-700 text-[11px] sm:text-xs whitespace-nowrap">{d.name}</td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 font-bold text-slate-800 text-[11px] sm:text-xs whitespace-nowrap">{formatCurrency(d.amount)}</td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-slate-400 text-[11px] sm:text-xs whitespace-nowrap">{d.date}</td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-slate-500 text-[11px] sm:text-xs whitespace-nowrap">{d.method}</td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
-                      <span
-                        className="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold"
-                        style={d.status === 'Paid'
-                          ? { backgroundColor: '#D1FAE5', color: '#065F46' }
-                          : { backgroundColor: '#FEE2E2', color: '#991B1B' }}
-                      >
-                        {d.status}
-                      </span>
-                    </td>
-                    <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
-                      <div className="flex items-center gap-1">
-                        <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View Donor" style={{ color: 'var(--tenant-primary)' }}>
-                          <Eye size={11} className="sm:w-[13px] sm:h-[13px]" />
-                        </button>
-                        <button className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit Donor">
-                          <Edit2 size={11} className="sm:w-[13px] sm:h-[13px]" />
-                        </button>
-                        <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete Donor" style={{ color: '#EF4444' }}>
-                          <Trash2 size={11} className="sm:w-[13px] sm:h-[13px]" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Add Donor Modal - Responsive */}
-      {showAddDonor && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black/50 z-50" 
-            onClick={() => setShowAddDonor(false)} 
-          />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-4 sm:mb-5">
-              <h3 className="font-bold text-slate-800 text-base sm:text-lg">Add New Donor</h3>
-              <button onClick={() => setShowAddDonor(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
-                <X size={16} className="sm:w-[18px] sm:h-[18px]" />
+          {/* Total Raised */}
+          <div style={{
+            backgroundColor: '#141D2E',
+            borderRadius: 12,
+            padding: '20px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <p style={{ fontSize: 14, color: '#94A3B8', margin: 0, fontWeight: 600 }}>Total Raised</p>
+              <button style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '4px 12px', borderRadius: 20,
+                border: '1px solid rgba(255,255,255,0.15)',
+                backgroundColor: '#1E293B',
+                color: '#CBD5E1', fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}>
+                $ <span style={{ fontSize: 9 }}>▾</span>
               </button>
             </div>
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Full Name</label>
-                <input className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400" placeholder="Donor's full name" />
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Amount (USD)</label>
-                  <input type="number" className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400" placeholder="0.00" />
-                </div>
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Payment Method</label>
-                  <select className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none">
-                    <option>Cash</option>
-                    <option>Cheque</option>
-                    <option>Stripe</option>
-                    <option>Powertranz</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button onClick={() => setShowAddDonor(false)} className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all">
-                  Cancel
-                </button>
-                <button
-                  onClick={() => setShowAddDonor(false)}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Add Donor
-                </button>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+              <p style={{
+                fontFamily: "'Barlow', sans-serif",
+                fontWeight: 900, fontSize: 32,
+                color: '#FFFFFF', margin: 0, lineHeight: 1,
+              }}>$184,720</p>
+              <p style={{ fontSize: 11, color: '#64748B', margin: 0 }}>
+                • Goal $250,000 (74%)
+              </p>
+            </div>
+            {/* Gold-to-red gradient progress bar */}
+            <div style={{ height: 8, backgroundColor: '#1E293B', borderRadius: 4, overflow: 'hidden', marginTop: 14 }}>
+              <div style={{
+                width: '74%', height: '100%', borderRadius: 4,
+                background: 'linear-gradient(90deg, #FFD700 0%, #FF8C00 45%, #DC143C 100%)',
+              }} />
             </div>
           </div>
-        </>
-      )}
+
+          {/* Recurring Donors */}
+          <div style={{
+            backgroundColor: '#141D2E',
+            borderRadius: 12,
+            padding: '20px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <p style={{ fontSize: 14, color: '#94A3B8', margin: '0 0 16px', fontWeight: 600 }}>
+              Recurring Donors
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <GoldDollarStack size={44} />
+              <p style={{
+                fontFamily: "'Barlow', sans-serif",
+                fontWeight: 900, fontSize: 42,
+                color: '#FFFFFF', margin: 0, lineHeight: 1,
+              }}>312</p>
+            </div>
+          </div>
+
+          {/* Events Upcoming */}
+          <div style={{
+            backgroundColor: '#141D2E',
+            borderRadius: 12,
+            padding: '20px',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}>
+            <p style={{ fontSize: 14, color: '#94A3B8', margin: '0 0 16px', fontWeight: 600 }}>
+              Events Upcoming
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <GoldDollarStack size={40} />
+              <p style={{
+                fontFamily: "'Barlow', sans-serif",
+                fontWeight: 900, fontSize: 42,
+                color: '#FFFFFF', margin: 0, lineHeight: 1,
+              }}>3</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Donor CRM + Chart (one card) ── */}
+        <div style={{
+          backgroundColor: '#141D2E',
+          borderRadius: 12,
+          border: '1px solid rgba(255,255,255,0.08)',
+          overflow: 'hidden',
+        }}>
+          {/* Card header */}
+          <div style={{
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', margin: 0 }}>Donor CRM</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Sencch search pill */}
+              <button style={{
+                padding: '6px 16px', borderRadius: 20,
+                border: '1px solid rgba(255,255,255,0.15)',
+                backgroundColor: '#1E293B',
+                color: '#CBD5E1', fontSize: 13, fontWeight: 500,
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}>Sencch</button>
+              {/* Cursor icon */}
+              <button style={{
+                width: 34, height: 34, borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.15)',
+                backgroundColor: '#2D3A50',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#CBD5E1', fontSize: 14,
+              }}>↖</button>
+              {/* Clock icon */}
+              <button style={{
+                width: 34, height: 34, borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.15)',
+                backgroundColor: '#1E293B',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#64748B', fontSize: 14,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </button>
+              {/* Hamburger */}
+              <button style={{
+                width: 34, height: 34, borderRadius: 8,
+                border: '1px solid rgba(255,255,255,0.15)',
+                backgroundColor: '#1E293B',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#64748B', fontSize: 14,
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Table + Chart side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px' }}>
+
+            {/* Table */}
+            <div style={{ padding: '0', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Donor Name', 'Amount', 'Date', 'Constituency'].map(h => (
+                      <th key={h} style={{
+                        padding: '12px 18px',
+                        textAlign: 'left',
+                        fontSize: 13,
+                        fontWeight: 600,
+                        color: '#94A3B8',
+                        borderBottom: '1px solid rgba(255,255,255,0.05)',
+                      }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {DONOR_CRM.map((d, i) => (
+                    <tr key={i} style={{
+                      backgroundColor: i % 2 === 1 ? 'rgba(255,255,255,0.04)' : 'transparent',
+                    }}>
+                      <td style={{ padding: '13px 18px', fontSize: 13, color: '#E2E8F0', fontWeight: 500 }}>{d.name}</td>
+                      <td style={{ padding: '13px 18px', fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>{d.amount}</td>
+                      <td style={{ padding: '13px 18px', fontSize: 13, color: '#64748B' }}>{d.date}</td>
+                      <td style={{ padding: '13px 18px', fontSize: 13, color: '#94A3B8' }}>{d.constituency}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Bar + Gold line chart */}
+            <div style={{
+              borderLeft: '1px solid rgba(255,255,255,0.06)',
+              padding: '16px 16px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+              <ResponsiveContainer width="100%" height={200}>
+                <ComposedChart data={BAR_DATA} margin={{ top: 10, right: 8, bottom: 0, left: -10 }}>
+                  <defs>
+                    <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"   stopColor="#FF4444" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#8B0000" stopOpacity={0.7} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis
+                    dataKey="x"
+                    tick={{ fill: '#475569', fontSize: 11 }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    ticks={[0, 25, 40, 60, 100, 150]}
+                    tick={{ fill: '#475569', fontSize: 10 }}
+                    axisLine={false}
+                    tickLine={false}
+                    domain={[0, 160]}
+                  />
+                  <Bar dataKey="v" radius={[3, 3, 0, 0]} barSize={22}>
+                    {BAR_DATA.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={i === BAR_DATA.length - 1 ? '#FFD700' : 'url(#barGrad)'}
+                      />
+                    ))}
+                  </Bar>
+                  <Line
+                    type="monotone"
+                    dataKey="trend"
+                    stroke="#FFD700"
+                    strokeWidth={3}
+                    dot={<TrendDot />}
+                    activeDot={false}
+                    strokeOpacity={0.9}
+                    filter="drop-shadow(0 0 6px #FFD700)"
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ── Action buttons ── */}
+        <div style={{ display: 'flex', gap: 24, paddingBottom: 8 }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            background: 'none', border: 'none',
+            cursor: 'pointer', fontFamily: 'inherit',
+            padding: '4px 0',
+          }}>
+            <GoldDollarStack size={32} />
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#E2E8F0' }}>Launch Donation Drive</span>
+          </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            background: 'none', border: 'none',
+            cursor: 'pointer', fontFamily: 'inherit',
+            padding: '4px 0',
+          }}>
+            <GoldDollarStack size={32} />
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#E2E8F0' }}>Send Pledge Reminder</span>
+          </button>
+        </div>
+
+      </div>
     </div>
   );
 }
