@@ -22,6 +22,12 @@ interface AppShellProps {
   logoContent: ReactNode;
   primaryColor?: string;
   showBottomNav?: boolean;
+  /** Hide the top bar on desktop — use when pages supply their own top bar */
+  hideDesktopTopBar?: boolean;
+  /** Remove padding from main content area — use when pages handle their own spacing */
+  noPadding?: boolean;
+  /** Override the overall shell background color */
+  shellBg?: string;
 }
 
 export function AppShell({
@@ -33,6 +39,9 @@ export function AppShell({
   logoContent,
   primaryColor = 'var(--tenant-primary)',
   showBottomNav = false,
+  hideDesktopTopBar = false,
+  noPadding = false,
+  shellBg = '#F8FAFC',
 }: AppShellProps) {
   const isDesktop = useIsDesktop();
   const router = useRouter();
@@ -82,8 +91,10 @@ export function AppShell({
   // Sidebar is ALWAYS position:fixed — it NEVER takes up layout space.
   const contentMargin = isDesktop && isOpen ? SIDEBAR_WIDTH : 0;
 
+  const showTopBar = !(hideDesktopTopBar && isDesktop);
+
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: shellBg }}>
 
       {/* ── SIDEBAR — always fixed, slides in/out ─────────────── */}
       <div
@@ -127,8 +138,8 @@ export function AppShell({
           minHeight: '100vh',
         }}
       >
-        {/* Topbar — ALWAYS rendered on every screen size */}
-        <header
+        {/* Topbar — hidden on desktop when hideDesktopTopBar is set */}
+        {showTopBar && <header
           style={{
             position: 'sticky',
             top: 0,
@@ -310,14 +321,14 @@ export function AppShell({
               )}
             </div>
           </div>
-        </header>
+        </header>}
 
         {/* Page content */}
         <main
           style={{
             flex: 1,
-            padding: '16px',
-            paddingBottom: showBottomNav && !isDesktop ? 76 : 16,
+            padding: noPadding ? 0 : '16px',
+            paddingBottom: !noPadding && showBottomNav && !isDesktop ? 76 : 0,
             overflowX: 'hidden',
           }}
         >

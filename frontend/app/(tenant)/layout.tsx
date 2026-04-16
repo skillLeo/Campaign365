@@ -118,6 +118,9 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
         logoContent={logoContent}
         primaryColor={theme.primary}
         showBottomNav={true}
+        hideDesktopTopBar={true}
+        noPadding={true}
+        shellBg="#060A14"
       >
         {children}
       </AppShell>

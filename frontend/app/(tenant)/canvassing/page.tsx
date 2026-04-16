@@ -1,285 +1,345 @@
 'use client';
 import { useState } from 'react';
-import { MapPin, Plus, Users, CheckCircle, Clock, Smartphone, Download, Search, Eye, Edit2, Trash2, X } from 'lucide-react';
 
-const WALK_LISTS = [
-  { id: 1, name: 'Kingston Central — Zone A', constituency: 'Kingston Central', team: 'Team Alpha', total: 320, knocked: 280, status: 'active' },
-  { id: 2, name: 'Kingston Central — Zone B', constituency: 'Kingston Central', team: 'Team Beta', total: 290, knocked: 290, status: 'completed' },
-  { id: 3, name: 'Kingston East Walk', constituency: 'Kingston East', team: 'Team Gamma', total: 410, knocked: 180, status: 'active' },
-  { id: 4, name: 'Spanish Town District', constituency: 'St. Catherine North', team: 'Team Delta', total: 220, knocked: 0, status: 'pending' },
-  { id: 5, name: 'Portmore Zone Coverage', constituency: 'St. Catherine North', team: 'Team Echo', total: 175, knocked: 120, status: 'active' },
+const CLUSTERS = [
+  { name: 'Cluster 1 - Basseterre', canvassers: 12, count: 12, progress: 89, barColor: '#E8622A', barFull: true },
+  { name: "Cluster 2 - St. Paul's", canvassers: 6,  count: 10, progress: 72, barColor: '#DC143C', barFull: false },
+  { name: "Cluster 1 - St. Paul's", canvassers: 6,  count: 20, progress: 89, barColor: '#DC143C', barFull: false },
+  { name: "Cluster 1 - St. Paul's", canvassers: 6,  count: 13, progress: 72, barColor: '#3B82F6', barFull: false },
+  { name: "Cluster 1 - St. Paul's", canvassers: 6,  count: 20, progress: 72, barColor: '#DC143C', barFull: false },
+  { name: "Cluster 2 - St. Paul's", canvassers: 8,  count: 10, progress: 72, barColor: '#DC143C', barFull: false },
+  { name: "Cluster 1 - St. Paul's", canvassers: 3,  count: 20, progress: 76, barColor: '#3B82F6', barFull: false },
+  { name: "Cluster 2 - St. Paul's", canvassers: 8,  count: 11, progress: 76, barColor: '#DC143C', barFull: false },
 ];
 
-const statusStyle = (s: string) => {
-  if (s === 'active') return { backgroundColor: 'var(--tenant-primary)', color: 'white' };
-  if (s === 'completed') return { backgroundColor: '#FEE2E2', color: 'var(--tenant-primary)' };
-  return { backgroundColor: '#FEF3C7', color: '#92400E' };
-};
-
-const ZONES = [
-  { label: 'Kingston Central', pct: 87 },
-  { label: 'Kingston East', pct: 44 },
-  { label: 'St. Catherine North', pct: 55 },
-  { label: 'Clarendon Central', pct: 0 },
+const ACTIVE_RUNS = [
+  { runner: 'John Doe',   turf: 'Basseterre',           visited: '2234.Pm', offline: '500.Pm'  },
+  { runner: 'Jane Smith', turf: 'St. Anne Sandy Point', visited: '2236.Pm', offline: '450.Pm'  },
+  { runner: 'Jane Smith', turf: 'St. Anne Sandy Point', visited: '12.34.Pm', offline: '456.Pm' },
 ];
 
-export default function CanvassingPage() {
-  const [search, setSearch] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [newWalkList, setNewWalkList] = useState({
-    name: '',
-    constituency: 'Kingston Central',
-    team: 'Team Alpha'
-  });
-  const primaryColor = 'var(--tenant-primary)';
+const TABS = ['Live Field Teams', 'Assigned Turfs', 'Route Optimizer'] as const;
 
-  const totalDoors = WALK_LISTS.reduce((s, w) => s + w.total, 0);
-  const totalKnocked = WALK_LISTS.reduce((s, w) => s + w.knocked, 0);
-
-  const filtered = WALK_LISTS.filter(w =>
-    w.name.toLowerCase().includes(search.toLowerCase()) ||
-    w.constituency.toLowerCase().includes(search.toLowerCase()) ||
-    w.team.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const handleCreateWalkList = () => {
-    if (!newWalkList.name.trim()) return;
-    console.log('New Walk List:', newWalkList);
-    setShowModal(false);
-    setNewWalkList({ name: '', constituency: 'Kingston Central', team: 'Team Alpha' });
-  };
+function CanvassingMap() {
+  const pins = [
+    { x: 118, y: 108 }, { x: 145, y: 95  }, { x: 168, y: 84  }, { x: 192, y: 78 },
+    { x: 218, y: 88  }, { x: 240, y: 98  }, { x: 260, y: 112 }, { x: 278, y: 102 },
+    { x: 300, y: 118 }, { x: 314, y: 128 }, { x: 290, y: 134 }, { x: 248, y: 124 },
+    { x: 322, y: 142 }, { x: 338, y: 155 }, { x: 355, y: 165 },
+  ];
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Field Canvassing Operations</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">Manage walk lists, turf assignments, and field teams</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all whitespace-nowrap">
-            <Download size={13} className="sm:w-[14px] sm:h-[14px]" />
-            Export Lists
-          </button>
-          <button
-            onClick={() => setShowModal(true)}
-            className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
-            style={{ backgroundColor: primaryColor }}
-          >
-            <Plus size={13} className="sm:w-[14px] sm:h-[14px]" />
-            New Walk List
-          </button>
-        </div>
-      </div>
+    <div style={{ width: '100%', position: 'relative', height: 300, borderRadius: 8, overflow: 'hidden' }}>
+      <svg viewBox="0 0 500 300" width="100%" height="100%" style={{ display: 'block' }}>
+        <defs>
+          <radialGradient id="oceanBg" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stopColor="#1a2d42" />
+            <stop offset="100%" stopColor="#0e1e2e" />
+          </radialGradient>
+          <filter id="pinShadow">
+            <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="rgba(0,0,0,0.6)" />
+          </filter>
+        </defs>
 
-      {/* Stats Cards - Responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[
-          { label: 'Total Doors', value: totalDoors.toLocaleString(), icon: MapPin, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
-          { label: 'Doors Knocked', value: totalKnocked.toLocaleString(), icon: CheckCircle, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
-          { label: 'Active Teams', value: WALK_LISTS.filter(w => w.status === 'active').length, icon: Users, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
-          { label: 'Completion Rate', value: `${Math.round((totalKnocked / totalDoors) * 100)}%`, icon: Clock, color: 'var(--tenant-primary)', bg: '#FEE2E2' },
-        ].map(({ label, value, icon: Icon, color, bg }) => (
-          <div key={label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}>
-                <Icon size={14} className="sm:w-[18px] sm:h-[18px]" style={{ color }} />
-              </div>
-            </div>
-            <p className="text-lg sm:text-2xl font-bold text-slate-800">{value}</p>
-            <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">{label}</p>
-          </div>
+        <rect width="500" height="300" fill="url(#oceanBg)" />
+
+        {[40,80,120,160,200,240,280].map(y => (
+          <line key={`h${y}`} x1="0" y1={y} x2="500" y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
         ))}
+        {[60,120,180,240,300,360,420,480].map(x => (
+          <line key={`v${x}`} x1={x} y1="0" x2={x} y2="300" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+        ))}
+
+        <path
+          d="M72,148 Q78,128 92,118 Q108,106 128,100 Q150,90 172,85
+             Q194,78 218,82 Q242,80 262,88 Q280,94 296,104
+             Q316,116 332,130 Q344,142 352,156 Q358,168 356,180
+             Q352,192 340,198 Q324,204 308,200 Q290,198 272,190
+             Q252,184 238,192 Q228,198 218,200 Q204,202 194,196
+             Q178,188 162,175 Q148,164 136,158 Q118,150 104,150 Q86,150 76,150 Z"
+          fill="#2e4a62" stroke="#4a6e88" strokeWidth="1.5"
+        />
+
+        <path d="M150,100 Q148,130 152,155" stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+        <path d="M200,88 Q196,120 198,150" stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+        <path d="M258,92 Q252,125 255,165" stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+        <path d="M306,110 Q300,140 305,175" stroke="rgba(255,255,255,0.1)" strokeWidth="1" fill="none"/>
+
+        <path
+          d="M340,198 Q354,205 368,212 Q380,218 390,224 Q400,230 405,235"
+          stroke="#4a6e88" strokeWidth="7" fill="none" strokeLinecap="round"
+        />
+
+        <ellipse cx="435" cy="240" rx="32" ry="24" fill="#2e4a62" stroke="#4a6e88" strokeWidth="1.2" />
+
+        {pins.map((p, i) => (
+          <g key={i} filter="url(#pinShadow)">
+            <circle cx={p.x} cy={p.y + 20} r="8" fill="#DC143C" />
+            <circle cx={p.x} cy={p.y + 20} r="3" fill="white" />
+            <circle cx={p.x} cy={p.y + 20} r="12" fill="#DC143C" fillOpacity="0.18" />
+          </g>
+        ))}
+
+        <rect x="58" y="168" width="34" height="18" rx="4" fill="#1E293B" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5"/>
+        <text x="75" y="181" fill="white" fontSize="9" fontFamily="Inter,sans-serif" textAnchor="middle" fontWeight="800">47</text>
+
+        <text x="8" y="292" fill="#64748B" fontSize="9" fontFamily="Inter,sans-serif">#0F17A</text>
+      </svg>
+
+      {/* Panic Button */}
+      <div style={{
+        position: 'absolute', top: 12, right: 12,
+        background: '#F97316', color: 'white',
+        borderRadius: 8, padding: '8px 14px', fontSize: 13, fontWeight: 700,
+        boxShadow: '0 0 16px rgba(249,115,22,0.55)',
+        display: 'flex', alignItems: 'center', gap: 7,
+      }}>
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'white', display: 'inline-block' }} />
+        Panic Button Activated
       </div>
 
-      {/* Map + Walk Lists - Responsive */}
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-        {/* Turf map */}
-        <div className="lg:w-2/5 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Turf Map Coverage</h3>
-          </div>
-          <div className="relative h-48 sm:h-56 flex items-center justify-center" style={{ backgroundColor: '#E8F0F8' }}>
-            <div className="text-center text-slate-400 pointer-events-none">
-              <MapPin size={24} className="sm:w-7 sm:h-7 mx-auto mb-2 opacity-30" />
-              <p className="text-[10px] sm:text-xs font-medium">Mapbox Turf Map</p>
-              <p className="text-[9px] sm:text-xs opacity-70">Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
-            </div>
-            {ZONES.map((z, i) => (
-              <div
-                key={z.label}
-                className="absolute bg-white rounded-lg shadow-sm px-1.5 sm:px-2.5 py-1 sm:py-1.5 text-[9px] sm:text-xs font-medium border border-slate-100 whitespace-nowrap"
-                style={{
-                  top: `${15 + i * 20}%`,
-                  left: `${10 + (i % 2) * 45}%`,
-                  color: z.pct >= 80 ? 'var(--tenant-primary)' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B',
-                }}
-              >
-                {z.label} — {z.pct}%
-              </div>
-            ))}
-          </div>
-          <div className="px-3 sm:px-5 py-3 sm:py-4 space-y-2">
-            {ZONES.map(z => (
-              <div key={z.label} className="flex items-center gap-2">
-                <div className="flex-1">
-                  <div className="flex justify-between text-[10px] sm:text-xs mb-1">
-                    <span className="text-slate-600 truncate">{z.label}</span>
-                    <span className="font-semibold whitespace-nowrap ml-2" style={{ color: z.pct >= 80 ? 'var(--tenant-primary)' : z.pct >= 50 ? primaryColor : z.pct === 0 ? '#94A3B8' : '#F59E0B' }}>
-                      {z.pct}%
-                    </span>
-                  </div>
-                  <div className="h-1 sm:h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${z.pct}%`,
-                        backgroundColor: 'var(--tenant-primary)',
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* Minus zoom */}
+      <div style={{ position: 'absolute', bottom: 20, left: 10 }}>
+        <button style={{
+          width: 28, height: 28, borderRadius: 4,
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          border: '1px solid rgba(255,255,255,0.25)',
+          color: 'white', fontSize: 18, fontWeight: 700,
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          lineHeight: 1,
+        }}>−</button>
+      </div>
+    </div>
+  );
+}
+
+export default function CanvassingPage() {
+  const [activeTab, setActiveTab] = useState<typeof TABS[number]>('Live Field Teams');
+
+  return (
+    /* 1. Page background: deep crimson/dark red */
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#7B1525',
+      fontFamily: "'Inter', sans-serif",
+      padding: '28px 28px 36px',
+    }}>
+
+      {/* Page title: white text on dark red */}
+      <h1 style={{
+        fontFamily: "'Barlow', sans-serif",
+        fontWeight: 800,
+        fontSize: 30,
+        color: '#FFFFFF',
+        margin: '0 0 22px',
+        letterSpacing: '-0.01em',
+      }}>
+        Canvassing Operations
+      </h1>
+
+      {/* 2. Main container: dark navy */}
+      <div style={{
+        backgroundColor: '#0F172A',
+        borderRadius: 12,
+        overflow: 'hidden',
+        border: '1px solid rgba(255,255,255,0.08)',
+        marginBottom: 24,
+      }}>
+
+        {/* 5. Tab bar: dark navy bg, white text, red active underline */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          padding: '0 20px',
+          backgroundColor: '#0F172A',
+        }}>
+          {TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '14px 18px',
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                fontSize: 14,
+                fontWeight: 600,
+                color: activeTab === tab ? '#FFFFFF' : '#64748B',
+                borderBottom: activeTab === tab ? '2px solid #DC143C' : '2px solid transparent',
+                transition: 'all 0.15s',
+                marginBottom: -1,
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+          <div style={{ flex: 1 }} />
+          <span style={{
+            fontSize: 12,
+            color: '#FFFFFF',
+            backgroundColor: '#0F172A',
+            border: '1px solid rgba(255,255,255,0.2)',
+            borderRadius: 5,
+            padding: '4px 10px',
+            fontFamily: 'monospace',
+            fontWeight: 600,
+          }}>
+            #0F172A
+          </span>
         </div>
 
-        {/* Walk lists */}
-        <div className="lg:flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Walk Lists</h3>
-            <div className="relative w-full sm:w-44">
-              <Search size={11} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="w-full bg-slate-100 rounded-lg sm:rounded-xl pl-8 pr-2.5 py-1.5 text-[11px] sm:text-xs text-slate-600 focus:outline-none"
-              />
-            </div>
+        {/* Two-column: map left + clusters right */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: 400 }}>
+
+          {/* Left: Map */}
+          <div style={{
+            padding: '20px',
+            borderRight: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', margin: '0 0 2px' }}>
+              St. Kitts &amp; Nevis
+            </p>
+            <p style={{ fontSize: 12, color: '#64748B', margin: '0 0 14px' }}>
+              47 Canvasser
+            </p>
+            <CanvassingMap />
+            <p style={{ fontSize: 10, color: '#475569', margin: '8px 0 0', fontFamily: 'monospace' }}>
+              #0F17A
+            </p>
           </div>
-          <div className="divide-y divide-slate-50 max-h-[480px] overflow-y-auto">
-            {filtered.map(list => {
-              const pct = list.total > 0 ? Math.round((list.knocked / list.total) * 100) : 0;
-              return (
-                <div key={list.id} className="px-3 sm:px-5 py-3 sm:py-4 hover:bg-slate-50 transition-colors">
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
-                    <div className="min-w-0">
-                      <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">{list.name}</p>
-                      <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5">{list.constituency} · {list.team}</p>
-                    </div>
-                    <span className="px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold capitalize whitespace-nowrap self-start" style={statusStyle(list.status)}>
-                      {list.status}
+
+          {/* 3. Cluster cards: WHITE cards with dark text inside dark navy container */}
+          <div style={{ padding: '20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              {CLUSTERS.map((c, i) => (
+                <div key={i} style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 10,
+                  padding: '14px 16px',
+                  border: 'none',
+                }}>
+                  <p style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: '#0F172A',
+                    margin: '0 0 3px',
+                    lineHeight: 1.3,
+                  }}>
+                    {c.name}
+                  </p>
+                  <p style={{ fontSize: 11, color: '#64748B', margin: '0 0 12px' }}>
+                    {c.canvassers} Canvassers
+                  </p>
+
+                  {/* Progress row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 12, color: '#475569', minWidth: 22, flexShrink: 0 }}>
+                      {c.count}
+                    </span>
+                    {c.barFull ? (
+                      /* First cluster: full orange progress bar */
+                      <div style={{ flex: 1, height: 6, backgroundColor: '#E2E8F0', borderRadius: 3, overflow: 'hidden' }}>
+                        <div style={{ width: `${c.progress}%`, height: '100%', backgroundColor: c.barColor, borderRadius: 3 }} />
+                      </div>
+                    ) : (
+                      /* Other clusters: small colored square */
+                      <div style={{
+                        width: 18, height: 18, borderRadius: 4,
+                        backgroundColor: c.barColor, flexShrink: 0,
+                      }} />
+                    )}
+                    <span style={{
+                      fontSize: 15, fontWeight: 700, color: '#0F172A',
+                      minWidth: 38, textAlign: 'right', flexShrink: 0,
+                    }}>
+                      {c.progress}%
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                    <div className="flex-1 bg-slate-100 rounded-full h-1.5 sm:h-2">
-                      <div
-                        className="h-1.5 sm:h-2 rounded-full transition-all"
-                        style={{ width: `${pct}%`, backgroundColor: 'var(--tenant-primary)' }}
-                      />
-                    </div>
-                    <span className="text-[10px] sm:text-xs font-semibold text-slate-600 shrink-0 whitespace-nowrap">{list.knocked}/{list.total}</span>
-                    <span className="text-[10px] sm:text-xs font-bold w-8 text-right shrink-0" style={{ color: primaryColor }}>{pct}%</span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-1">
-                    <button className="flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all whitespace-nowrap">
-                      <Smartphone size={10} className="sm:w-[11px] sm:h-[11px]" /> Send to App
-                    </button>
-                    <button className="flex items-center gap-0.5 sm:gap-1 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-medium border border-slate-200 text-slate-600 hover:bg-slate-100 transition-all whitespace-nowrap">
-                      <Download size={10} className="sm:w-[11px] sm:h-[11px]" /> Export
-                    </button>
-                    <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="View" style={{ color: primaryColor }}>
-                      <Eye size={11} className="sm:w-[13px] sm:h-[13px]" />
-                    </button>
-                    <button className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-500" title="Edit">
-                      <Edit2 size={11} className="sm:w-[13px] sm:h-[13px]" />
-                    </button>
-                    <button className="p-1 sm:p-1.5 rounded-lg hover:bg-red-50 transition-colors" title="Delete" style={{ color: '#EF4444' }}>
-                      <Trash2 size={11} className="sm:w-[13px] sm:h-[13px]" />
-                    </button>
-                  </div>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Create Walk List Modal - Responsive */}
-      {showModal && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black/50 z-50" 
-            onClick={() => setShowModal(false)} 
-          />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-[90%] max-w-md bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
-            <div className="flex items-center justify-between mb-4 sm:mb-5">
-              <h3 className="font-bold text-slate-800 text-base sm:text-lg">Create New Walk List</h3>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1">
-                <X size={16} className="sm:w-[18px] sm:h-[18px]" />
-              </button>
-            </div>
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Walk List Name</label>
-                <input 
-                  value={newWalkList.name}
-                  onChange={e => setNewWalkList({ ...newWalkList, name: e.target.value })}
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-red-400"
-                  placeholder="e.g. Kingston Central Zone C" 
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Constituency</label>
-                  <select 
-                    value={newWalkList.constituency}
-                    onChange={e => setNewWalkList({ ...newWalkList, constituency: e.target.value })}
-                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
-                  >
-                    <option>Kingston Central</option>
-                    <option>Kingston East</option>
-                    <option>St. Catherine North</option>
-                    <option>Clarendon Central</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] sm:text-xs font-medium text-slate-500 mb-1 sm:mb-1.5">Assign Team</label>
-                  <select 
-                    value={newWalkList.team}
-                    onChange={e => setNewWalkList({ ...newWalkList, team: e.target.value })}
-                    className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-slate-600 focus:outline-none"
-                  >
-                    <option>Team Alpha</option>
-                    <option>Team Beta</option>
-                    <option>Team Gamma</option>
-                    <option>Team Delta</option>
-                    <option>Unassigned</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button 
-                  onClick={() => setShowModal(false)} 
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateWalkList}
-                  disabled={!newWalkList.name.trim()}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  Create Walk List
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {/* 4. "Active Canvassing Run" — NO white wrapper, sits directly on dark red bg */}
+      <div>
+        {/* Section title row */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 8,
+        }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF', margin: 0 }}>
+            Active Canvassing Run
+          </h3>
+          <button style={{
+            padding: '7px 20px',
+            borderRadius: 6,
+            border: '1px solid rgba(255,255,255,0.2)',
+            backgroundColor: 'rgba(255,255,255,0.08)',
+            color: '#FFFFFF',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}>
+            Spage
+          </button>
+        </div>
+
+        {/* Table: dark rows, white text */}
+        <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ backgroundColor: '#1E293B' }}>
+                {['', 'Runner Name', 'Turf', 'Voters Visited', 'Offline Sync Status'].map((h, i) => (
+                  <th key={i} style={{
+                    padding: '12px 20px',
+                    textAlign: 'left',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: '#64748B',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {ACTIVE_RUNS.map((r, i) => (
+                <tr key={i} style={{
+                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                  backgroundColor: i % 2 === 0 ? '#0F172A' : '#111827',
+                }}>
+                  <td style={{ padding: '14px 20px' }}>
+                    <input type="checkbox" style={{ accentColor: '#DC143C', width: 15, height: 15 }} />
+                  </td>
+                  <td style={{ padding: '14px 20px', fontSize: 14, color: '#FFFFFF', fontWeight: 600 }}>
+                    {r.runner}
+                  </td>
+                  <td style={{ padding: '14px 20px', fontSize: 14, color: '#94A3B8' }}>
+                    {r.turf}
+                  </td>
+                  <td style={{ padding: '14px 20px', fontSize: 14, color: '#94A3B8' }}>
+                    {r.visited}
+                  </td>
+                  <td style={{ padding: '14px 20px', fontSize: 14, color: '#94A3B8' }}>
+                    {r.offline}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 }

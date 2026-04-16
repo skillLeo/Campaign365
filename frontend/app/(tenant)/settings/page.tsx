@@ -1,448 +1,419 @@
 'use client';
-import { useState, useRef } from 'react';
-import { api } from '@/lib/api';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Toggle } from '@/components/ui/Toggle';
-import { useAuthStore } from '@/lib/store';
-import { Settings, Users, Bell, Shield, Palette, Globe, Key, Save, Upload, X } from 'lucide-react';
+import { useState } from 'react';
 
-const tabs = [
-  { id: 'party', label: 'Party Profile', icon: Globe },
-  { id: 'team', label: 'Team & Roles', icon: Users },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'security', label: 'Security', icon: Shield },
-  { id: 'branding', label: 'Branding', icon: Palette },
-  { id: 'api', label: 'API & Integrations', icon: Key },
-];
+const TABS = ['My Account', 'Subscription & Features', 'Branding', 'Offline Sync', 'AI Models'] as const;
+type Tab = typeof TABS[number];
+
+/* ── Icons ── */
+function IconAdvancedPolling() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Two feather/leaf wings */}
+      <path d="M24 34 C18 28 8 26 8 16 C8 10 14 8 20 12 C22 13.5 23 16 24 20" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <path d="M24 34 C30 28 40 26 40 16 C40 10 34 8 28 12 C26 13.5 25 16 24 20" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      <path d="M20 12 C19 18 20 26 24 34" stroke="white" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6"/>
+      <path d="M28 12 C29 18 28 26 24 34" stroke="white" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.6"/>
+      {/* Left wing veins */}
+      <path d="M14 17 C16 18 19 19 22 22" stroke="white" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.5"/>
+      <path d="M11 21 C14 21 18 22 21 25" stroke="white" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.5"/>
+      {/* Right wing veins */}
+      <path d="M34 17 C32 18 29 19 26 22" stroke="white" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.5"/>
+      <path d="M37 21 C34 21 30 22 27 25" stroke="white" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.5"/>
+      {/* Center stem */}
+      <line x1="24" y1="34" x2="24" y2="40" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconPanicButton1() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Circular clock with refresh arrow */}
+      <circle cx="24" cy="24" r="14" stroke="white" strokeWidth="2" fill="none"/>
+      {/* Clock hands */}
+      <line x1="24" y1="24" x2="24" y2="14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <line x1="24" y1="24" x2="31" y2="24" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      {/* Refresh arrow on top-right */}
+      <path d="M35 13 C37 15 38 18 38 21" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <polygon points="33,10 37,14 38,9" fill="white"/>
+    </svg>
+  );
+}
+
+function IconSpeechToText() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Outer circle */}
+      <circle cx="24" cy="24" r="15" stroke="white" strokeWidth="2" fill="none"/>
+      {/* Lightning bolt inside */}
+      <path d="M27 12 L20 24 L25 24 L21 36 L30 22 L25 22 Z" fill="white" stroke="none"/>
+    </svg>
+  );
+}
+
+function IconFundraisingPro1() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Scissors/crossed tools with arrow */}
+      {/* Scissors left blade */}
+      <path d="M14 14 L28 28" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
+      <circle cx="12" cy="12" r="3.5" stroke="white" strokeWidth="2" fill="none"/>
+      {/* Scissors right blade */}
+      <path d="M34 14 L22 26" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
+      <circle cx="36" cy="12" r="3.5" stroke="white" strokeWidth="2" fill="none"/>
+      {/* Arrow pointing up-right */}
+      <path d="M22 30 L34 18" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M28 18 L34 18 L34 24" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      {/* Small circle decoration */}
+      <circle cx="18" cy="36" r="3" stroke="white" strokeWidth="1.8" fill="none"/>
+    </svg>
+  );
+}
+
+function IconPanicButton2() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Person silhouette */}
+      <circle cx="21" cy="16" r="5" stroke="white" strokeWidth="2" fill="none"/>
+      <path d="M12 36 C12 28 30 28 30 36" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      {/* Signal/wifi waves on right */}
+      <path d="M32 20 C35 17 35 13 32 10" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M35 23 C40 18 40 10 35 5" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.6"/>
+      {/* Small dots near person */}
+      <circle cx="30" cy="22" r="1.5" fill="white"/>
+    </svg>
+  );
+}
+
+function IconFundraisingPro2() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Photo/camera frame */}
+      <rect x="10" y="12" width="28" height="26" rx="3" stroke="white" strokeWidth="2" fill="none"/>
+      {/* Person inside frame */}
+      <circle cx="24" cy="21" r="4" stroke="white" strokeWidth="1.8" fill="none"/>
+      <path d="M16 34 C16 28 32 28 32 34" stroke="white" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+      {/* Frame brackets on sides */}
+      <path d="M6 18 L6 12 L10 12" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6 30 L6 36 L10 36" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M42 18 L42 12 L38 12" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M42 30 L42 36 L38 36" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+/* ── Profile Avatar (dark-skin male, navy ring) ── */
+function ProfileAvatar({ size = 38 }: { size?: number }) {
+  const uid = 'nav_prof';
+  return (
+    <svg width={size} height={size} viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id={`${uid}_skin`} cx="0.4" cy="0.3" r="0.7">
+          <stop offset="0%" stopColor="#7B4F2E"/>
+          <stop offset="60%" stopColor="#5C3317"/>
+          <stop offset="100%" stopColor="#3D1F0A"/>
+        </radialGradient>
+        <clipPath id={`${uid}_clip`}>
+          <circle cx="19" cy="19" r="18"/>
+        </clipPath>
+      </defs>
+      <circle cx="19" cy="19" r="18" fill="#1E293B" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5"/>
+      <g clipPath={`url(#${uid}_clip)`}>
+        {/* Shirt/shoulders */}
+        <ellipse cx="19" cy="40" rx="13" ry="8" fill="#1E3A5F"/>
+        {/* Neck */}
+        <rect x="15.5" y="24" width="7" height="10" fill={`url(#${uid}_skin)`}/>
+        {/* Face */}
+        <ellipse cx="19" cy="20" rx="8" ry="9" fill={`url(#${uid}_skin)`}/>
+        {/* Hair */}
+        <ellipse cx="19" cy="11" rx="8.5" ry="5" fill="#1A0900"/>
+        <ellipse cx="19" cy="10.5" rx="6" ry="3.5" fill="#240D00"/>
+        {/* Ears */}
+        <ellipse cx="11" cy="20" rx="2" ry="2.5" fill={`url(#${uid}_skin)`}/>
+        <ellipse cx="27" cy="20" rx="2" ry="2.5" fill={`url(#${uid}_skin)`}/>
+        {/* Eyes */}
+        <ellipse cx="15.5" cy="19" rx="2" ry="1.5" fill="white"/>
+        <ellipse cx="22.5" cy="19" rx="2" ry="1.5" fill="white"/>
+        <circle cx="15.5" cy="19" r="1.1" fill="#2D1600"/>
+        <circle cx="22.5" cy="19" r="1.1" fill="#2D1600"/>
+        {/* Eyebrows */}
+        <path d="M13 17 Q15.5 15.5 18 17" stroke="#1A0900" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        <path d="M21 17 Q23.5 15.5 26 17" stroke="#1A0900" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        {/* Mouth */}
+        <path d="M16.5 24 Q19 26 21.5 24" stroke="#3D1F0A" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+      </g>
+    </svg>
+  );
+}
+
+/* ── Feature Card ── */
+type FeatureCardProps = {
+  icon: React.ReactNode;
+  label: string;
+  panicStyle?: boolean;
+};
+function FeatureCard({ icon, label, panicStyle = false }: FeatureCardProps) {
+  return (
+    <div style={{
+      backgroundColor: '#131C2E',
+      border: '1px solid rgba(255,255,255,0.1)',
+      borderRadius: 14,
+      padding: '28px 20px 24px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 12,
+      minHeight: 170,
+    }}>
+      {icon}
+      <p style={{
+        fontSize: 15,
+        fontWeight: 600,
+        color: '#FFFFFF',
+        margin: 0,
+        textAlign: 'center',
+        lineHeight: 1.3,
+      }}>{label}</p>
+      <div style={{
+        backgroundColor: panicStyle ? '#DC2626' : '#C9A84C',
+        color: '#FFFFFF',
+        fontSize: 13,
+        fontWeight: 700,
+        padding: '6px 28px',
+        borderRadius: 999,
+        letterSpacing: '0.04em',
+        boxShadow: panicStyle
+          ? '0 0 12px rgba(220,38,38,0.5)'
+          : '0 0 8px rgba(201,168,76,0.35)',
+      }}>
+        ON
+      </div>
+    </div>
+  );
+}
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('party');
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const { branding, user, setBranding } = useAuthStore();
-  const primaryColor = branding?.primary_color || 'var(--tenant-primary)';
-
-  // State variables
-  const [partyName, setPartyName] = useState(branding?.party_name || 'SKNLP');
-  const [shortName, setShortName] = useState('SKNLP');
-  const [partySlogan, setPartySlogan] = useState('Building a Better Tomorrow');
-  const [partyWebsite, setPartyWebsite] = useState('https://sknlp.org');
-  const [contactEmail, setContactEmail] = useState('info@sknlp.org');
-  const [phoneNumber, setPhoneNumber] = useState('+1 (869) 555-0100');
-  const [aboutParty, setAboutParty] = useState('The St. Kitts-Nevis Labour Party has been serving the people since 1932...');
-  const [subdomain, setSubdomain] = useState(
-    branding?.subdomain || (typeof window !== 'undefined' ? localStorage.getItem('c365_tenant') || 'sknlp' : 'sknlp')
-  );
-
-  // Local branding state
-  const [localPrimaryColor, setLocalPrimaryColor] = useState(branding?.primary_color || 'var(--tenant-primary)');
-  const [localHexInput, setLocalHexInput] = useState(branding?.primary_color || 'var(--tenant-primary)');
-  const [localLogoUrl, setLocalLogoUrl] = useState<string | null>(branding?.logo_url || null);
-  const logoInputRef = useRef<HTMLInputElement>(null);
-
-  const handleLogoFile = (file: File) => {
-    if (!file.type.match(/^image\//)) return;
-    const reader = new FileReader();
-    reader.onload = (e) => setLocalLogoUrl(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handleColorChange = (hex: string) => {
-    setLocalPrimaryColor(hex);
-    setLocalHexInput(hex);
-  };
-  const handleHexInput = (val: string) => {
-    setLocalHexInput(val);
-    if (/^#[0-9a-fA-F]{6}$/.test(val)) setLocalPrimaryColor(val);
-  };
-
-  const [notifPrefs, setNotifPrefs] = useState({
-    panicAlerts: true,
-    voterImport: true,
-    campaignMilestone: true,
-    surveyResponse: false,
-    lowBattery: false,
-    fundraisingGoal: true,
-  });
-  const toggleNotif = (key: keyof typeof notifPrefs) =>
-    setNotifPrefs(p => ({ ...p, [key]: !p[key] }));
-
-  const handleSave = async () => {
-    setSaving(true);
-    await new Promise(r => setTimeout(r, 800));
-    setBranding({
-      name: branding?.name || 'SKNLP',
-      party_name: partyName,
-      logo_url: localLogoUrl,
-      primary_color: localPrimaryColor,
-      secondary_color: branding?.secondary_color || '#1A1A1A',
-      font: branding?.font || 'Inter',
-      subdomain: subdomain,
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const [activeTab, setActiveTab] = useState<Tab>('Subscription & Features');
 
   return (
-    <div className="w-full max-w-full p-4 sm:p-5 md:p-6 lg:p-8">
-      {/* Header - Fixed to show full title */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5 sm:mb-6">
-        <div className="flex-1">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800">Settings</h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1">Manage your campaign account and preferences</p>
-        </div>
-        <Button size="sm" icon={<Save size={14} />} onClick={handleSave} loading={saving} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="whitespace-nowrap">
-          {saved ? 'Saved!' : 'Save Changes'}
-        </Button>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#EBEBEB',
+      fontFamily: "'Inter', sans-serif",
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+
+      {/* ── Top Navigation Bar ── */}
+      <div style={{
+        backgroundColor: '#0F172A',
+        padding: '12px 24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <span style={{
+          fontSize: 20,
+          fontWeight: 800,
+          color: '#FFFFFF',
+          letterSpacing: '-0.3px',
+        }}>Campaign 365</span>
+
+        <ProfileAvatar size={40} />
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-5">
-        {/* Sidebar nav */}
-        <div className="w-full lg:w-48 xl:w-56 lg:flex-shrink-0">
-          <Card className="p-2">
-            <div className="flex flex-row lg:flex-col flex-wrap gap-1">
-              {tabs.map(({ id, label, icon: Icon }) => (
+      {/* ── Page Content ── */}
+      <div style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+        {/* Title row */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          marginBottom: 20,
+        }}>
+          <h1 style={{
+            fontFamily: "'Barlow', sans-serif",
+            fontWeight: 900,
+            fontSize: 32,
+            color: '#CC1F1F',
+            margin: 0,
+            letterSpacing: '-0.5px',
+          }}>Settings &amp; White-Label Controls</h1>
+          <span style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: '#4A5568',
+            marginTop: 8,
+            fontFamily: 'monospace',
+          }}>#0F172A</span>
+        </div>
+
+        {/* ── Tab Bar ── */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0,
+          marginBottom: 24,
+          borderBottom: '1px solid rgba(0,0,0,0.1)',
+          paddingBottom: 0,
+        }}>
+          {TABS.map((tab, i) => {
+            const active = activeTab === tab;
+            return (
+              <div key={tab} style={{ display: 'flex', alignItems: 'center' }}>
+                {/* Bullet separator */}
+                <span style={{
+                  color: '#6B7280',
+                  fontSize: 14,
+                  margin: i === 0 ? '0 8px 0 0' : '0 8px',
+                  lineHeight: 1,
+                }}>•</span>
                 <button
-                  key={id}
-                  onClick={() => setActiveTab(id)}
-                  className={`flex items-center gap-2 lg:gap-3 px-3 py-2 lg:py-2.5 rounded-lg text-sm font-medium text-left transition-all whitespace-nowrap ${activeTab === id ? 'text-white' : 'text-slate-600 hover:bg-slate-50'}`}
-                  style={activeTab === id ? { backgroundColor: primaryColor } : {}}
+                  onClick={() => setActiveTab(tab)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: '10px 4px',
+                    fontSize: 14,
+                    fontWeight: active ? 700 : 500,
+                    color: active ? '#1A1A1A' : '#6B7280',
+                    borderBottom: active ? '2.5px solid #CC1F1F' : '2.5px solid transparent',
+                    marginBottom: -1,
+                    transition: 'all 0.15s',
+                    fontFamily: 'inherit',
+                    whiteSpace: 'nowrap',
+                  }}
                 >
-                  <Icon size={15} />
-                  <span>{label}</span>
+                  {tab}
                 </button>
-              ))}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ── Main Content Card ── */}
+        <div style={{
+          backgroundColor: '#1a2035',
+          borderRadius: 16,
+          overflow: 'hidden',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+        }}>
+          {/* Card header */}
+          <div style={{
+            padding: '20px 28px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(255,255,255,0.07)',
+          }}>
+            <span style={{
+              fontSize: 17,
+              fontWeight: 700,
+              color: '#FFFFFF',
+            }}>Subscription &amp; Features</span>
+            <span style={{
+              fontSize: 15,
+              fontWeight: 600,
+              color: '#C9A84C',
+            }}>Pro Plan - SKNLP</span>
+          </div>
+
+          {/* Feature grid */}
+          <div style={{ padding: '24px 28px 28px' }}>
+
+            {/* Row 1 — 4 cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: 16,
+              marginBottom: 16,
+            }}>
+              <FeatureCard
+                icon={<IconAdvancedPolling />}
+                label="Advanced Polling"
+                panicStyle={false}
+              />
+              <FeatureCard
+                icon={<IconPanicButton1 />}
+                label="Panic Button"
+                panicStyle={true}
+              />
+              <FeatureCard
+                icon={<IconSpeechToText />}
+                label="Speech-to-Text"
+                panicStyle={false}
+              />
+              <FeatureCard
+                icon={<IconFundraisingPro1 />}
+                label="Fundraising Pro"
+                panicStyle={false}
+              />
             </div>
-          </Card>
+
+            {/* Row 2 — 2 cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: 16,
+            }}>
+              <FeatureCard
+                icon={<IconPanicButton2 />}
+                label="Panic Button"
+                panicStyle={true}
+              />
+              <FeatureCard
+                icon={<IconFundraisingPro2 />}
+                label="Fundraising Pro"
+                panicStyle={false}
+              />
+              {/* Empty cells to keep 4-col grid */}
+              <div />
+              <div />
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {activeTab === 'party' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Party Profile</h3>
-              <div className="space-y-4">
-                <input
-                  ref={logoInputRef}
-                  type="file"
-                  accept="image/png,image/svg+xml,image/jpeg,image/webp"
-                  className="hidden"
-                  onChange={e => { const f = e.target.files?.[0]; if (f) handleLogoFile(f); }}
-                />
-
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-                  <div
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl font-bold text-white relative overflow-hidden flex-shrink-0"
-                    style={{ backgroundColor: primaryColor }}
-                  >
-                    {localLogoUrl
-                      ? <img src={localLogoUrl} alt="Logo" className="w-full h-full object-cover" />
-                      : (partyName?.[0] || 'S')}
-                    {localLogoUrl && (
-                      <button
-                        onClick={() => setLocalLogoUrl(null)}
-                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-black/80"
-                        title="Remove logo"
-                      >
-                        <X size={9} color="white" />
-                      </button>
-                    )}
-                  </div>
-
-                  <div>
-                    <button
-                      onClick={() => logoInputRef.current?.click()}
-                      className="inline-flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
-                    >
-                      <Upload size={13} />
-                      {localLogoUrl ? 'Change Logo' : 'Upload Logo'}
-                    </button>
-                    <p className="text-xs text-slate-400 mt-1">PNG, SVG or JPG · max 2 MB</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Name</label>
-                    <input 
-                      value={partyName} 
-                      onChange={e => setPartyName(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Short Name / Abbreviation</label>
-                    <input 
-                      value={shortName} 
-                      onChange={e => setShortName(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Slogan</label>
-                    <input 
-                      value={partySlogan} 
-                      onChange={e => setPartySlogan(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Party Website</label>
-                    <input 
-                      value={partyWebsite} 
-                      onChange={e => setPartyWebsite(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Contact Email</label>
-                    <input 
-                      value={contactEmail} 
-                      onChange={e => setContactEmail(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number</label>
-                    <input 
-                      value={phoneNumber} 
-                      onChange={e => setPhoneNumber(e.target.value)} 
-                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1" 
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">About the Party</label>
-                  <textarea 
-                    value={aboutParty} 
-                    onChange={e => setAboutParty(e.target.value)} 
-                    rows={3} 
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-1" 
-                  />
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'branding' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">White-Label Branding</h3>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-2">Primary Color</label>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <input
-                      type="color"
-                      value={localPrimaryColor}
-                      onChange={e => handleColorChange(e.target.value)}
-                      className="w-10 h-10 rounded-lg border border-slate-200 cursor-pointer"
-                    />
-                    <input
-                      value={localHexInput}
-                      onChange={e => handleHexInput(e.target.value)}
-                      className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32 font-mono"
-                    />
-                    <span className="text-xs text-slate-400">Used for buttons, highlights, sidebar accent</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-2">Color Presets</label>
-                  <div className="flex flex-wrap gap-2">
-                    {['#CC0000', 'var(--tenant-primary)', '#006400', '#1D4ED8', '#7C3AED', '#F59E0B'].map(c => (
-                      <button
-                        key={c}
-                        onClick={() => handleColorChange(c)}
-                        className="w-8 h-8 rounded-full shadow hover:scale-110 transition-transform"
-                        style={{
-                          backgroundColor: c,
-                          border: localPrimaryColor === c ? '3px solid #0F172A' : '2px solid white',
-                        }}
-                        title={c}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-2">Subdomain</label>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <input 
-                      value={subdomain} 
-                      onChange={e => setSubdomain(e.target.value)} 
-                      className="border border-slate-200 rounded-lg px-3 py-2 text-sm w-32" 
-                    />
-                    <span className="text-sm text-slate-400">.campaign365.com</span>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-2">Preview</label>
-                  <div className="border border-slate-200 rounded-xl overflow-hidden">
-                    <div className="h-2 w-full" style={{ backgroundColor: localPrimaryColor }} />
-                    <div className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: localPrimaryColor }}>
-                        {(partyName || 'SKNLP')[0]}
-                      </div>
-                      <span className="font-semibold text-slate-800">{partyName || 'SKNLP'} Campaign 365</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'team' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Team Members & Roles</h3>
-              <div className="space-y-3">
-                {[
-                  { name: 'Dr. Terrence Drew', email: 'tdrew@sknlp.org', role: 'general_secretary', status: 'active' },
-                  { name: 'Konris Maynard', email: 'kmaynard@sknlp.org', role: 'campaign_director', status: 'active' },
-                  { name: 'Jonel Powell', email: 'jpowell@sknlp.org', role: 'campaign_manager', status: 'active' },
-                  { name: 'Marsha Henderson', email: 'mhenderson@sknlp.org', role: 'data_manager', status: 'active' },
-                  { name: 'Carlos Browne', email: 'cbrowne@sknlp.org', role: 'field_organizer', status: 'inactive' },
-                ].map((member, i) => (
-                  <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-slate-100 rounded-xl hover:bg-slate-50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ backgroundColor: primaryColor }}>
-                        {member.name[0]}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-slate-800">{member.name}</p>
-                        <p className="text-xs text-slate-400">{member.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600 capitalize">{member.role.replace(/_/g, ' ')}</span>
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${member.status === 'active' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{member.status}</span>
-                      <Button variant="ghost" size="sm">Edit</Button>
-                    </div>
-                  </div>
-                ))}
-                <Button variant="outline" size="sm" icon={<Users size={13} />} className="w-full">Invite Team Member</Button>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'notifications' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Notification Preferences</h3>
-              <div className="space-y-4">
-                {(
-                  [
-                    { key: 'panicAlerts',        label: 'Panic Alerts',           desc: 'Immediate notification when a field agent triggers a panic alert' },
-                    { key: 'voterImport',         label: 'Voter Import Complete',  desc: 'Notify when a CSV voter import finishes processing' },
-                    { key: 'campaignMilestone',   label: 'Campaign Milestone',     desc: 'Updates when canvassing targets are reached' },
-                    { key: 'surveyResponse',      label: 'New Survey Response',    desc: 'Daily digest of survey/poll responses' },
-                    { key: 'lowBattery',          label: 'Low Agent Battery',      desc: "Alert when a tracked agent's battery drops below 20%" },
-                    { key: 'fundraisingGoal',     label: 'Fundraising Goal',       desc: 'Notify when a donation goal is reached or updated' },
-                  ] as { key: keyof typeof notifPrefs; label: string; desc: string }[]
-                ).map(({ key, label, desc }) => {
-                  const enabled = notifPrefs[key];
-                  return (
-                    <div key={key} className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 py-3 border-b border-slate-50 last:border-0">
-                      <div>
-                        <p className="text-sm font-medium text-slate-800">{label}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{desc}</p>
-                      </div>
-                      <Toggle on={enabled} onChange={() => toggleNotif(key)} color={primaryColor} />
-                    </div>
-                  );
-                })}
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'security' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">Security Settings</h3>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">Change Password</label>
-                  <div className="space-y-2">
-                    <input type="password" placeholder="Current password" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                    <input type="password" placeholder="New password" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                    <input type="password" placeholder="Confirm new password" className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-                    <Button variant="outline" size="sm">Update Password</Button>
-                  </div>
-                </div>
-                <div className="border-t border-slate-100 pt-5">
-                  <p className="text-sm font-medium text-slate-800 mb-1">Two-Factor Authentication</p>
-                  <p className="text-xs text-slate-400 mb-3">Add an extra layer of security to your account</p>
-                  <Button variant="outline" size="sm">Enable 2FA</Button>
-                </div>
-                <div className="border-t border-slate-100 pt-5">
-                  <p className="text-sm font-medium text-slate-800 mb-1">Active Sessions</p>
-                  <div className="space-y-2 mt-3">
-                    {[
-                      { device: 'MacBook Pro — Chrome', ip: '192.168.1.4', time: 'Current session' },
-                      { device: 'iPhone 15 — Safari', ip: '10.0.0.12', time: '2 hours ago' },
-                    ].map((s, i) => (
-                      <div key={i} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-slate-100 rounded-lg">
-                        <div>
-                          <p className="text-sm text-slate-700">{s.device}</p>
-                          <p className="text-xs text-slate-400">{s.ip} · {s.time}</p>
-                        </div>
-                        {i !== 0 && <Button variant="ghost" size="sm" className="text-red-500">Revoke</Button>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {activeTab === 'api' && (
-            <Card className="p-4 sm:p-5 md:p-6">
-              <h3 className="font-semibold text-slate-800 mb-4 sm:mb-5 text-base sm:text-lg">API & Integrations</h3>
-              <div className="space-y-5">
-                <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-2">API Keys</label>
-                  <div className="space-y-2">
-                    {[
-                      { label: 'Live API Key', value: 'ck_live_••••••••••••••••••••' },
-                      { label: 'Test API Key', value: 'ck_test_••••••••••••••••••••' },
-                    ].map(({ label, value }) => (
-                      <div key={label} className="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-slate-200 rounded-lg">
-                        <div className="flex-1">
-                          <p className="text-xs font-medium text-slate-600">{label}</p>
-                          <code className="text-sm text-slate-800 font-mono break-all">{value}</code>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm">Reveal</Button>
-                          <Button variant="ghost" size="sm">Regenerate</Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="border-t border-slate-100 pt-5">
-                  <label className="block text-xs font-medium text-slate-700 mb-3">Connected Integrations</label>
-                  <div className="space-y-2">
-                    {[
-                      { name: 'Twilio (SMS/WhatsApp)', status: 'connected', color: '#F22F46' },
-                      { name: 'Pusher (Real-time)', status: 'connected', color: '#300D4F' },
-                      { name: 'Mailgun (Email)', status: 'connected', color: '#F06B25' },
-                      { name: 'Stripe (Payments)', status: 'disconnected', color: '#635BFF' },
-                      { name: 'Google Maps', status: 'disconnected', color: '#4285F4' },
-                    ].map(({ name, status, color }) => (
-                      <div key={name} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border border-slate-100 rounded-lg">
-                        <div className="flex items-center gap-2">
-                          <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-                          <span className="text-sm text-slate-700">{name}</span>
-                        </div>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${status === 'connected' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{status}</span>
-                          <Button variant="ghost" size="sm">{status === 'connected' ? 'Configure' : 'Connect'}</Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
+        {/* ── Bottom Action Buttons ── */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          marginTop: 24,
+        }}>
+          <button style={{
+            backgroundColor: '#DC2626',
+            color: '#FFFFFF',
+            fontSize: 14,
+            fontWeight: 700,
+            padding: '12px 28px',
+            borderRadius: 999,
+            border: 'none',
+            cursor: 'pointer',
+            letterSpacing: '0.02em',
+            boxShadow: '0 4px 14px rgba(220,38,38,0.4)',
+            fontFamily: 'inherit',
+          }}>
+            Export All Data
+          </button>
+          <button style={{
+            backgroundColor: 'transparent',
+            color: '#1A1A1A',
+            fontSize: 14,
+            fontWeight: 700,
+            padding: '11px 28px',
+            borderRadius: 999,
+            border: '2px solid #1A1A1A',
+            cursor: 'pointer',
+            letterSpacing: '0.02em',
+            fontFamily: 'inherit',
+          }}>
+            Logout
+          </button>
         </div>
+
       </div>
     </div>
   );

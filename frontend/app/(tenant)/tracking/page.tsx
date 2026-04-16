@@ -1,195 +1,121 @@
 'use client';
 import { useState } from 'react';
-import { MapPin, Radio, AlertTriangle, Users, Activity, Clock } from 'lucide-react';
+import { MapPin, Radio, Users, Activity, Clock, Navigation } from 'lucide-react';
 
-interface Agent {
-  id: number;
-  name: string;
-  role: string;
-  constituency: string;
-  lat: number;
-  lng: number;
-  last_seen: string;
-  status: 'active' | 'idle' | 'offline';
-  battery: number;
-}
-
-const AGENTS: Agent[] = [
-  { id: 1, name: 'Marcus James', role: 'Canvasser', constituency: 'Kingston Central', lat: 17.997, lng: -76.793, last_seen: '2 min ago', status: 'active', battery: 84 },
-  { id: 2, name: 'Leila Morris', role: 'Field Organizer', constituency: 'Kingston East', lat: 18.002, lng: -76.782, last_seen: '5 min ago', status: 'active', battery: 62 },
-  { id: 3, name: 'Devon Clarke', role: 'Runner', constituency: 'Kingston Central', lat: 17.993, lng: -76.799, last_seen: '1 min ago', status: 'active', battery: 91 },
-  { id: 4, name: 'Nadia Brown', role: 'Canvasser', constituency: 'St. Catherine North', lat: 18.010, lng: -76.812, last_seen: '12 min ago', status: 'idle', battery: 47 },
-  { id: 5, name: 'Patrick Grant', role: 'Branch Manager', constituency: 'Clarendon Central', lat: 17.988, lng: -76.776, last_seen: '45 min ago', status: 'offline', battery: 18 },
+const AGENTS = [
+  { id: 1, name: 'Marcus Brown',  role: 'Canvasser',    constituency: 'Kingston Central',   status: 'Active',   lastSeen: '2 min ago',  color: '#4ADE80' },
+  { id: 2, name: 'Sarah James',   role: 'Runner',       constituency: 'Basseterre Central', status: 'Active',   lastSeen: '5 min ago',  color: '#4ADE80' },
+  { id: 3, name: 'Devon Clarke',  role: 'Outdoor Agent',constituency: 'Nevis',              status: 'En Route', lastSeen: '9 min ago',  color: '#60A5FA' },
+  { id: 4, name: 'Trevor Hall',   role: 'Canvasser',    constituency: 'St. Christopher N',  status: 'Active',   lastSeen: '12 min ago', color: '#4ADE80' },
+  { id: 5, name: 'Patricia W.',   role: 'Runner',       constituency: 'Portland East',      status: 'Offline',  lastSeen: '1 hr ago',   color: '#94A3B8' },
 ];
 
-const batteryColor = (b: number) => b > 50 ? 'var(--tenant-primary)' : b > 20 ? '#F59E0B' : '#EF4444';
-const statusColors = { active: 'var(--tenant-primary)', idle: '#F59E0B', offline: '#94A3B8' };
+const LIVE_STATS = [
+  { label: 'Active Agents', value: '18', color: '#4ADE80', icon: Users },
+  { label: 'Constituencies', value: '8', color: '#60A5FA', icon: MapPin },
+  { label: 'GPS Active',     value: '15', color: 'var(--tenant-primary)', icon: Radio },
+  { label: 'Last Update',    value: '30s', color: '#F59E0B', icon: Clock },
+];
 
 export default function TrackingPage() {
-  const [agents] = useState<Agent[]>(AGENTS);
-  const [selected, setSelected] = useState<Agent | null>(null);
-  const [filter, setFilter] = useState<'all' | 'active' | 'idle' | 'offline'>('all');
-  const primaryColor = 'var(--tenant-primary)';
-
-  const filtered = filter === 'all' ? agents : agents.filter(a => a.status === filter);
+  const [selected, setSelected] = useState<number | null>(null);
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Live GPS Tracking</h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">Real-time field agent locations — updates every 30 seconds</p>
+    <div style={{ minHeight: '100vh', fontFamily: "'Inter', sans-serif", backgroundColor: 'var(--tenant-sidebar)' }}>
+
+      {/* ── Header ── */}
+      <div style={{ padding: '22px 24px 18px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#4ADE80', boxShadow: '0 0 0 3px rgba(74,222,128,0.3)', animation: 'trackpulse 2s infinite' }} />
+            <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#4ADE80' }}>Live Tracking</span>
+          </div>
+          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(22px,4vw,30px)', color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>
+            Field Agent Tracker
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, margin: '5px 0 0' }}>Real-time GPS monitoring for all field teams</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span
-            className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full whitespace-nowrap"
-            style={{ backgroundColor: '#ECFDF5', color: '#065F46' }}
-          >
-            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-400 animate-pulse" />
-            Live
-          </span>
-          <button className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all whitespace-nowrap">
-            <AlertTriangle size={12} className="sm:w-[13px] sm:h-[13px]" />
-            <span className="hidden xs:inline">Simulate Panic</span>
-            <span className="xs:hidden">Panic</span>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button style={{ padding: '9px 16px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.7)', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Radio size={13} /> Full Screen Map
           </button>
         </div>
       </div>
 
-      {/* Stats Cards - Responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[
-          { label: 'Active Agents', value: agents.filter(a => a.status === 'active').length, color: 'var(--tenant-primary)', bg: '#ECFDF5', icon: Activity },
-          { label: 'Idle', value: agents.filter(a => a.status === 'idle').length, color: '#F59E0B', bg: '#FFFBEB', icon: Clock },
-          { label: 'Offline', value: agents.filter(a => a.status === 'offline').length, color: '#94A3B8', bg: '#F1F5F9', icon: Radio },
-          { label: 'Total Tracked', value: agents.length, color: primaryColor, bg: '#F0FDFA', icon: Users },
-        ].map(({ label, value, color, bg, icon: Icon }) => (
-          <div key={label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 sm:gap-3 mb-2">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: bg }}>
-                <Icon size={14} className="sm:w-[16px] sm:h-[16px]" style={{ color }} />
-              </div>
+      {/* ── Live stats ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, padding: '0 24px 18px' }}>
+        {LIVE_STATS.map(({ label, value, color, icon: Icon }) => (
+          <div key={label} style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 14, padding: '14px 16px', border: '1px solid rgba(255,255,255,0.09)', display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 9, backgroundColor: `${color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Icon size={16} style={{ color }} />
             </div>
-            <p className="text-lg sm:text-2xl font-bold text-slate-800">{value}</p>
-            <p className="text-[10px] sm:text-xs text-slate-400 mt-0.5 truncate">{label}</p>
+            <div>
+              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 22, color: '#fff', margin: 0, lineHeight: 1 }}>{value}</p>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', margin: '3px 0 0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Map + Agent List - Responsive */}
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
+      {/* ── Map + agent list ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.8fr) minmax(260px,1fr)', gap: 14, padding: '0 24px 24px' }}>
+
         {/* Map */}
-        <div className="lg:flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Live Agent Map</h3>
-            <span className="text-[10px] sm:text-xs text-slate-400">Jamaica · All Constituencies</span>
-          </div>
-          <div className="relative h-[300px] sm:h-[380px] lg:h-[420px] flex items-center justify-center" style={{ backgroundColor: '#E8EEF5' }}>
-            <div className="text-center text-slate-400 pointer-events-none">
-              <MapPin size={28} className="sm:w-8 sm:h-8 mx-auto mb-2 opacity-20" />
-              <p className="text-xs sm:text-sm font-medium text-slate-500">Mapbox Live Map</p>
-              <p className="text-[10px] sm:text-xs text-slate-400">Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
+        <div style={{ borderRadius: 18, overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', height: 380, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, position: 'relative' }}>
+          <MapPin size={42} style={{ color: 'rgba(255,255,255,0.12)' }} />
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, margin: 0, fontWeight: 600 }}>Live GPS Map</p>
+          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, margin: 0 }}>Configure NEXT_PUBLIC_MAPBOX_TOKEN</p>
+
+          {/* Agent pins */}
+          {[
+            { top: '25%', left: '30%', color: '#4ADE80' },
+            { top: '45%', left: '55%', color: '#4ADE80' },
+            { top: '35%', left: '68%', color: '#60A5FA' },
+            { top: '62%', left: '42%', color: '#4ADE80' },
+            { top: '55%', left: '22%', color: '#94A3B8' },
+          ].map((pin, i) => (
+            <div key={i} onClick={() => setSelected(i + 1)}
+              style={{ position: 'absolute', top: pin.top, left: pin.left, width: 18, height: 18, borderRadius: '50%', backgroundColor: pin.color, boxShadow: `0 0 0 5px ${pin.color}33`, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'transform .15s', transform: selected === i + 1 ? 'scale(1.3)' : 'scale(1)' }}>
+              <Navigation size={9} style={{ color: '#fff' }} />
             </div>
-            {agents.map((agent, i) => (
-              <button
-                key={agent.id}
-                onClick={() => setSelected(agent)}
-                className="absolute z-10 transition-all hover:scale-110"
-                style={{ top: `${18 + i * 14}%`, left: `${12 + i * 16}%` }}
-                title={agent.name}
-              >
-                <div
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
-                  style={{
-                    backgroundColor: statusColors[agent.status],
-                    animation: agent.status === 'active' ? 'pulse 2s infinite' : undefined,
-                  }}
-                >
-                  {agent.name[0]}
-                </div>
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
 
         {/* Agent list */}
-        <div className="lg:w-80 xl:w-96 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden flex flex-col">
-          <div className="px-3 sm:px-4 py-3 sm:py-4 border-b border-slate-100">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm mb-2 sm:mb-3">Field Agents</h3>
-            <div className="flex flex-wrap gap-1">
-              {(['all', 'active', 'idle', 'offline'] as const).map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-medium capitalize transition-all whitespace-nowrap"
-                  style={filter === f
-                    ? { backgroundColor: primaryColor, color: 'white' }
-                    : { backgroundColor: '#F1F5F9', color: '#64748B' }}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
+        <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 18, border: '1px solid rgba(255,255,255,0.09)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+            <p style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.35)', margin: 0 }}>Field Agents</p>
           </div>
-          <div className="flex-1 overflow-y-auto divide-y divide-slate-50 max-h-[400px] sm:max-h-[500px]">
-            {filtered.map(agent => (
-              <button
-                key={agent.id}
-                onClick={() => setSelected(selected?.id === agent.id ? null : agent)}
-                className="w-full text-left px-3 sm:px-4 py-3 sm:py-3.5 hover:bg-slate-50 transition-colors"
-                style={selected?.id === agent.id ? { backgroundColor: '#F8FAFC', borderLeft: `3px solid ${primaryColor}` } : {}}
-              >
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="relative shrink-0">
-                    <div
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-white text-xs sm:text-sm font-bold"
-                      style={{ backgroundColor: primaryColor }}
-                    >
-                      {agent.name[0]}
-                    </div>
-                    <span
-                      className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full border-2 border-white"
-                      style={{ backgroundColor: statusColors[agent.status] }}
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">{agent.name}</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 truncate">{agent.role} · {agent.constituency}</p>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-[10px] sm:text-xs text-slate-400 whitespace-nowrap">{agent.last_seen}</p>
-                    <div className="flex items-center gap-1 mt-0.5 justify-end">
-                      <div className="w-8 sm:w-10 h-1 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full transition-all" style={{ width: `${agent.battery}%`, backgroundColor: batteryColor(agent.battery) }} />
-                      </div>
-                      <span className="text-[10px] sm:text-xs" style={{ color: batteryColor(agent.battery) }}>{agent.battery}%</span>
-                    </div>
-                  </div>
+          <div style={{ overflowY: 'auto', flex: 1 }}>
+            {AGENTS.map((a, i) => (
+              <div key={a.id}
+                onClick={() => setSelected(a.id)}
+                style={{ padding: '12px 18px', borderTop: i > 0 ? '1px solid rgba(255,255,255,0.06)' : 'none', display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer', transition: 'background-color .15s', backgroundColor: selected === a.id ? 'rgba(255,255,255,0.1)' : 'transparent' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: a.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 700, fontSize: 12, color: '#000' }}>
+                  {a.name.split(' ').map(n => n[0]).join('')}
                 </div>
-                {selected?.id === agent.id && (
-                  <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-[10px] sm:text-xs font-semibold text-slate-600">GPS Coordinates</p>
-                      <p className="text-[9px] sm:text-xs text-slate-400 mt-0.5 truncate">{agent.lat.toFixed(4)}, {agent.lng.toFixed(4)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] sm:text-xs font-semibold text-slate-600">Status</p>
-                      <p className="text-[10px] sm:text-xs capitalize mt-0.5" style={{ color: statusColors[agent.status] }}>{agent.status}</p>
-                    </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 600, fontSize: 13, color: '#fff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.name}</p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.role} · {a.constituency}</p>
+                </div>
+                <div style={{ flexShrink: 0, textAlign: 'right' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: a.color }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: a.color }}>{a.status}</span>
                   </div>
-                )}
-              </button>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', margin: '2px 0 0', whiteSpace: 'nowrap' }}>{a.lastSeen}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Add pulse animation keyframes */}
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.1); opacity: 0.8; }
+      <style>{`
+        @keyframes trackpulse { 0%,100%{box-shadow:0 0 0 3px rgba(74,222,128,0.3)} 50%{box-shadow:0 0 0 8px rgba(74,222,128,0.1)} }
+        @media(max-width:768px){
+          div[style*="repeat(4,1fr)"]{grid-template-columns:repeat(2,1fr)!important}
+          div[style*="minmax(0,1.8fr)"]{grid-template-columns:1fr!important}
         }
       `}</style>
     </div>
