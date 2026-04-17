@@ -53,7 +53,8 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
       setTheme(t);
       setChecked(true);
     }
-  }, [router, setBranding]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   // Reactively update theme + CSS variables whenever branding changes
   useEffect(() => {
@@ -118,9 +119,9 @@ export default function TenantLayout({ children }: { children: React.ReactNode }
         logoContent={logoContent}
         primaryColor={theme.primary}
         showBottomNav={true}
-        hideDesktopTopBar={true}
+        hideDesktopTopBar={false}
         noPadding={true}
-        shellBg="#060A14"
+        shellBg="#F8FAFC"
       >
         {children}
       </AppShell>

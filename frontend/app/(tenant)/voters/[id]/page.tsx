@@ -1,8 +1,11 @@
 // Server component wrapper — enables static export for dynamic route
 export function generateStaticParams() {
-  // Return a placeholder so Next.js generates the route shell.
-  // The real voter ID is resolved client-side by useParams().
-  return [{ id: '0' }];
+  // Static placeholders — real IDs resolved client-side via useParams()
+  return [
+    { id: '0' },
+    { id: '1' },
+    { id: '2' },
+  ];
 }
 
 import VoterProfile from './VoterProfile';

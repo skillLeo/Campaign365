@@ -1,221 +1,370 @@
 'use client';
-import { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { ArrowLeft, Upload, CheckCircle, AlertCircle, FileText, Download, ArrowRight, Users } from 'lucide-react';
-import type {} from 'react'; // satisfy lint
+import { useState, useRef, useEffect } from 'react';
 
-const STEPS = ['Upload File', 'Map Columns', 'Preview', 'Import'];
+function useW() {
+  const [w, setW] = useState(1200);
+  useEffect(() => {
+    setW(window.innerWidth);
+    const h = () => setW(window.innerWidth);
+    window.addEventListener('resize', h);
+    return () => window.removeEventListener('resize', h);
+  }, []);
+  return w;
+}
 
-export default function VoterImportPage() {
-  const router = useRouter();
-  const [step, setStep] = useState(0);
-  const [file, setFile] = useState<File | null>(null);
-  const [dragging, setDragging] = useState(false);
-  const [importing, setImporting] = useState(false);
-  const [done, setDone] = useState(false);
+// ─── SKNLP Flag + upload badge (matches reference exactly) ──────────────────
+function FlagBadge() {
+  return (
+    <div style={{ position: 'relative', width: 180, height: 150, margin: '0 auto' }}>
+      {/* Flag SVG */}
+      <svg viewBox="0 0 180 130" width="180" height="130" style={{ display: 'block', filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.8))' }}>
+        <defs>
+          <clipPath id="fc"><rect width="180" height="130" rx="10" /></clipPath>
+          <linearGradient id="fshine" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.15)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0.1)" />
+          </linearGradient>
+          <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#CC0A1E" />
+            <stop offset="100%" stopColor="#FF1A35" />
+          </linearGradient>
+        </defs>
+        <g clipPath="url(#fc)">
+          {/* Blue right side */}
+          <rect width="180" height="130" fill="#1A4080" />
+          {/* Green patches */}
+          <rect x="90" width="90" height="130" fill="#006B3C" />
+          {/* Red diagonal triangle left */}
+          <polygon points="0,0 110,65 0,130" fill="url(#redGrad)" />
+          {/* Gold thin line */}
+          <polygon points="0,0 85,65 0,130" fill="#FCD116" />
+          {/* Black thin line */}
+          <polygon points="0,0 70,65 0,130" fill="#111111" />
+          {/* Shine overlay */}
+          <rect width="180" height="130" fill="url(#fshine)" />
+          {/* SKNLP text */}
+          <text x="120" y="52" fill="#FCD116" fontSize="20" fontWeight="900"
+            fontFamily="'Barlow','Impact',Arial,sans-serif" textAnchor="middle"
+            letterSpacing="2">SKNLP</text>
+          {/* Stars or small detail */}
+          <circle cx="120" cy="72" r="3" fill="rgba(255,255,255,0.4)" />
+          <circle cx="132" cy="70" r="2" fill="rgba(255,255,255,0.3)" />
+          <circle cx="108" cy="70" r="2" fill="rgba(255,255,255,0.3)" />
+        </g>
+        {/* Gold border */}
+        <rect width="180" height="130" rx="10" fill="none" stroke="rgba(201,162,39,0.6)" strokeWidth="2.5" />
+      </svg>
+
+      {/* Globe + upload icon badge — bottom center */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: '50%',
+        transform: 'translateX(-50%)',
+        width: 58, height: 58, borderRadius: '50%',
+        background: 'linear-gradient(145deg, #E8C84A 0%, #C9A227 55%, #9A7810 100%)',
+        boxShadow: '0 4px 18px rgba(201,162,39,0.65), 0 0 0 4px rgba(201,162,39,0.15)',
+        border: '2.5px solid rgba(255,255,255,0.3)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 2,
+      }}>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          {/* Globe */}
+          <circle cx="12" cy="13" r="8" stroke="#5A3200" strokeWidth="1.6" />
+          <ellipse cx="12" cy="13" rx="3.5" ry="8" stroke="#5A3200" strokeWidth="1.2" />
+          <line x1="4" y1="10" x2="20" y2="10" stroke="#5A3200" strokeWidth="1.2" />
+          <line x1="4" y1="16" x2="20" y2="16" stroke="#5A3200" strokeWidth="1.2" />
+          {/* Upload arrow */}
+          <polyline points="9,5 12,2 15,5" stroke="#3A1800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <line x1="12" y1="2" x2="12" y2="8" stroke="#3A1800" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ─── Mock history ────────────────────────────────────────────────────────────
+const HISTORY = [
+  { file: 'SKNLP_EOJ_2023-10-15.eoj', ref: '#0F172A', status: 'Completed' },
+  { file: 'SKNLP_2023-09-20.csv',     ref: '#0F172A', status: 'Completed' },
+  { file: 'SKNLP_2023-09-20.csv',     ref: '#0F172A', status: 'Failed'    },
+  { file: 'SKNLP_2023-09-20.csv',     ref: '#0F172A', status: 'Completed' },
+  { file: 'SKNLP_2023-09-20.csv',     ref: '#0F172A', status: 'Failed'    },
+  { file: 'SKNLP_2023-09-20.csv',     ref: '#0F172A', status: 'Failed'    },
+];
+
+export default function ImportVotersPage() {
   const fileRef = useRef<HTMLInputElement>(null);
-  const primaryColor = 'var(--tenant-primary)';
-
-  const csvHeaders = ['First Name', 'Last Name', 'Email', 'Phone', 'Address', 'Constituency', 'DOB', 'Gender'];
-  const systemFields = ['first_name', 'last_name', 'email', 'phone', 'address', 'constituency', 'date_of_birth', 'gender'];
-  const previewRows = [
-    ['Marcus', 'Williams', 'marcus@email.com', '+1869-555-0142', '14 Bay Rd', 'St. Chris 1', '1985-07-22', 'Male'],
-    ['Sandra', 'Clarke', 'sandra@email.com', '+1869-555-0198', '7 Main St', 'Nevis 1', '1990-03-14', 'Female'],
-    ['Devon', 'Baptiste', 'devon@email.com', '+1869-555-0331', '3 Park Ave', 'St. Chris 2', '1978-11-05', 'Male'],
-  ];
+  const [dragging, setDragging]   = useState(false);
+  const [file, setFile]           = useState<File | null>(null);
+  const [progress]                = useState(54);
+  const [histOpen, setHistOpen]   = useState(true);
+  const vw = useW();
+  const isMobile = vw < 768;
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
+    e.preventDefault(); setDragging(false);
     const f = e.dataTransfer.files[0];
-    if (f?.name.endsWith('.csv')) { setFile(f); setStep(1); }
+    if (f) setFile(f);
   };
-
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    if (f) { setFile(f); setStep(1); }
+    if (f) setFile(f);
   };
-
-  const handleImport = async () => {
-    setImporting(true);
-    await new Promise(r => setTimeout(r, 2200));
-    setImporting(false);
-    setDone(true);
-  };
-
-  if (done) {
-    return (
-      <div className="flex items-center justify-center h-full fade-in p-3 sm:p-4">
-        <Card className="p-6 sm:p-10 text-center max-w-md w-full">
-          <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}15` }}>
-            <CheckCircle size={28} className="sm:w-9 sm:h-9" style={{ color: primaryColor }} />
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold text-slate-800 mb-2">Import Complete!</h2>
-          <p className="text-xs sm:text-sm text-slate-500 mb-1">Successfully imported <strong>3 voters</strong></p>
-          <p className="text-xs sm:text-sm text-slate-500 mb-4 sm:mb-6"><span className="text-amber-600 font-medium">0 skipped</span> · <span className="text-red-500 font-medium">0 errors</span></p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Button variant="outline" onClick={() => { setDone(false); setStep(0); setFile(null); }} className="w-full sm:w-auto">Import Another</Button>
-            <Button onClick={() => router.push('/voters')} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="w-full sm:w-auto">
-              View Voters
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
-  }
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5 fade-in">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button onClick={() => router.back()} className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-lg transition-colors">
-            <ArrowLeft size={14} className="sm:w-[16px] sm:h-[16px]" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Import Voter Roll</h1>
-            <p className="text-xs sm:text-sm text-slate-500">Upload a CSV file to bulk-import voters</p>
-          </div>
-        </div>
-        <div className="sm:ml-auto">
-          <Button variant="outline" size="sm" icon={<Download size={12} className="sm:w-[13px] sm:h-[13px]" />} className="w-full sm:w-auto">
-            Download Template
-          </Button>
-        </div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0D1117',
+      fontFamily: "'Inter','Segoe UI',sans-serif",
+      color: '#E6EDF3',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+
+      {/* ── Dramatic red hero bg ─────────────────────────────────────────────── */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+        {/* Red top gradient */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 260,
+          background: 'linear-gradient(120deg, #5A0010 0%, #960018 22%, #CC0020 48%, #DC143C 65%, #8B0018 85%, #3A0008 100%)',
+        }} />
+        {/* Palm trees */}
+        <svg viewBox="0 0 1200 260" preserveAspectRatio="xMaxYMin meet"
+          style={{ position: 'absolute', top: 0, right: 0, width: '65%', height: 260, opacity: 0.5 }}>
+          <path d="M860,260 Q855,215 858,170 Q834,135 810,112 Q836,128 840,156 Q826,124 818,96 Q836,116 844,142 Q843,110 840,82 Q854,104 856,134 Q864,103 866,76 Q872,104 867,135 Q876,108 888,88 Q882,114 876,142 Q889,120 906,104 Q893,128 880,154 Q885,168 882,215 Q873,240 871,260Z" fill="#051505" />
+          <path d="M858,162 Q820,134 795,108 Q826,128 830,156" fill="#072010" />
+          <path d="M858,162 Q850,116 862,84 Q856,120 854,158" fill="#072010" />
+          <path d="M858,162 Q892,128 916,102 Q886,126 878,154" fill="#072010" />
+          <path d="M858,162 Q898,140 920,122 Q887,144 879,156" fill="#072010" />
+          <path d="M1020,260 Q1015,208 1018,160 Q993,124 968,100 Q995,118 999,148 Q984,116 976,88 Q994,110 1003,138 Q1001,106 997,76 Q1012,100 1014,132 Q1022,100 1024,72 Q1031,102 1025,133 Q1035,106 1047,88 Q1041,114 1034,143 Q1048,120 1064,104 Q1050,128 1038,154 Q1042,168 1040,210 Q1031,238 1029,260Z" fill="#051505" />
+          <path d="M1018,152 Q978,122 952,96 Q982,118 987,148" fill="#072010" />
+          <path d="M1018,152 Q1024,106 1036,76 Q1022,116 1020,150" fill="#072010" />
+          <path d="M1018,152 Q1055,122 1078,100 Q1047,126 1038,152" fill="#072010" />
+          {/* Flag bg shapes */}
+          <rect x="1050" y="30" width="100" height="70" rx="5" fill="rgba(0,100,180,0.25)" />
+          <rect x="1050" y="30" width="100" height="22" rx="3" fill="rgba(206,17,38,0.3)" />
+          <rect x="1050" y="78" width="100" height="22" rx="3" fill="rgba(206,17,38,0.3)" />
+          <polygon points="1050,30 1100,65 1050,100" fill="rgba(252,209,22,0.2)" />
+          <text x="1085" y="62" fill="rgba(255,215,0,0.6)" fontSize="14" fontWeight="900" fontFamily="Arial" textAnchor="middle">SKNLP</text>
+        </svg>
+        {/* Fade bottom */}
+        <div style={{
+          position: 'absolute', top: 180, left: 0, right: 0, height: 110,
+          background: 'linear-gradient(to bottom, transparent, #0D1117)',
+        }} />
       </div>
 
-      {/* Step indicator - Responsive */}
-      <Card className="p-3 sm:p-4 overflow-x-auto">
-        <div className="flex items-center min-w-[400px] sm:min-w-0">
-          {STEPS.map((s, i) => (
-            <div key={s} className="flex items-center flex-1 last:flex-none">
-              <div className={`flex items-center gap-1 sm:gap-2 ${i <= step ? 'text-slate-800' : 'text-slate-400'}`}>
-                <div className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-bold transition-all ${i < step ? 'text-white' : i === step ? 'text-white' : 'bg-slate-100'}`}
-                  style={i <= step ? { backgroundColor: primaryColor } : {}}>
-                  {i < step ? <CheckCircle size={12} className="sm:w-[14px] sm:h-[14px]" /> : i + 1}
-                </div>
-                <span className="text-[11px] sm:text-sm font-medium whitespace-nowrap">{s}</span>
+      {/* ── Content ─────────────────────────────────────────────────────────── */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        padding: isMobile ? '24px 14px 32px' : '30px 28px 36px',
+      }}>
+
+        {/* Title */}
+        <h1 style={{
+          fontSize: isMobile ? 26 : 38,
+          fontWeight: 900, color: '#FFFFFF',
+          margin: '0 0 24px', letterSpacing: '-0.02em',
+          textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+        }}>
+          Import Voters
+        </h1>
+
+        {/* Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : `1fr ${histOpen ? '420px' : '0'}`,
+          gap: 16,
+          alignItems: 'start',
+        }}>
+
+          {/* ── LEFT ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+
+            {/* Drop zone */}
+            <div
+              onDragOver={e => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={() => setDragging(false)}
+              onDrop={handleDrop}
+              onClick={() => fileRef.current?.click()}
+              style={{
+                background: 'linear-gradient(160deg, #1E2535 0%, #181D28 100%)',
+                borderRadius: 14,
+                border: `2.5px solid ${dragging ? '#E8C84A' : '#C9A227'}`,
+                boxShadow: `0 0 0 1px rgba(201,162,39,0.15), 0 6px 36px rgba(0,0,0,0.6)`,
+                padding: isMobile ? '36px 20px 42px' : '52px 40px 56px',
+                cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22,
+                transform: dragging ? 'scale(1.01)' : 'scale(1)',
+                transition: 'all 0.18s ease',
+              }}>
+              <input ref={fileRef} type="file" accept=".csv,.eoj" style={{ display: 'none' }} onChange={handleFile} />
+              <FlagBadge />
+              <div style={{ textAlign: 'center' }}>
+                <p style={{
+                  fontSize: isMobile ? 26 : 38,
+                  fontWeight: 900, color: '#FFFFFF',
+                  margin: '0 0 8px', letterSpacing: '-0.02em',
+                  textShadow: '0 2px 12px rgba(0,0,0,0.4)',
+                }}>
+                  {file ? file.name : 'Drag & Drop'}
+                </p>
+                <p style={{ fontSize: 15, fontWeight: 500, color: '#8B949E', margin: 0 }}>
+                  EOJ Electoral Roll or CSV File
+                </p>
               </div>
-              {i < STEPS.length - 1 && <div className={`flex-1 h-px mx-2 sm:mx-3 ${i < step ? '' : 'bg-slate-200'}`} style={i < step ? { backgroundColor: primaryColor } : {}} />}
             </div>
-          ))}
-        </div>
-      </Card>
 
-      {/* Step content */}
-      {step === 0 && (
-        <Card className="p-4 sm:p-6 md:p-8">
-          <div
-            onDragOver={e => { e.preventDefault(); setDragging(true); }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={handleDrop}
-            onClick={() => fileRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 text-center cursor-pointer transition-all ${dragging ? 'scale-105' : 'hover:bg-slate-50'}`}
-            style={{ borderColor: dragging ? primaryColor : '#CBD5E1' }}
-          >
-            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mx-auto mb-3 sm:mb-4 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}15` }}>
-              <Upload size={22} className="sm:w-[26px] sm:h-[26px]" style={{ color: primaryColor }} />
-            </div>
-            <p className="text-base sm:text-lg font-semibold text-slate-700 mb-1">Drop your CSV file here</p>
-            <p className="text-xs sm:text-sm text-slate-400">or click to browse · CSV files only · Max 10MB</p>
-            <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleFile} />
-          </div>
-          <div className="mt-4 sm:mt-5 flex flex-col sm:flex-row items-start gap-2 sm:gap-3 bg-blue-50 rounded-xl p-3 sm:p-4">
-            <AlertCircle size={14} className="text-blue-500 mt-0.5 flex-shrink-0" />
-            <div className="text-[11px] sm:text-xs text-blue-700">
-              <p className="font-semibold mb-1">Required columns:</p>
-              <p>first_name, last_name — all other fields are optional. Download the template above for the correct format.</p>
-            </div>
-          </div>
-        </Card>
-      )}
-
-      {step === 1 && file && (
-        <Card className="p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 sm:mb-5 p-3 bg-slate-50 rounded-xl">
-            <FileText size={16} className="text-slate-500 flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">{file.name}</span>
-            <span className="text-[10px] sm:text-xs text-slate-400 sm:ml-auto">{(file.size / 1024).toFixed(1)} KB</span>
-          </div>
-          <h3 className="font-semibold text-slate-700 mb-3 sm:mb-4 text-xs sm:text-sm">Map CSV Columns to System Fields</h3>
-          <div className="space-y-2 sm:space-y-3">
-            {csvHeaders.map((header, i) => (
-              <div key={header} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-                <div className="flex items-center gap-2 p-2 sm:p-2.5 bg-slate-50 rounded-lg text-xs sm:text-sm text-slate-700 font-medium sm:w-40 md:w-48">
-                  <FileText size={12} className="text-slate-400 flex-shrink-0" />
-                  <span className="truncate">{header}</span>
-                </div>
-                <select defaultValue={systemFields[i]} className="flex-1 border border-slate-200 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm">
-                  <option value="">— Skip this column —</option>
-                  {systemFields.map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
+            {/* Supported + progress */}
+            <div style={{
+              background: '#161B22',
+              borderRadius: 12,
+              border: '1px solid rgba(255,255,255,0.07)',
+              padding: isMobile ? '16px' : '18px 22px',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.35)',
+            }}>
+              <p style={{ fontSize: 16, fontWeight: 800, color: '#FFFFFF', margin: '0 0 6px' }}>Supported</p>
+              <p style={{ fontSize: 14, color: '#8B949E', margin: '0 0 16px', lineHeight: 1.7 }}>
+                EOJ Electoral Roll (*.eoj) or<br />CSV File (*.csv)
+              </p>
+              <p style={{ fontSize: 14, fontWeight: 700, color: '#E6EDF3', margin: '0 0 8px' }}>
+                Importing 1 of 1000 records
+              </p>
+              {/* Gold progress bar */}
+              <div style={{
+                height: 11, borderRadius: 999,
+                backgroundColor: 'rgba(255,255,255,0.07)',
+                overflow: 'hidden',
+              }}>
+                <div style={{
+                  height: '100%', width: `${progress}%`,
+                  background: 'linear-gradient(90deg, #A07818 0%, #C9A227 35%, #E8C84A 65%, #C9A227 100%)',
+                  borderRadius: 999,
+                  boxShadow: '0 0 12px rgba(201,162,39,0.7)',
+                }} />
               </div>
-            ))}
+            </div>
           </div>
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 sm:mt-5">
-            <Button variant="ghost" onClick={() => setStep(0)} className="w-full sm:w-auto">Back</Button>
-            <Button icon={<ArrowRight size={13} className="sm:w-[14px] sm:h-[14px]" />} onClick={() => setStep(2)} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="w-full sm:w-auto">
-              Next: Preview
-            </Button>
-          </div>
-        </Card>
-      )}
 
-      {step === 2 && (
-        <Card className="p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 sm:mb-4">
-            <h3 className="font-semibold text-slate-700 text-xs sm:text-sm">Data Preview (first 3 rows)</h3>
-            <span className="text-[10px] sm:text-xs text-slate-400">3 valid rows · 0 errors detected</span>
-          </div>
-          <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <table className="w-full text-xs" style={{ minWidth: '700px' }}>
-              <thead>
-                <tr className="bg-slate-50">
-                  {csvHeaders.map(h => <th key={h} className="text-left py-2 px-2 sm:px-3 font-medium text-slate-500 text-[10px] sm:text-xs whitespace-nowrap">{h}</th>)}
-                  <th className="py-2 px-2 sm:px-3 font-medium text-slate-500 text-[10px] sm:text-xs whitespace-nowrap">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {previewRows.map((row, i) => (
-                  <tr key={i}>
-                    {row.map((cell, j) => <td key={j} className="py-2 px-2 sm:px-3 text-slate-700 text-[10px] sm:text-xs whitespace-nowrap">{cell}</td>)}
-                    <td className="py-2 px-2 sm:px-3 whitespace-nowrap">
-                      <span className="text-emerald-600 font-medium flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs">
-                        <CheckCircle size={10} className="sm:w-[11px] sm:h-[11px]" />Valid
-                      </span>
-                    </td>
-                  </tr>
+          {/* ── RIGHT: Import History (DARK panel) ── */}
+          {histOpen && (
+            <div style={{
+              background: 'linear-gradient(160deg, #1C2230 0%, #13181F 100%)',
+              borderRadius: 14,
+              border: '1.5px solid rgba(201,162,39,0.4)',
+              overflow: 'hidden',
+              boxShadow: '0 0 0 1px rgba(201,162,39,0.12), 0 8px 48px rgba(0,0,0,0.75)',
+              alignSelf: 'start',
+              minWidth: 0,
+            }}>
+              {/* Panel header */}
+              <div style={{
+                display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+                padding: '18px 20px 16px',
+                borderBottom: '1px solid rgba(255,255,255,0.09)',
+              }}>
+                <div>
+                  <p style={{
+                    fontSize: 28, fontWeight: 900, color: '#FFFFFF',
+                    margin: '0 0 5px', letterSpacing: '-0.02em',
+                    lineHeight: 1,
+                  }}>
+                    Import History
+                  </p>
+                  <p style={{ fontSize: 14, color: '#6E7681', margin: 0, fontWeight: 400 }}>Dost Uristory</p>
+                </div>
+                <button onClick={() => setHistOpen(false)} style={{
+                  width: 30, height: 30, borderRadius: 7,
+                  backgroundColor: 'rgba(255,255,255,0.09)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, marginTop: 2,
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Column headers */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1.7fr 72px 110px',
+                padding: '11px 20px',
+                borderBottom: '1px solid rgba(255,255,255,0.08)',
+                backgroundColor: 'rgba(255,255,255,0.045)',
+              }}>
+                {['File Name','Status','Records'].map(h => (
+                  <span key={h} style={{
+                    fontSize: 15, fontWeight: 700, color: '#FFFFFF',
+                    letterSpacing: '0.02em',
+                  }}>{h}</span>
                 ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 sm:mt-5">
-            <Button variant="ghost" onClick={() => setStep(1)} className="w-full sm:w-auto">Back</Button>
-            <Button icon={<ArrowRight size={13} className="sm:w-[14px] sm:h-[14px]" />} onClick={() => setStep(3)} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="w-full sm:w-auto">
-              Next: Import
-            </Button>
-          </div>
-        </Card>
-      )}
+              </div>
 
-      {step === 3 && (
-        <Card className="p-6 sm:p-8 text-center">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mx-auto mb-3 sm:mb-4 flex items-center justify-center" style={{ backgroundColor: `${primaryColor}15` }}>
-            <Users size={22} className="sm:w-[26px] sm:h-[26px]" style={{ color: primaryColor }} />
-          </div>
-          <h3 className="text-base sm:text-lg font-bold text-slate-800 mb-2">Ready to Import</h3>
-          <p className="text-xs sm:text-sm text-slate-500 mb-1"><strong>3 voters</strong> will be added to your voter roll</p>
-          <p className="text-[11px] sm:text-sm text-slate-400 mb-4 sm:mb-6">Duplicates will be detected and skipped automatically</p>
-          <div className="flex flex-col-reverse sm:flex-row justify-center gap-2 sm:gap-3">
-            <Button variant="ghost" onClick={() => setStep(2)} className="w-full sm:w-auto">Back</Button>
-            <Button loading={importing} onClick={handleImport} style={{ backgroundColor: primaryColor, borderColor: primaryColor }} className="w-full sm:w-auto">
-              {importing ? 'Importing...' : 'Start Import'}
-            </Button>
-          </div>
-        </Card>
-      )}
+              {/* Data rows */}
+              {HISTORY.map((row, i) => (
+                <div key={i} style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1.7fr 72px 110px',
+                  padding: '14px 20px',
+                  borderBottom: i < HISTORY.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
+                  backgroundColor: i % 2 === 1 ? 'rgba(255,255,255,0.03)' : 'transparent',
+                  alignItems: 'center',
+                }}>
+                  {/* File name */}
+                  <span style={{
+                    fontSize: 14, color: '#C9D1D9',
+                    fontFamily: "'Courier New',Courier,monospace",
+                    overflow: 'hidden', textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap', paddingRight: 10,
+                    display: 'block',
+                    fontWeight: 500,
+                  }}>
+                    {row.file}
+                  </span>
+                  {/* Ref / hash */}
+                  <span style={{
+                    fontSize: 13, color: '#8B949E',
+                    fontFamily: "'Courier New',Courier,monospace",
+                    whiteSpace: 'nowrap',
+                    fontWeight: 500,
+                  }}>
+                    {row.ref}
+                  </span>
+                  {/* Status badge */}
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '7px 16px', borderRadius: 8,
+                    fontSize: 14, fontWeight: 700,
+                    backgroundColor: row.status === 'Completed' ? '#16A34A' : '#DC2626',
+                    color: '#FFFFFF',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.01em',
+                    boxShadow: row.status === 'Completed'
+                      ? '0 2px 10px rgba(22,163,74,0.5)'
+                      : '0 2px 10px rgba(220,38,38,0.5)',
+                  }}>
+                    {row.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Restore button */}
+        {!histOpen && (
+          <button onClick={() => setHistOpen(true)} style={{
+            marginTop: 14, padding: '9px 18px', borderRadius: 8,
+            backgroundColor: '#21262D', border: '1px solid #30363D',
+            fontSize: 13, fontWeight: 600, color: '#C9D1D9',
+            cursor: 'pointer', fontFamily: 'inherit',
+          }}>
+            Show Import History
+          </button>
+        )}
+      </div>
     </div>
   );
 }
