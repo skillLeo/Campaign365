@@ -145,57 +145,64 @@ export function AppShell({
             top: 0,
             zIndex: 30,
             height: 56,
-            backgroundColor: '#FFFFFF',
-            borderBottom: '1px solid #E2E8F0',
+            backgroundColor: '#0B1120',
+            borderBottom: '1px solid #1E2D45',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '0 16px',
+            padding: '0 20px',
             flexShrink: 0,
+            boxShadow: '0 1px 6px rgba(0,0,0,0.3)',
           }}
         >
-          {/* Hamburger — always visible, always clickable */}
+          {/* Hamburger */}
           <button
             onClick={onToggle}
             aria-label="Toggle sidebar"
             style={{
-              width: 40,
-              height: 40,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 5,
-              background: 'none',
-              border: '1px solid #E2E8F0',
-              cursor: 'pointer',
-              borderRadius: 8,
-              flexShrink: 0,
+              width: 36, height: 36,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: 5, background: 'none',
+              border: '1px solid #1E2D45',
+              cursor: 'pointer', borderRadius: 8, flexShrink: 0,
             }}
           >
-            <span style={{ display: 'block', width: 18, height: 2, background: '#374151', borderRadius: 2 }} />
-            <span style={{ display: 'block', width: 18, height: 2, background: '#374151', borderRadius: 2 }} />
-            <span style={{ display: 'block', width: 18, height: 2, background: '#374151', borderRadius: 2 }} />
+            <span style={{ display: 'block', width: 16, height: 2, background: '#94A3B8', borderRadius: 2 }} />
+            <span style={{ display: 'block', width: 16, height: 2, background: '#94A3B8', borderRadius: 2 }} />
+            <span style={{ display: 'block', width: 16, height: 2, background: '#94A3B8', borderRadius: 2 }} />
           </button>
 
-          {/* Logo — center on mobile, hidden on desktop (sidebar shows it) */}
-          {!isDesktop && (
-            <div
-              style={{
-                position: 'absolute',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              {logoContent}
-            </div>
-          )}
+          {/* Party name dropdown — center */}
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: '#1A2744', border: '1px solid #1E2D45',
+            borderRadius: 8, padding: '7px 14px', cursor: 'pointer',
+            marginLeft: 16,
+          }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#E2E8F0', whiteSpace: 'nowrap' }}>
+              St. Kitts Nevis Labour Party
+            </span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2.5">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          {/* Search bar */}
+          <div style={{
+            flex: 1, maxWidth: 280, margin: '0 16px',
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: '#1A2744', border: '1px solid #1E2D45',
+            borderRadius: 8, padding: '7px 12px',
+          }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A5D80" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span style={{ fontSize: 13, color: '#4A5D80' }}>Search...</span>
+          </div>
 
           {/* Right icons */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 'auto' }}>
 
             {/* Notification bell */}
             <div ref={notifRef} style={{ position: 'relative' }}>
@@ -205,17 +212,19 @@ export function AppShell({
                 style={{
                   width: 36, height: 36,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: showNotifPanel ? '#F1F5F9' : 'none',
-                  border: '1px solid #E2E8F0',
+                  background: '#1A2744',
+                  border: '1px solid #1E2D45',
                   cursor: 'pointer', borderRadius: 8, position: 'relative',
                 }}
               >
-                <Bell size={16} color="#64748B" />
+                <Bell size={16} color="#94A3B8" />
                 <span style={{
-                  position: 'absolute', top: 7, right: 7,
-                  width: 7, height: 7, borderRadius: '50%',
-                  backgroundColor: primaryColor, border: '2px solid white',
-                }} />
+                  position: 'absolute', top: 6, right: 6,
+                  width: 8, height: 8, borderRadius: '50%',
+                  backgroundColor: '#E8C84A', border: '2px solid rgba(0,0,0,0.3)',
+                  fontSize: 8, fontWeight: 800, color: '#000',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>1</span>
               </button>
 
               {showNotifPanel && (
@@ -261,26 +270,27 @@ export function AppShell({
               <button
                 onClick={() => { setShowProfileMenu(p => !p); setShowNotifPanel(false); }}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 6,
-                  background: showProfileMenu ? '#F1F5F9' : 'none',
-                  border: '1px solid #E2E8F0', borderRadius: 8,
-                  padding: '4px 8px 4px 4px', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  background: '#1A2744',
+                  border: '1px solid #1E2D45', borderRadius: 8,
+                  padding: '4px 10px 4px 4px', cursor: 'pointer',
                 }}
               >
                 <div style={{
-                  width: 28, height: 28, borderRadius: '50%',
-                  backgroundColor: primaryColor,
+                  width: 30, height: 30, borderRadius: '50%',
+                  backgroundColor: '#CC1525',
+                  border: '2px solid #E2E8F0',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'white', fontSize: 11, fontWeight: 700, flexShrink: 0,
+                  color: 'white', fontSize: 12, fontWeight: 700, flexShrink: 0,
                 }}>
                   {userInitial}
                 </div>
                 {isDesktop && (
-                  <span style={{ fontSize: 12, fontWeight: 500, color: '#374151', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {displayName}
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#E2E8F0', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {displayName.split(' ')[0].slice(0,2).toUpperCase()}
                   </span>
                 )}
-                <ChevronDown size={12} color="#9CA3AF" style={{ transform: showProfileMenu ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                <ChevronDown size={12} color="#94A3B8" style={{ transform: showProfileMenu ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
               </button>
 
               {showProfileMenu && (

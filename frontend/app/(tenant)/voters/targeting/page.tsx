@@ -1,265 +1,388 @@
 'use client';
 import { useState } from 'react';
-import { Filter, Download, Map, Users, ChevronDown, Search } from 'lucide-react';
 
-const CONSTITUENCIES = [
-  { id: 'all', name: 'All Constituencies' },
-  { id: 'sk1', name: 'St. Christopher 1' },
-  { id: 'sk2', name: 'St. Christopher 2' },
-  { id: 'sk3', name: 'St. Christopher 3' },
-  { id: 'sk4', name: 'St. Christopher 4' },
-  { id: 'sk5', name: 'St. Christopher 5' },
-  { id: 'nevis1', name: 'Nevis 1' },
-  { id: 'nevis2', name: 'Nevis 2' },
-];
+// ── Glowing target pin ────────────────────────────────────────────────────────
+function TargetPin({ x, y, size = 28 }: { x: number; y: number; size?: number }) {
+  const r1 = size * 0.5;
+  const r2 = size * 0.32;
+  const r3 = size * 0.14;
+  return (
+    <g>
+      {/* Outer glow */}
+      <circle cx={x} cy={y} r={r1 + 6} fill="rgba(201,162,39,0.12)" />
+      {/* Outer ring */}
+      <circle cx={x} cy={y} r={r1} fill="none" stroke="#C9A227" strokeWidth="1.8" opacity="0.85" />
+      {/* Mid ring */}
+      <circle cx={x} cy={y} r={r2} fill="none" stroke="#E8C84A" strokeWidth="1.4" opacity="0.9" />
+      {/* Center dot */}
+      <circle cx={x} cy={y} r={r3} fill="#E8C84A" opacity="0.95" />
+      {/* Cross-hairs */}
+      <line x1={x - r1 - 3} y1={y} x2={x - r2 - 2} y2={y} stroke="#C9A227" strokeWidth="1.2" opacity="0.7" />
+      <line x1={x + r2 + 2} y1={y} x2={x + r1 + 3} y2={y} stroke="#C9A227" strokeWidth="1.2" opacity="0.7" />
+      <line x1={x} y1={y - r1 - 3} x2={x} y2={y - r2 - 2} stroke="#C9A227" strokeWidth="1.2" opacity="0.7" />
+      <line x1={x} y1={y + r2 + 2} x2={x} y2={y + r1 + 3} stroke="#C9A227" strokeWidth="1.2" opacity="0.7" />
+    </g>
+  );
+}
 
-const MOCK_VOTERS = [
-  { id: 1, name: 'Marcus James', constituency: 'St. Christopher 1', age: 34, history: 'Voted 3/3', sentiment: 'Supporter', gender: 'Male' },
-  { id: 2, name: 'Josephine Williams', constituency: 'St. Christopher 2', age: 52, history: 'Voted 2/3', sentiment: 'Undecided', gender: 'Female' },
-  { id: 3, name: 'Desmond Clarke', constituency: 'St. Christopher 3', age: 28, history: 'Voted 1/3', sentiment: 'Opposition', gender: 'Male' },
-  { id: 4, name: 'Patricia Henry', constituency: 'Nevis 1', age: 45, history: 'Voted 3/3', sentiment: 'Supporter', gender: 'Female' },
-  { id: 5, name: 'Ronald Baptiste', constituency: 'St. Christopher 4', age: 61, history: 'Voted 3/3', sentiment: 'Supporter', gender: 'Male' },
-  { id: 6, name: 'Sandra Morton', constituency: 'Nevis 2', age: 39, history: 'Voted 0/3', sentiment: 'Undecided', gender: 'Female' },
-  { id: 7, name: 'Calvin Thomas', constituency: 'St. Christopher 5', age: 22, history: 'First voter', sentiment: 'Undecided', gender: 'Male' },
-  { id: 8, name: 'Yvonne Francis', constituency: 'St. Christopher 1', age: 48, history: 'Voted 2/3', sentiment: 'Supporter', gender: 'Female' },
-  { id: 9, name: 'George Daniel', constituency: 'St. Christopher 2', age: 55, history: 'Voted 3/3', sentiment: 'Opposition', gender: 'Male' },
-  { id: 10, name: 'Michelle Phipps', constituency: 'Nevis 1', age: 31, history: 'Voted 2/3', sentiment: 'Supporter', gender: 'Female' },
-];
+// ── Target icon for stats ─────────────────────────────────────────────────────
+function TargetIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 52 52">
+      <circle cx="26" cy="26" r="24" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.6" />
+      <circle cx="26" cy="26" r="16" fill="none" stroke="#C9A227" strokeWidth="2" opacity="0.8" />
+      <circle cx="26" cy="26" r="7"  fill="#C9A227" opacity="0.9" />
+      <line x1="2"  y1="26" x2="10" y2="26" stroke="#C9A227" strokeWidth="2" opacity="0.7" />
+      <line x1="42" y1="26" x2="50" y2="26" stroke="#C9A227" strokeWidth="2" opacity="0.7" />
+      <line x1="26" y1="2"  x2="26" y2="10" stroke="#C9A227" strokeWidth="2" opacity="0.7" />
+      <line x1="26" y1="42" x2="26" y2="50" stroke="#C9A227" strokeWidth="2" opacity="0.7" />
+    </svg>
+  );
+}
 
-const sentimentColor: Record<string, { bg: string; text: string }> = {
-  Supporter: { bg: '#DCFCE7', text: '#16A34A' },
-  Undecided: { bg: '#FEF9C3', text: '#CA8A04' },
-  Opposition: { bg: '#FEE2E2', text: '#DC2626' },
-};
-
-const mapZones = [
-  { id: 'sk1', x: 120, y: 80, w: 90, h: 70, name: 'SK 1', color: '#16A34A', opacity: 0.7 },
-  { id: 'sk2', x: 220, y: 60, w: 80, h: 80, name: 'SK 2', color: '#F59E0B', opacity: 0.6 },
-  { id: 'sk3', x: 150, y: 160, w: 100, h: 65, name: 'SK 3', color: '#16A34A', opacity: 0.8 },
-  { id: 'sk4', x: 260, y: 150, w: 70, h: 70, name: 'SK 4', color: '#DC2626', opacity: 0.6 },
-  { id: 'sk5', x: 100, y: 230, w: 110, h: 60, name: 'SK 5', color: '#F59E0B', opacity: 0.5 },
-  { id: 'nevis1', x: 280, y: 260, w: 85, h: 75, name: 'Nevis 1', color: '#16A34A', opacity: 0.65 },
-  { id: 'nevis2', x: 290, y: 340, w: 80, h: 65, name: 'Nevis 2', color: '#DC2626', opacity: 0.5 },
-];
+// ── Device icon for stats ─────────────────────────────────────────────────────
+function DeviceIcon({ size = 52 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 52 52" fill="none" stroke="#C9A227" strokeWidth="2" strokeLinecap="round">
+      <rect x="6"  y="10" width="24" height="32" rx="3" opacity="0.8" />
+      <rect x="22" y="20" width="24" height="22" rx="3" opacity="0.8" />
+      <line x1="14" y1="38" x2="22" y2="38" opacity="0.6" />
+    </svg>
+  );
+}
 
 export default function VoterTargetingPage() {
-  const [constituency, setConstituency] = useState('all');
-  const [sentiment, setSentiment] = useState('all');
-  const [search, setSearch] = useState('');
-
-  const filtered = MOCK_VOTERS.filter(v =>
-    (constituency === 'all' || v.constituency.toLowerCase().includes(constituency.replace('sk', 'st. christopher ').replace('nevis', 'nevis'))) &&
-    (sentiment === 'all' || v.sentiment === sentiment) &&
-    (search === '' || v.name.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  const supporters = MOCK_VOTERS.filter(v => v.sentiment === 'Supporter').length;
-  const undecided = MOCK_VOTERS.filter(v => v.sentiment === 'Undecided').length;
-  const opposition = MOCK_VOTERS.filter(v => v.sentiment === 'Opposition').length;
+  const [activeFilter, setActiveFilter] = useState('Undecided');
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-slate-800 truncate">Voter Targeting Map</h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Visualize and segment voters by constituency</p>
-        </div>
-        <button className="flex items-center justify-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap" style={{ backgroundColor: 'var(--tenant-primary)' }}>
-          <Download size={13} className="sm:w-[14px] sm:h-[14px]" /> Export List
-        </button>
-      </div>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#0D1117',
+      fontFamily: "'Inter','Segoe UI',sans-serif",
+      color: '#E6EDF3',
+      position: 'relative',
+    }}>
 
-      {/* Filter bar - Responsive */}
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-        <div className="relative w-full sm:w-auto">
-          <select 
-            value={constituency} 
-            onChange={e => setConstituency(e.target.value)}
-            className="appearance-none w-full pl-3 pr-8 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm font-medium bg-white"
-            style={{ borderColor: '#E2E8F0', color: '#0F172A' }}
-          >
-            {CONSTITUENCIES.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <ChevronDown size={13} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500" />
-        </div>
-        <div className="relative w-full sm:w-auto">
-          <select 
-            value={sentiment} 
-            onChange={e => setSentiment(e.target.value)}
-            className="appearance-none w-full pl-3 pr-8 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm font-medium bg-white"
-            style={{ borderColor: '#E2E8F0', color: '#0F172A' }}
-          >
-            <option value="all">All Sentiment</option>
-            <option value="Supporter">Supporters</option>
-            <option value="Undecided">Undecided</option>
-            <option value="Opposition">Opposition</option>
-          </select>
-          <ChevronDown size={13} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500" />
-        </div>
-        <div className="relative flex-1 sm:flex-none">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input 
-            value={search} 
-            onChange={e => setSearch(e.target.value)} 
-            placeholder="Search voter..."
-            className="w-full pl-8 pr-3 py-1.5 sm:py-2 rounded-lg border text-xs sm:text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
-            style={{ borderColor: '#E2E8F0', color: '#0F172A' }}
-          />
+      {/* ── Hero banner ──────────────────────────────────────────────────────── */}
+      <div style={{ position: 'relative', height: 120, overflow: 'hidden', flexShrink: 0 }}>
+        {/* Background gradient — red/orange political rally feel */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(135deg, #1A0005 0%, #5C0010 20%, #9B0020 40%, #CC1020 55%, #E83030 68%, #B02020 80%, #4A0010 100%)',
+        }} />
+        {/* Crowd silhouettes SVG */}
+        <svg style={{ position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', height: 120 }}
+          viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <path d="M0,80 Q30,55 50,70 Q65,45 80,65 Q95,38 115,60 Q130,30 148,55 Q165,25 180,52 Q198,20 215,48 Q232,15 250,45 Q268,18 285,44 Q300,28 318,50 Q335,20 352,48 Q370,32 385,55 Q400,42 420,58 Q438,30 455,52 Q470,18 488,45 Q505,28 522,50 Q538,15 555,45 Q572,22 590,48 Q608,35 625,55 Q640,20 658,48 Q675,32 692,54 Q710,25 728,50 Q745,15 762,45 Q780,28 798,52 Q815,38 832,58 Q848,25 865,50 Q882,18 900,46 Q918,30 935,52 Q950,42 968,60 Q985,35 1000,55 Q1015,22 1032,48 Q1050,30 1068,52 Q1085,38 1100,58 Q1118,42 1135,62 Q1150,45 1165,65 Q1180,52 1200,68 L1200,120 L0,120Z"
+            fill="rgba(0,0,0,0.55)" />
+          {/* Raised fists / arms */}
+          {[80,160,240,320,400,480,560,640,720,800,880,960,1040,1120].map((x, i) => (
+            <g key={i} transform={`translate(${x}, ${20 + (i % 3) * 12})`}>
+              <ellipse cx="0" cy="15" rx="6" ry="22" fill="rgba(0,0,0,0.5)" />
+              <ellipse cx="0" cy="0" rx="8" ry="7" fill="rgba(0,0,0,0.5)" />
+            </g>
+          ))}
+        </svg>
+        {/* Top fade */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 60,
+          background: 'linear-gradient(to bottom, rgba(0,0,0,0.3), transparent)',
+        }} />
+        {/* "Voter Targeting" title */}
+        <div style={{ position: 'absolute', bottom: 16, left: 24 }}>
+          <h1 style={{
+            fontSize: 32, fontWeight: 900, color: '#FFFFFF',
+            margin: 0, letterSpacing: '-0.02em',
+            textShadow: '0 2px 20px rgba(0,0,0,0.7)',
+          }}>Voter Targeting</h1>
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-        {/* Map - Responsive */}
-        <div className="bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-4 flex-1 min-w-0" style={{ borderColor: '#E2E8F0' }}>
-          <div className="flex items-center gap-2 mb-3">
-            <Map size={14} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
-            <span className="font-semibold text-xs sm:text-sm text-slate-800">St. Kitts & Nevis — Constituency Map</span>
+      {/* ── Content area ─────────────────────────────────────────────────────── */}
+      <div style={{ padding: '0 20px 16px' }}>
+
+        {/* ── Filter bar ── */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 0,
+          background: 'linear-gradient(160deg, #1C2230 0%, #161B22 100%)',
+          borderRadius: '0 0 14px 14px',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderTop: 'none',
+          padding: '12px 18px',
+          marginBottom: 10,
+          flexWrap: 'wrap', gap: 10,
+        }}>
+          {/* Left filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 220 }}>
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#C9D1D9' }}>Filter</span>
+            <span style={{
+              fontSize: 14, fontWeight: 700, color: '#E8C84A',
+              borderBottom: '2px solid #E8C84A', paddingBottom: 1, marginLeft: 4,
+            }}>{activeFilter}</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#C9D1D9', marginLeft: 4 }}>in Basseterre</span>
           </div>
-          {/* SVG Map - Responsive */}
-          <div className="relative bg-blue-50 rounded-xl overflow-hidden">
-            <div className="w-full overflow-x-auto">
-              <svg viewBox="0 0 480 420" style={{ width: '100%', height: 'auto', minHeight: 'clamp(250px, 50vw, 340px)' }}>
-                <rect width="480" height="420" fill="#BFDBFE" />
-                <text x="30" y="200" fill="#93C5FD" fontSize="11" fontStyle="italic">Caribbean Sea</text>
-                <ellipse cx="200" cy="200" rx="130" ry="75" fill="#D1FAE5" stroke="#6EE7B7" strokeWidth="1.5" />
-                <ellipse cx="330" cy="310" rx="70" ry="55" fill="#D1FAE5" stroke="#6EE7B7" strokeWidth="1.5" />
-                {mapZones.map(z => (
-                  <g key={z.id}>
-                    <rect x={z.x} y={z.y} width={z.w} height={z.h} rx="8" fill={z.color} fillOpacity={z.opacity} stroke={z.color} strokeWidth="1.5" strokeOpacity="0.8" style={{ cursor: 'pointer' }} />
-                    <text x={z.x + z.w / 2} y={z.y + z.h / 2 + 4} textAnchor="middle" fill="white" fontSize="10" fontWeight="700">{z.name}</text>
-                  </g>
-                ))}
+
+          {/* Right: last contacted */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                width: 20, height: 20, borderRadius: 4,
+                backgroundColor: '#16A34A',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 500, color: '#C9D1D9' }}>Last Contacted &gt; 14 days</span>
+            </div>
+            {/* Dropdown arrows */}
+            <button style={{
+              width: 30, height: 30, borderRadius: 7,
+              backgroundColor: '#21262D', border: '1px solid #30363D',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
               </svg>
-            </div>
-            {/* Legend - Responsive */}
-            <div className="flex flex-wrap gap-3 sm:gap-4 p-2 sm:p-3 border-t" style={{ borderColor: '#E2E8F0' }}>
-              {[
-                ['#16A34A', 'Supporter'],
-                ['#F59E0B', 'Undecided'],
-                ['#DC2626', 'Opposition']
-              ].map(([c, l]) => (
-                <div key={l} className="flex items-center gap-1.5">
-                  <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: c as string }} />
-                  <span className="text-[10px] sm:text-xs text-slate-500">{l}</span>
-                </div>
-              ))}
-            </div>
+            </button>
+            <button style={{
+              width: 30, height: 30, borderRadius: 7,
+              backgroundColor: '#21262D', border: '1px solid #30363D',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8B949E" strokeWidth="2.5">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
           </div>
         </div>
 
-        {/* Stats Panel - Responsive */}
-        <div className="flex flex-col gap-3 sm:gap-4 w-full lg:w-80">
-          <div className="bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-4" style={{ borderColor: '#E2E8F0' }}>
-            <div className="flex items-center gap-2 mb-3">
-              <Users size={14} className="sm:w-[15px] sm:h-[15px]" style={{ color: 'var(--tenant-primary)' }} />
-              <span className="font-semibold text-xs sm:text-sm text-slate-800">Segmentation</span>
-            </div>
-            <div className="space-y-2.5 sm:space-y-3">
-              <div>
-                <div className="flex justify-between text-[10px] sm:text-xs mb-1">
-                  <span className="text-slate-500">Total Voters</span>
-                  <span className="font-bold text-slate-800">{MOCK_VOTERS.length.toLocaleString()}</span>
-                </div>
-              </div>
-              {[
-                { label: 'Supporters', count: supporters, color: '#16A34A', bg: '#DCFCE7' },
-                { label: 'Undecided', count: undecided, color: '#CA8A04', bg: '#FEF9C3' },
-                { label: 'Opposition', count: opposition, color: '#DC2626', bg: '#FEE2E2' },
-              ].map(s => (
-                <div key={s.label}>
-                  <div className="flex justify-between text-[10px] sm:text-xs mb-1">
-                    <span className="text-slate-500">{s.label}</span>
-                    <span className="font-bold" style={{ color: s.color }}>{s.count}</span>
-                  </div>
-                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all" style={{ width: `${(s.count / MOCK_VOTERS.length) * 100}%`, backgroundColor: s.color }} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-4" style={{ borderColor: '#E2E8F0' }}>
-            <p className="text-[10px] sm:text-xs font-semibold mb-2 sm:mb-3 text-slate-500 uppercase tracking-wide">Gender Breakdown</p>
-            {[
-              ['Male', 6, '#3B82F6'], 
-              ['Female', 4, 'var(--tenant-primary)']
-            ].map(([g, n, c]) => (
-              <div key={g as string} className="flex justify-between items-center mb-2">
-                <span className="text-xs sm:text-sm text-slate-700">{g}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-16 sm:w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${((n as number) / 10) * 100}%`, backgroundColor: c as string }} />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-800">{n}</span>
-                </div>
-              </div>
+        {/* ── Map card ── */}
+        <div style={{
+          background: 'linear-gradient(160deg, #0D1B2E 0%, #0A1628 100%)',
+          borderRadius: 14,
+          border: '1px solid rgba(255,255,255,0.08)',
+          overflow: 'hidden',
+          position: 'relative',
+          marginBottom: 4,
+        }}>
+          {/* Zoom controls — left */}
+          <div style={{
+            position: 'absolute', left: 14, top: 14, zIndex: 10,
+            display: 'flex', flexDirection: 'column', gap: 4,
+          }}>
+            {['+', '−'].map(s => (
+              <button key={s} style={{
+                width: 32, height: 32, borderRadius: 6,
+                backgroundColor: 'rgba(15,22,36,0.85)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: '#E6EDF3', fontSize: 18, fontWeight: 700,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                lineHeight: 1,
+              }}>{s}</button>
             ))}
           </div>
 
-          <div className="bg-white rounded-xl sm:rounded-2xl border p-3 sm:p-4" style={{ borderColor: '#E2E8F0' }}>
-            <p className="text-[10px] sm:text-xs font-semibold mb-2 sm:mb-3 text-slate-500 uppercase tracking-wide">Age Range</p>
-            {[
-              ['18–30', 2], 
-              ['31–45', 4], 
-              ['46–60', 3], 
-              ['61+', 1]
-            ].map(([r, n]) => (
-              <div key={r as string} className="flex justify-between items-center mb-2">
-                <span className="text-[11px] sm:text-xs text-slate-600">{r}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-14 sm:w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: `${((n as number) / 10) * 100}%`, backgroundColor: 'var(--tenant-primary)' }} />
-                  </div>
-                  <span className="text-[10px] sm:text-xs font-bold text-slate-800">{n}</span>
-                </div>
-              </div>
+          {/* Zoom controls — right */}
+          <div style={{
+            position: 'absolute', right: 14, top: 14, zIndex: 10,
+            display: 'flex', flexDirection: 'column', gap: 4,
+          }}>
+            <button style={{
+              width: 32, height: 32, borderRadius: 6,
+              backgroundColor: 'rgba(15,22,36,0.85)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              color: '#E6EDF3', fontSize: 12,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            {['+', '−'].map(s => (
+              <button key={s} style={{
+                width: 32, height: 32, borderRadius: 6,
+                backgroundColor: 'rgba(15,22,36,0.85)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                color: '#E6EDF3', fontSize: 18, fontWeight: 700,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                lineHeight: 1,
+              }}>{s}</button>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* Voter Table - Responsive */}
-      <div className="bg-white rounded-xl sm:rounded-2xl border mt-4 sm:mt-5" style={{ borderColor: '#E2E8F0' }}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 sm:p-4 border-b" style={{ borderColor: '#F1F5F9' }}>
-          <span className="font-semibold text-xs sm:text-sm text-slate-800">Filtered Voters ({filtered.length})</span>
-          <div className="flex items-center gap-2">
-            <Filter size={12} className="sm:w-[13px] sm:h-[13px] text-slate-400" />
-            <span className="text-[11px] sm:text-xs text-slate-400">Showing {filtered.length} results</span>
+          {/* SVG Map — St. Kitts & Nevis */}
+          <svg viewBox="0 0 820 360" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 250 }}>
+            <defs>
+              <radialGradient id="og" cx="40%" cy="50%" r="70%">
+                <stop offset="0%" stopColor="#0E2442" />
+                <stop offset="100%" stopColor="#070F1E" />
+              </radialGradient>
+            </defs>
+            {/* Ocean */}
+            <rect width="820" height="360" fill="url(#og)" />
+            {/* Ocean label */}
+            <text x="28" y="200" fill="rgba(80,140,210,0.25)" fontSize="16" fontStyle="italic" fontFamily="Georgia,serif">Caribbean Sea</text>
+
+            {/* ── St. Kitts island ── */}
+            {/* Main body — elongated NW→SE with peninsula hook */}
+            <polygon points="
+              55,195  80,165  115,140  155,122  200,110  248,105  296,108
+              342,116 388,128 430,144 468,162 500,180 522,198 535,216
+              532,236 520,250 504,258 486,258 470,248 458,234
+              445,220 430,212 414,214 398,222 382,235 365,232
+              345,222 322,216 296,218 270,224 245,234 218,242
+              190,246 162,242 135,232 108,218  78,208  55,200
+            " fill="#1D4A20" stroke="#2A6830" strokeWidth="1.8" />
+            {/* Highlight ridge */}
+            <polygon points="
+              200,115 248,108 296,111 342,120 388,132 428,148 462,166
+              490,184 512,202 524,220 518,232 504,244 486,252
+              470,244 456,230 442,218 426,210 410,212 394,220
+              378,232 360,230 340,220 318,214 292,216 266,222
+              240,232 212,240 186,242 162,236 135,226 110,214
+              82,204 62,196 60,193 82,164 115,140 155,123 200,115
+            " fill="#245228" opacity="0.5" />
+            {/* St. Kitts label */}
+            <text x="270" y="182" fill="rgba(180,230,160,0.45)" fontSize="13" fontFamily="Georgia,serif" textAnchor="middle">St. Kitts</text>
+
+            {/* ── Nevis island ── */}
+            <ellipse cx="692" cy="290" rx="68" ry="76" fill="#1D4A20" stroke="#2A6830" strokeWidth="1.8" />
+            <ellipse cx="692" cy="290" rx="46" ry="52" fill="#245228" opacity="0.5" />
+            <text x="692" y="296" fill="rgba(180,230,160,0.45)" fontSize="12" fontFamily="Georgia,serif" textAnchor="middle">Nevis</text>
+
+            {/* ── Target pins — St. Kitts (scattered across island) ── */}
+            <TargetPin x={160} y={148} size={22} />
+            <TargetPin x={210} y={130} size={24} />
+            <TargetPin x={264} y={120} size={26} />
+            <TargetPin x={320} y={125} size={22} />
+            <TargetPin x={372} y={136} size={28} />
+            <TargetPin x={420} y={152} size={24} />
+            <TargetPin x={462} y={170} size={26} />
+            <TargetPin x={496} y={190} size={22} />
+            <TargetPin x={516} y={212} size={24} />
+            <TargetPin x={478} y={228} size={20} />
+            <TargetPin x={444} y={218} size={22} />
+            <TargetPin x={300} y={190} size={20} />
+            <TargetPin x={240} y={195} size={18} />
+
+            {/* ── Target pins — Nevis ── */}
+            <TargetPin x={664} y={262} size={22} />
+            <TargetPin x={706} y={268} size={24} />
+            <TargetPin x={678} y={302} size={20} />
+            <TargetPin x={718} y={310} size={22} />
+            <TargetPin x={692} y={336} size={18} />
+          </svg>
+
+          {/* "Summary Nevis" label */}
+          <div style={{
+            padding: '8px 16px',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: '#C9D1D9' }}>Summary Nevis</span>
           </div>
         </div>
-        <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
-          <table className="w-full text-xs" style={{ minWidth: '600px' }}>
-            <thead>
-              <tr style={{ backgroundColor: '#F8FAFC' }}>
-                {['Name', 'Constituency', 'Age', 'Voting History', 'Sentiment', 'Actions'].map(h => (
-                  <th key={h} className="py-2 sm:py-2.5 px-3 sm:px-4 text-left text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wide whitespace-nowrap">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((v, i) => (
-                <tr key={v.id} className="border-t border-slate-50 hover:bg-slate-50 transition-colors">
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-sm font-semibold text-slate-800 whitespace-nowrap">{v.name}</td>
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-sm text-slate-500 whitespace-nowrap">{v.constituency}</td>
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-sm text-slate-500 whitespace-nowrap">{v.age}</td>
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 text-[11px] sm:text-sm text-slate-500 whitespace-nowrap">{v.history}</td>
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
-                    <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full" style={{ backgroundColor: sentimentColor[v.sentiment].bg, color: sentimentColor[v.sentiment].text }}>
-                      {v.sentiment}
-                    </span>
-                  </td>
-                  <td className="py-2.5 sm:py-3 px-3 sm:px-4 whitespace-nowrap">
-                    <button className="text-[10px] sm:text-xs font-semibold hover:opacity-70 transition-opacity" style={{ color: 'var(--tenant-primary)' }}>
-                      View Profile
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+
+        {/* ── Stats row ── */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 1,
+          background: 'rgba(255,255,255,0.06)',
+          borderRadius: '0 0 14px 14px',
+          overflow: 'hidden',
+          marginBottom: 10,
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderTop: 'none',
+        }}>
+          {/* Left stat */}
+          <div style={{
+            backgroundColor: '#0D1B2E',
+            padding: '18px 22px',
+            display: 'flex', alignItems: 'center', gap: 16,
+          }}>
+            <TargetIcon size={44} />
+            <div>
+              <p style={{ fontSize: 36, fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                1,872
+              </p>
+              <p style={{ fontSize: 14, color: '#8B949E', margin: '3px 0 0', fontWeight: 500 }}>
+                Voters Targeted
+              </p>
+            </div>
+          </div>
+
+          {/* Right stat */}
+          <div style={{
+            backgroundColor: '#0D1B2E',
+            borderLeft: '1px solid rgba(255,255,255,0.06)',
+            padding: '18px 22px',
+            display: 'flex', alignItems: 'center', gap: 16,
+          }}>
+            <DeviceIcon size={44} />
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#C9D1D9', margin: '0 0 3px', lineHeight: 1.2 }}>
+                Projected Contact Rate
+              </p>
+              <p style={{ fontSize: 38, fontWeight: 900, color: '#FFFFFF', margin: 0, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                78%
+              </p>
+            </div>
+          </div>
         </div>
+
+        {/* ── Action buttons ── */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button style={{
+            flex: 1, minWidth: 140,
+            padding: '12px 20px',
+            backgroundColor: '#C9A227',
+            border: 'none',
+            borderRadius: 10,
+            fontSize: 14, fontWeight: 700, color: '#0D1117',
+            cursor: 'pointer', fontFamily: 'inherit',
+            letterSpacing: '0.01em',
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#E8C84A')}
+          onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#C9A227')}
+          >
+            Assign to Canvassers
+          </button>
+          <button style={{
+            flex: 1, minWidth: 140,
+            padding: '12px 20px',
+            backgroundColor: 'transparent',
+            border: '2px solid rgba(255,255,255,0.2)',
+            borderRadius: 10,
+            fontSize: 14, fontWeight: 700, color: '#C9D1D9',
+            cursor: 'pointer', fontFamily: 'inherit',
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)'; (e.currentTarget as HTMLButtonElement).style.color = '#C9D1D9'; }}
+          >
+            Launch SMS Blast
+          </button>
+          <button style={{
+            flex: 1, minWidth: 140,
+            padding: '12px 20px',
+            backgroundColor: 'transparent',
+            border: '2px solid rgba(255,255,255,0.2)',
+            borderRadius: 10,
+            fontSize: 14, fontWeight: 700, color: '#C9D1D9',
+            cursor: 'pointer', fontFamily: 'inherit',
+            transition: 'all 0.15s',
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.4)'; (e.currentTarget as HTMLButtonElement).style.color = '#FFFFFF'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.2)'; (e.currentTarget as HTMLButtonElement).style.color = '#C9D1D9'; }}
+          >
+            Add to Poll
+          </button>
+        </div>
+
       </div>
     </div>
   );

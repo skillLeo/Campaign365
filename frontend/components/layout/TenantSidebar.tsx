@@ -266,7 +266,7 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
   const handleNavClick = () => { if (!isDesktop) onClose(); };
 
   const PRIMARY    = '#DC143C';
-  const SIDEBAR_BG = '#0F172A';
+  const SIDEBAR_BG = '#0F1624';
 
   // Is a direct-link item currently active?
   const isDirectActive = (href: string) =>
@@ -298,37 +298,46 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
 
       {/* ── Logo ── */}
       <div style={{
-        padding: '22px 20px 18px',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '14px 14px 12px',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
         flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
       }}>
-        <p style={{
-          fontFamily: "'Barlow', sans-serif",
-          fontWeight: 900,
-          fontSize: 34,
-          color: '#FFFFFF',
-          margin: 0,
-          lineHeight: 1,
-          letterSpacing: '0.03em',
+        {/* Gold circular badge */}
+        <div style={{
+          width: 34, height: 34, borderRadius: '50%',
+          background: 'linear-gradient(135deg, #E8C84A 0%, #C9A227 55%, #9A7810 100%)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+          boxShadow: '0 2px 8px rgba(201,162,39,0.4)',
         }}>
-          SKNLP
-        </p>
-        <p style={{
-          fontFamily: "'Barlow', sans-serif",
-          fontWeight: 700,
-          fontSize: 15,
-          color: PRIMARY,
-          margin: '3px 0 0',
-          letterSpacing: '0.02em',
-        }}>
-          Campaign 365
-        </p>
+          <svg viewBox="0 0 20 20" width="18" height="18">
+            <path d="M10 2 C6 2 3 5 3 10 C3 13.5 5 16.5 8 18 L8 16 C6 14.8 4.5 12.6 4.5 10 C4.5 5.8 7 3.5 10 3.5 C13 3.5 15.5 5.8 15.5 10 C15.5 12.6 14 14.8 12 16 L12 18 C15 16.5 17 13.5 17 10 C17 5 14 2 10 2Z"
+              fill="#5A3200" />
+          </svg>
+        </div>
+        <div>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 800, fontSize: 15,
+            color: '#FFFFFF', margin: 0, lineHeight: 1.1,
+            letterSpacing: '0.06em',
+          }}>CAMPAIGN</p>
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 500, fontSize: 10,
+            color: '#8B949E', margin: '2px 0 0',
+            letterSpacing: '0.08em', textTransform: 'uppercase',
+          }}>Client Web Dashboard</p>
+        </div>
       </div>
 
       {/* ── Nav ── */}
       <nav style={{
         flex: 1,
-        padding: '10px 10px',
+        padding: '6px 8px',
         overflowY: 'auto',
         overflowX: 'hidden',
         scrollbarWidth: 'none',
@@ -350,13 +359,13 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 11,
-                  padding: '9px 12px',
-                  borderRadius: 8,
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 6,
                   textDecoration: 'none',
-                  fontSize: 14,
-                  fontWeight: active ? 600 : 400,
-                  marginBottom: 2,
+                  fontSize: 13,
+                  fontWeight: active ? 600 : 500,
+                  marginBottom: 1,
                   transition: 'all 0.15s ease',
                   ...(active
                     ? { backgroundColor: PRIMARY, color: '#FFFFFF' }
@@ -375,7 +384,7 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
                   }
                 }}
               >
-                <Icon size={16} style={{ flexShrink: 0 }} />
+                <Icon size={15} style={{ flexShrink: 0 }} />
                 <span style={{ flex: 1 }}>{item.label}</span>
               </Link>
             );
@@ -390,14 +399,14 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 11,
-                  padding: '9px 12px',
-                  borderRadius: 8,
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 6,
                   width: '100%',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: 14,
-                  fontWeight: groupActive ? 600 : 400,
+                  fontSize: 13,
+                  fontWeight: groupActive ? 600 : 500,
                   fontFamily: 'inherit',
                   transition: 'all 0.15s ease',
                   ...(groupActive
@@ -417,7 +426,7 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
                   }
                 }}
               >
-                <Icon size={16} style={{ flexShrink: 0 }} />
+                <Icon size={15} style={{ flexShrink: 0 }} />
                 <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
                 {isOpen
                   ? <ChevronDown size={13} style={{ flexShrink: 0, opacity: 0.6 }} />
@@ -447,7 +456,7 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
                           borderRadius: 6,
                           textDecoration: 'none',
                           fontSize: 12,
-                          fontWeight: childActive ? 600 : 400,
+                          fontWeight: childActive ? 600 : 500,
                           marginBottom: 1,
                           transition: 'all 0.15s ease',
                           ...(childActive
@@ -502,10 +511,10 @@ export function TenantSidebar({ theme: _theme, onClose }: TenantSidebarProps) {
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ color: '#E2E8F0', fontSize: 12, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <p style={{ color: '#E2E8F0', fontSize: 13, fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {displayName}
             </p>
-            <p style={{ color: '#475569', fontSize: 10, margin: '1px 0 0' }}>
+            <p style={{ color: '#475569', fontSize: 11, margin: '1px 0 0' }}>
               {roleLabel[storedRole] || storedRole}
             </p>
           </div>
