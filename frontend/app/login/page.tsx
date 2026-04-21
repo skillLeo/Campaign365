@@ -49,22 +49,65 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    await new Promise(r => setTimeout(r, 700));
-    if (email && password) {
-      const token = 'mock-tenant-token-' + Date.now();
-      const user = { id: 1, name: 'Marcus Liburd', email };
-      const tenantKey = 'sknlp';
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Invalid credentials');
+        return;
+      }
+      const { token, user } = data.data;
+      const tenantKey = user.tenant?.subdomain || 'sknlp';
+      const role = user.roles?.[0]?.name || 'campaign_manager';
+
       localStorage.setItem('c365_token', token);
-      localStorage.setItem('c365_role', 'campaign_manager');
+      localStorage.setItem('c365_role', role);
       localStorage.setItem('c365_user', JSON.stringify(user));
       localStorage.setItem('c365_tenant', tenantKey);
-      setBrandingForTenant(tenantKey, setBranding);
+
+      // Fetch live branding via X-Tenant-Subdomain header (works on localhost)
+      try {
+        const bRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/tenant/branding`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json',
+              'X-Tenant-Subdomain': tenantKey,
+            },
+          }
+        );
+        const bData = await bRes.json();
+        if (bRes.ok && bData.success && bData.data) {
+          setBranding({
+            name:            bData.data.name,
+            logo_url:        bData.data.logo_url,
+            primary_color:   bData.data.primary_color,
+            secondary_color: bData.data.secondary_color,
+            font:            bData.data.font || 'Inter',
+            subdomain:       bData.data.subdomain || tenantKey,
+          });
+        } else {
+          setBrandingForTenant(tenantKey, setBranding);
+        }
+      } catch {
+        setBrandingForTenant(tenantKey, setBranding);
+      }
+
       setAuth(token, user);
       router.push('/dashboard');
-    } else {
-      setError('Please enter your email and password');
+    } catch {
+      setError('Unable to connect to server. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

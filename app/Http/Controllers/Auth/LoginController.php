@@ -37,7 +37,7 @@ class LoginController extends Controller
         $token = $user->createToken('auth-token')->plainTextToken;
 
         return $this->success([
-            'user'  => $user->load('roles'),
+            'user'  => $user->load('roles', 'tenant'),
             'token' => $token,
         ], 'Login successful');
     }

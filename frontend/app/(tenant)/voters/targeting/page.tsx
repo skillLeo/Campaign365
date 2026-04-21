@@ -103,7 +103,7 @@ export default function VoterTargetingPage() {
 
         {/* ── Filter bar ── */}
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 0,
+          display: 'flex', alignItems: 'center',
           background: 'linear-gradient(160deg, #1C2230 0%, #161B22 100%)',
           borderRadius: '0 0 14px 14px',
           border: '1px solid rgba(255,255,255,0.08)',

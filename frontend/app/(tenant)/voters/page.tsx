@@ -104,22 +104,26 @@ function SortIcon() {
   );
 }
 
-// ── Voter data ────────────────────────────────────────────────────────────────
-const VOTERS = [
-  { id:1,  voterId:'209719',  name:'Jany Nevs',   constituency:'02295', phone:'02295', email:'569', support:'Dabaa1040fhct', history:'Now Fittall', flagIdx:0 },
-  { id:2,  voterId:'207115',  name:'Jany Mery',   constituency:'02295', phone:'02295', email:'699', support:'Dabaa1106fhct', history:'Now Fittall', flagIdx:1 },
-  { id:3,  voterId:'203119',  name:'Jany Here',   constituency:'02295', phone:'02295', email:'699', support:'Dabaa1100fhct', history:'Now Fittall', flagIdx:2 },
-  { id:4,  voterId:'201040',  name:'Jany Marnh',  constituency:'02265', phone:'02265', email:'690', support:'Dabaa1010fhct', history:'Now Fittall', flagIdx:3 },
-  { id:5,  voterId:'2114177', name:'Jany Nans',   constituency:'02295', phone:'02295', email:'550', support:'Daba42 6oln',   history:'Now Fittall', flagIdx:4 },
-  { id:6,  voterId:'2011779', name:'Jany Jeve',   constituency:'02295', phone:'02295', email:'204', support:'Daba34 9oln',   history:'Now Fittall', flagIdx:0 },
-  { id:7,  voterId:'201338',  name:'Jany Aunn',   constituency:'02295', phone:'02295', email:'201', support:'Daba22 0oln',   history:'Now Fittall', flagIdx:1 },
-  { id:8,  voterId:'127671',  name:'Jany Memd',   constituency:'02295', phone:'02295', email:'261', support:'Daba22 0oln',   history:'Now Fittall', flagIdx:2 },
-  { id:9,  voterId:'1617409', name:'Jany Mern',   constituency:'02295', phone:'02295', email:'507', support:'Daba24 0oln',   history:'Now Fittall', flagIdx:3 },
-  { id:10, voterId:'2571492', name:'Jany Mern',   constituency:'02295', phone:'02295', email:'100', support:'Daba22 9oln',   history:'Now Fittall', flagIdx:4 },
-  { id:11, voterId:'292364',  name:'Jany Merrf',  constituency:'02295', phone:'02295', email:'008', support:'Daba42 9oln',   history:'Now Fittall', flagIdx:0 },
-  { id:12, voterId:'291151',  name:'Jany Nevs',   constituency:'02295', phone:'02295', email:'069', support:'Daba22 9oln',   history:'Now Fittall', flagIdx:1 },
-  { id:13, voterId:'2117519', name:'Jany Nany',   constituency:'02295', phone:'02295', email:'060', support:'Daba22 6oln',   history:'Now Fittall', flagIdx:2 },
-];
+// ── Voter type ────────────────────────────────────────────────────────────────
+interface ApiVoter {
+  id: number;
+  first_name: string;
+  last_name: string;
+  constituency: string | null;
+  phone: string | null;
+  email: string | null;
+  sentiment: string | null;
+  voting_history: string[] | null;
+  last_contacted_at: string | null;
+  do_not_contact: boolean;
+}
+
+const SENTIMENT_LABEL: Record<string, string> = {
+  supporter: 'Supporter',
+  undecided: 'Undecided',
+  opposition: 'Opposition',
+  unknown: 'Unknown',
+};
 
 // ── Shared btn style ──────────────────────────────────────────────────────────
 const iconBtn: React.CSSProperties = {
@@ -129,15 +133,94 @@ const iconBtn: React.CSSProperties = {
   flexShrink: 0,
 };
 
+const EMPTY_FORM = {
+  first_name: '', last_name: '', address: '',
+  constituency: '', phone: '', email: '',
+  age: '', gender: '', sentiment: 'unknown',
+};
+
 export default function VotersPage() {
-  const [selected, setSelected] = useState<number[]>([6, 9]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [voters, setVoters] = useState<ApiVoter[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
   const { isMobile, isTablet, isDesktop } = useBreakpoint();
+
+  useEffect(() => {
+    const token = localStorage.getItem('c365_token');
+    if (!token) return;
+    const tenantKey = localStorage.getItem('c365_tenant') || 'sknlp';
+    const params = new URLSearchParams({ page: String(page), per_page: '15' });
+    if (search) params.set('search', search);
+
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/voters?${params}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'X-Tenant-Subdomain': tenantKey,
+      },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          setVoters(data.data ?? []);
+          setTotal(data.meta?.total ?? data.data?.length ?? 0);
+        }
+      })
+      .catch(() => { /* keep empty */ })
+      .finally(() => setLoading(false));
+  }, [page, search, refreshKey]);
+
+  const handleAddVoter = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError('');
+    setSaving(true);
+    try {
+      const token = localStorage.getItem('c365_token');
+      const tenantKey = localStorage.getItem('c365_tenant') || 'sknlp';
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/voters`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Tenant-Subdomain': tenantKey,
+        },
+        body: JSON.stringify({
+          ...form,
+          age: form.age ? parseInt(form.age) : undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setFormError(data.error || Object.values(data.errors ?? {})[0] as string || 'Failed to add voter');
+        return;
+      }
+      // Success — close modal, refresh list
+      setShowAddModal(false);
+      setForm({ ...EMPTY_FORM });
+      setPage(1);
+      setRefreshKey(k => k + 1);
+    } catch {
+      setFormError('Connection error. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const toggle = (id: number) =>
     setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
-  const allSel = VOTERS.every(v => selected.includes(v.id));
-  const toggleAll = () => setSelected(allSel ? [] : VOTERS.map(v => v.id));
+  const allSel = voters.length > 0 && voters.every(v => selected.includes(v.id));
+  const toggleAll = () => setSelected(allSel ? [] : voters.map(v => v.id));
 
   // Which columns to show per breakpoint
   const showConstituency  = !isMobile;
@@ -188,7 +271,17 @@ export default function VotersPage() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={C.textMuted} strokeWidth="2">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <span style={{ fontSize: 13, color: C.textMuted }}>Voters</span>
+            <input
+              type="text"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search voters…"
+              style={{
+                background: 'none', border: 'none', outline: 'none',
+                fontSize: 13, color: C.textWhite,
+                fontFamily: 'inherit', flex: 1, minWidth: 0,
+              }}
+            />
           </div>
         </div>
 
@@ -247,7 +340,25 @@ export default function VotersPage() {
           <h1 style={{ fontSize: isMobile ? 26 : 34, fontWeight: 900, color: C.red, margin: 0, letterSpacing: '-0.02em' }}>
             Voters List
           </h1>
-          <div style={{ display: 'flex', alignItems: 'stretch' }}>
+          <div style={{ display: 'flex', alignItems: 'stretch', gap: 8 }}>
+            {/* Add Voter button */}
+            <button
+              onClick={() => { setShowAddModal(true); setFormError(''); }}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7,
+                padding: isMobile ? '8px 14px' : '9px 18px',
+                backgroundColor: C.red, border: 'none',
+                borderRadius: 7,
+                fontSize: 13, fontWeight: 700, color: '#FFF',
+                cursor: 'pointer', fontFamily: 'inherit',
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              {isMobile ? 'Add' : 'Add Voter'}
+            </button>
+            {/* Export button */}
             <button style={{
               display: 'flex', alignItems: 'center', gap: 7,
               padding: isMobile ? '8px 14px' : '9px 16px',
@@ -261,7 +372,7 @@ export default function VotersPage() {
                 <polyline points="17 8 12 3 7 8"/>
                 <line x1="12" y1="3" x2="12" y2="15"/>
               </svg>
-              Export List
+              Export
             </button>
             <button style={{
               padding: '8px 9px', backgroundColor: C.btnDark,
@@ -399,13 +510,34 @@ export default function VotersPage() {
                 </tr>
               </thead>
               <tbody>
-                {VOTERS.map((v, idx) => {
+                {loading && (
+                  <tr>
+                    <td colSpan={10} style={{ padding: '32px', textAlign: 'center', color: C.textMuted, fontSize: 14 }}>
+                      Loading voters…
+                    </td>
+                  </tr>
+                )}
+                {!loading && voters.length === 0 && (
+                  <tr>
+                    <td colSpan={10} style={{ padding: '32px', textAlign: 'center', color: C.textMuted, fontSize: 14 }}>
+                      No voters found
+                    </td>
+                  </tr>
+                )}
+                {!loading && voters.map((v, idx) => {
                   const isSel = selected.includes(v.id);
-                  const Flag  = FLAGS[v.flagIdx];
+                  const Flag  = FLAGS[idx % FLAGS.length];
                   const rowBg  = isSel ? C.tblSelected : (idx % 2 === 0 ? C.tblRow : C.tblRowAlt);
                   const txt    = isSel ? '#FFF' : C.textWhite;
                   const subTxt = isSel ? 'rgba(255,255,255,0.72)' : C.textGray;
                   const cellPad = isMobile ? '9px 11px' : '11px 12px';
+                  const fullName = `${v.first_name} ${v.last_name}`;
+                  const sentimentLabel = SENTIMENT_LABEL[v.sentiment || 'unknown'] || 'Unknown';
+                  const historyLabel = Array.isArray(v.voting_history) && v.voting_history.length
+                    ? v.voting_history.slice(-1)[0] : '—';
+                  const lastContacted = v.last_contacted_at
+                    ? new Date(v.last_contacted_at).toLocaleDateString()
+                    : 'Never';
                   return (
                     <tr key={v.id} onClick={() => toggle(v.id)} style={{
                       backgroundColor: rowBg,
@@ -417,24 +549,33 @@ export default function VotersPage() {
                           onClick={e => e.stopPropagation()}
                           style={{ accentColor: C.red, width: 13, height: 13, cursor: 'pointer' }} />
                       </td>
-                      <td style={{ padding: cellPad, color: subTxt, fontSize: 13 }}>{v.id}</td>
-                      <td style={{ padding: cellPad, color: txt, fontFamily: 'monospace', fontSize: 13, whiteSpace: 'nowrap' }}>{v.voterId}</td>
-                      <td style={{ padding: cellPad, color: txt, fontWeight: 600, whiteSpace: 'nowrap', fontSize: 14 }}>{v.name}</td>
-                      {showConstituency && <td style={{ padding: cellPad, color: subTxt, fontSize: 13 }}>{v.constituency}</td>}
-                      {showPhone        && <td style={{ padding: cellPad, color: subTxt, fontFamily: 'monospace', fontSize: 13 }}>{v.phone}</td>}
-                      {showEmail        && <td style={{ padding: cellPad, color: subTxt, fontFamily: 'monospace', fontSize: 13 }}>{v.email}</td>}
-                      {showSupport      && <td style={{ padding: cellPad, color: subTxt, fontSize: 13, whiteSpace: 'nowrap' }}>{v.support}</td>}
-                      {showHistory      && <td style={{ padding: cellPad, color: subTxt, fontSize: 13, whiteSpace: 'nowrap' }}>{v.history}</td>}
+                      <td style={{ padding: cellPad, color: subTxt, fontSize: 13 }}>{(page - 1) * 15 + idx + 1}</td>
+                      <td style={{ padding: cellPad, color: txt, fontFamily: 'monospace', fontSize: 13, whiteSpace: 'nowrap' }}>#{v.id}</td>
+                      <td style={{ padding: cellPad, color: txt, fontWeight: 600, whiteSpace: 'nowrap', fontSize: 14 }}>{fullName}</td>
+                      {showConstituency && <td style={{ padding: cellPad, color: subTxt, fontSize: 13 }}>{v.constituency || '—'}</td>}
+                      {showPhone        && <td style={{ padding: cellPad, color: subTxt, fontFamily: 'monospace', fontSize: 13 }}>{v.phone || '—'}</td>}
+                      {showEmail        && <td style={{ padding: cellPad, color: subTxt, fontFamily: 'monospace', fontSize: 13 }}>{v.email || '—'}</td>}
+                      {showSupport      && (
+                        <td style={{ padding: cellPad }}>
+                          <span style={{
+                            padding: '2px 8px', borderRadius: 4, fontSize: 12, fontWeight: 600,
+                            backgroundColor: v.sentiment === 'supporter' ? 'rgba(74,222,128,0.15)'
+                              : v.sentiment === 'opposition' ? 'rgba(220,20,60,0.2)'
+                              : v.sentiment === 'undecided' ? 'rgba(251,191,36,0.15)'
+                              : 'rgba(139,148,158,0.2)',
+                            color: v.sentiment === 'supporter' ? '#4ADE80'
+                              : v.sentiment === 'opposition' ? '#F87171'
+                              : v.sentiment === 'undecided' ? '#FCD34D'
+                              : C.textGray,
+                          }}>{sentimentLabel}</span>
+                        </td>
+                      )}
+                      {showHistory      && <td style={{ padding: cellPad, color: subTxt, fontSize: 13, whiteSpace: 'nowrap' }}>{historyLabel}</td>}
                       {showLastContacted && (
                         <td style={{ padding: cellPad }}>
-                          <button onClick={e => e.stopPropagation()} style={{
-                            padding: '4px 9px', borderRadius: 5,
-                            backgroundColor: isSel ? 'rgba(255,255,255,0.15)' : C.btnDark,
-                            border: `1px solid ${isSel ? 'rgba(255,255,255,0.25)' : C.btnBorder}`,
-                            fontSize: 12, fontWeight: 500,
-                            color: isSel ? '#FFF' : '#C9D1D9',
-                            cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
-                          }}>Seeemin</button>
+                          <span style={{ fontSize: 12, color: isSel ? '#FFF' : '#C9D1D9', whiteSpace: 'nowrap' }}>
+                            {lastContacted}
+                          </span>
                         </td>
                       )}
                       <td style={{ padding: cellPad }}>
@@ -460,35 +601,232 @@ export default function VotersPage() {
           </div>
 
           {/* ── Pagination ── */}
-          <div style={{
-            display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
-            alignItems: isMobile ? 'flex-start' : 'center',
-            justifyContent: 'space-between',
-            gap: isMobile ? 10 : 0,
-            padding: isMobile ? '10px 12px' : '11px 16px',
-            borderTop: `1px solid ${C.tblBorder}`,
-            backgroundColor: C.tblHeader,
-          }}>
-            <span style={{ fontSize: 13, color: C.textMuted }}>
-              Showing <strong style={{ color: '#C9D1D9' }}>1–{VOTERS.length}</strong> of <strong style={{ color: '#C9D1D9' }}>4,218</strong> voters
-            </span>
-            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-              {['‹', '1', '2', '3', '...', '42', '›'].map((p, i) => (
-                <button key={i} style={{
-                  width: 30, height: 30, borderRadius: 5,
-                  backgroundColor: p === '1' ? C.red : C.btnDark,
-                  border: `1px solid ${p === '1' ? C.red : C.btnBorder}`,
-                  fontSize: 13, fontWeight: p === '1' ? 700 : 400,
-                  color: p === '1' ? '#FFF' : '#8B949E',
-                  cursor: 'pointer',
-                }}>{p}</button>
-              ))}
-            </div>
-          </div>
+          {(() => {
+            const perPage = 15;
+            const totalPages = Math.max(1, Math.ceil(total / perPage));
+            const from = (page - 1) * perPage + 1;
+            const to   = Math.min(page * perPage, total);
+            const pageNums: (number | string)[] = [];
+            if (totalPages <= 6) {
+              for (let i = 1; i <= totalPages; i++) pageNums.push(i);
+            } else {
+              pageNums.push(1, 2);
+              if (page > 4) pageNums.push('…');
+              if (page > 2 && page < totalPages - 1) pageNums.push(page);
+              if (page < totalPages - 2) pageNums.push('…');
+              pageNums.push(totalPages - 1, totalPages);
+            }
+            return (
+              <div style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                alignItems: isMobile ? 'flex-start' : 'center',
+                justifyContent: 'space-between',
+                gap: isMobile ? 10 : 0,
+                padding: isMobile ? '10px 12px' : '11px 16px',
+                borderTop: `1px solid ${C.tblBorder}`,
+                backgroundColor: C.tblHeader,
+              }}>
+                <span style={{ fontSize: 13, color: C.textMuted }}>
+                  Showing <strong style={{ color: '#C9D1D9' }}>{total > 0 ? `${from}–${to}` : '0'}</strong> of{' '}
+                  <strong style={{ color: '#C9D1D9' }}>{total.toLocaleString()}</strong> voters
+                </span>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                    style={{ width: 30, height: 30, borderRadius: 5, backgroundColor: C.btnDark, border: `1px solid ${C.btnBorder}`, fontSize: 13, color: page === 1 ? C.textMuted : '#8B949E', cursor: page === 1 ? 'default' : 'pointer' }}>
+                    ‹
+                  </button>
+                  {pageNums.map((p, i) => (
+                    <button key={i}
+                      onClick={() => typeof p === 'number' && setPage(p)}
+                      style={{
+                        width: 30, height: 30, borderRadius: 5,
+                        backgroundColor: p === page ? C.red : C.btnDark,
+                        border: `1px solid ${p === page ? C.red : C.btnBorder}`,
+                        fontSize: 13, fontWeight: p === page ? 700 : 400,
+                        color: p === page ? '#FFF' : '#8B949E',
+                        cursor: typeof p === 'number' ? 'pointer' : 'default',
+                      }}>{p}</button>
+                  ))}
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                    style={{ width: 30, height: 30, borderRadius: 5, backgroundColor: C.btnDark, border: `1px solid ${C.btnBorder}`, fontSize: 13, color: page === totalPages ? C.textMuted : '#8B949E', cursor: page === totalPages ? 'default' : 'pointer' }}>
+                    ›
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
       </div>
+
+      {/* ── Add Voter Modal ─────────────────────────────────────────────────── */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 1000,
+          backgroundColor: 'rgba(0,0,0,0.75)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '16px',
+        }}
+          onClick={e => { if (e.target === e.currentTarget) setShowAddModal(false); }}
+        >
+          <div style={{
+            backgroundColor: '#161B22',
+            borderRadius: 12,
+            border: '1px solid rgba(255,255,255,0.1)',
+            width: '100%', maxWidth: 520,
+            maxHeight: '90vh', overflowY: 'auto',
+            padding: '28px 28px 24px',
+          }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 22 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 800, color: '#E6EDF3', margin: 0 }}>
+                Add New Voter
+              </h2>
+              <button onClick={() => setShowAddModal(false)} style={{
+                width: 32, height: 32, borderRadius: 6,
+                backgroundColor: '#21262D', border: '1px solid #30363D',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B949E" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            {formError && (
+              <div style={{ background: 'rgba(220,20,60,0.15)', border: '1px solid rgba(220,20,60,0.4)', borderRadius: 8, padding: '10px 14px', marginBottom: 16 }}>
+                <p style={{ color: '#F87171', fontSize: 13, margin: 0 }}>{formError}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleAddVoter} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* Row: First + Last name */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {[
+                  { key: 'first_name', label: 'First Name', placeholder: 'John', required: true },
+                  { key: 'last_name',  label: 'Last Name',  placeholder: 'Doe',  required: true },
+                ].map(f => (
+                  <div key={f.key}>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#8B949E', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      {f.label} {f.required && <span style={{ color: C.red }}>*</span>}
+                    </label>
+                    <input
+                      required={f.required}
+                      value={(form as any)[f.key]}
+                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                      placeholder={f.placeholder}
+                      style={inputStyle}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Address */}
+              <div>
+                <label style={labelStyle}>Address <span style={{ color: C.red }}>*</span></label>
+                <input required value={form.address}
+                  onChange={e => setForm(p => ({ ...p, address: e.target.value }))}
+                  placeholder="123 Main Street, Basseterre"
+                  style={inputStyle} />
+              </div>
+
+              {/* Row: Constituency + Phone */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={labelStyle}>Constituency</label>
+                  <input value={form.constituency}
+                    onChange={e => setForm(p => ({ ...p, constituency: e.target.value }))}
+                    placeholder="St. Christopher 1"
+                    style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Phone</label>
+                  <input value={form.phone}
+                    onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+                    placeholder="+1 869 555 0100"
+                    style={inputStyle} />
+                </div>
+              </div>
+
+              {/* Row: Email + Age */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={labelStyle}>Email</label>
+                  <input type="email" value={form.email}
+                    onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                    placeholder="voter@email.com"
+                    style={inputStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Age</label>
+                  <input type="number" min="18" max="120" value={form.age}
+                    onChange={e => setForm(p => ({ ...p, age: e.target.value }))}
+                    placeholder="35"
+                    style={inputStyle} />
+                </div>
+              </div>
+
+              {/* Row: Gender + Sentiment */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={labelStyle}>Gender</label>
+                  <select value={form.gender}
+                    onChange={e => setForm(p => ({ ...p, gender: e.target.value }))}
+                    style={{ ...inputStyle, appearance: 'none' as any }}>
+                    <option value="">Select</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={labelStyle}>Support Level</label>
+                  <select value={form.sentiment}
+                    onChange={e => setForm(p => ({ ...p, sentiment: e.target.value }))}
+                    style={{ ...inputStyle, appearance: 'none' as any }}>
+                    <option value="unknown">Unknown</option>
+                    <option value="supporter">Supporter</option>
+                    <option value="undecided">Undecided</option>
+                    <option value="opposition">Opposition</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+                <button type="button" onClick={() => setShowAddModal(false)} style={{
+                  flex: 1, padding: '11px', borderRadius: 7,
+                  backgroundColor: '#21262D', border: '1px solid #30363D',
+                  fontSize: 14, fontWeight: 600, color: '#C9D1D9',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}>
+                  Cancel
+                </button>
+                <button type="submit" disabled={saving} style={{
+                  flex: 2, padding: '11px', borderRadius: 7, border: 'none',
+                  backgroundColor: saving ? '#8B1A1A' : C.red,
+                  fontSize: 14, fontWeight: 700, color: '#FFF',
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}>
+                  {saving && (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"
+                      style={{ animation: 'spin 1s linear infinite' }}>
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                  )}
+                  {saving ? 'Saving…' : 'Add Voter'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
     </div>
   );
 }
@@ -501,4 +839,25 @@ const thStyle: React.CSSProperties = {
   color: '#C9D1D9',
   borderBottom: '1px solid rgba(255,255,255,0.06)',
   whiteSpace: 'nowrap',
+};
+
+// ── Modal form styles ─────────────────────────────────────────────────────────
+const inputStyle: React.CSSProperties = {
+  width: '100%', boxSizing: 'border-box',
+  backgroundColor: '#0D1117',
+  border: '1px solid #30363D',
+  borderRadius: 7,
+  padding: '9px 12px',
+  fontSize: 13, color: '#E6EDF3',
+  fontFamily: "'Inter','Segoe UI',sans-serif",
+  outline: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 12, fontWeight: 600,
+  color: '#8B949E',
+  marginBottom: 5,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
 };

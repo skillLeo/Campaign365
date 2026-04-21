@@ -19,7 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'feature'     => \App\Http\Middleware\FeatureGateMiddleware::class,
         ]);
 
-        $middleware->statefulApi();
+        // Token-based auth — no CSRF/cookie sessions needed
+        $middleware->validateCsrfTokens(except: ['api/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {

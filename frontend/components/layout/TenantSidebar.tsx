@@ -82,7 +82,8 @@ const NAV_ITEMS: NavItem[] = [
     label: 'GOTV Command',
     icon: Target,
     children: [
-      { href: '/gotv',                 label: 'Election Day Live' },
+      { href: '/gotv/dashboard',       label: 'Command Center' },
+      { href: '/gotv/election-day',    label: 'Election Day Live' },
       { href: '/gotv/outdoor-agents',  label: 'Outdoor Agents' },
       { href: '/gotv/turnout',         label: 'Turnout Dashboard' },
     ],
@@ -116,6 +117,7 @@ const NAV_ITEMS: NavItem[] = [
       { href: '/fundraising/events',        label: 'Events' },
       { href: '/fundraising/merchandise',   label: 'Merchandise' },
       { href: '/fundraising/expenditure',   label: 'Expenditure' },
+      { href: '/reports/fundraising',       label: 'Fundraising Reports' },
     ],
   },
   {
@@ -123,9 +125,10 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Polling',
     icon: BarChart2,
     children: [
-      { href: '/polling',          label: 'Live Polls' },
-      { href: '/polling/builder',  label: 'Survey Builder' },
-      { href: '/polling/history',  label: 'Historical Data' },
+      { href: '/polling',           label: 'Polling Dashboard' },
+      { href: '/polling/live',      label: 'Live Polls' },
+      { href: '/polling/builder',   label: 'Survey Builder' },
+      { href: '/polling/history',   label: 'Historical Data' },
     ],
   },
   {

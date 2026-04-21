@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('campaign_id')->constrained()->onDelete('cascade');
-            $table->foreignId('canvasser_id')->references('id')->on('users');
+            $table->unsignedBigInteger('canvasser_id')->nullable();
+            $table->foreign('canvasser_id')->references('id')->on('users')->nullOnDelete();
             $table->string('name');
             $table->json('turf_geojson')->nullable();
             $table->string('area_name')->nullable();

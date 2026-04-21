@@ -9,7 +9,7 @@ class SuperAdminMiddleware
 {
     public function handle(Request $request, Closure $next): mixed
     {
-        $user = $request->user('super_admin');
+        $user = $request->user('super_admin_sanctum');
 
         if (!$user) {
             return response()->json(['success' => false, 'error' => 'Super Admin access required'], 403);

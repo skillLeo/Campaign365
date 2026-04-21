@@ -1,196 +1,181 @@
 'use client';
 import { useState } from 'react';
-import { MessageSquare, Plus, Send, Clock, CheckCircle2, Users, BarChart3, Search, ChevronRight, Smartphone, X } from 'lucide-react';
 
-const PRIMARY = 'var(--tenant-primary)';
-
-const SMS_CAMPAIGNS = [
-  { id: 1, name: 'GOTV Reminder — Election Day', message: "Don't forget to vote today! Polls are open until 6PM. Your vote matters. — SKNLP", status: 'sent', recipients: 9200, delivered: 8740, failed: 460, date: '2025-11-14' },
-  { id: 2, name: 'Town Hall Reminder', message: "Reminder: Town Hall tonight at 6PM at Independence Square. Come hear our plan! — SKNLP", status: 'sent', recipients: 4100, delivered: 3922, failed: 178, date: '2025-10-15' },
-  { id: 3, name: 'Undecided Voter Outreach', message: "Hi {{first_name}}, we'd love your support on Nov 14. Reply STOP to opt out.", status: 'scheduled', recipients: 3200, delivered: 0, failed: 0, date: '2025-11-10' },
-  { id: 4, name: 'Volunteer Thank You', message: "Thank you for volunteering with SKNLP! Your help makes a difference.", status: 'draft', recipients: 0, delivered: 0, failed: 0, date: '—' },
+const BLASTS = [
+  { campaign: '#0F172A', preview: 'Election Rally',   sent: '1,2970', delivered: '12,506', responses: '0 pnp' },
+  { campaign: '#0F172A', preview: 'Get Out the Vote', sent: '1,2800', delivered: '1',      responses: '0 pnp' },
+  { campaign: '#0F172A', preview: 'Get Out the Vote', sent: '1,3040', delivered: '1,12%',  responses: '0 pnp' },
+  { campaign: '#0F172A', preview: 'Get Out the Vote', sent: '1,4949', delivered: '-',      responses: '2 pnp' },
+  { campaign: '#0F172A', preview: 'Get Out the Vote', sent: '1,3909', delivered: '8,1%',   responses: '2 pnp' },
+  { campaign: '#0F172A', preview: 'Election Rally',   sent: '1,1499', delivered: '0,05%',  responses: '2 pnp' },
+  { campaign: '#0F172A', preview: 'Election Rally',   sent: '1,2829', delivered: '0,46%',  responses: '4 pnp' },
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  sent:      { label: 'Sent',      color: '#16A34A', bg: '#F0FDF4' },
-  scheduled: { label: 'Scheduled', color: '#D97706', bg: '#FFFBEB' },
-  draft:     { label: 'Draft',     color: '#94A3B8', bg: '#F8FAFC' },
+const PREVIEW_TAGS: Record<string, string> = {
+  'Election Rally':   '#1E3A5F',
+  'Get Out the Vote': '#1A3D28',
 };
 
-const MAX_SMS = 160;
-
-export default function SMSCampaignsPage() {
-  const [tab, setTab] = useState<'campaigns' | 'compose'>('campaigns');
+export default function SMSBlastsPage() {
   const [message, setMessage] = useState('');
-  const [segment, setSegment] = useState('all');
-  const [campaignName, setCampaignName] = useState('');
-  const [sent, setSent] = useState(false);
-
-  const charsLeft = MAX_SMS - message.length;
-  const smsCount = Math.ceil(message.length / MAX_SMS) || 1;
-
-  const totalSent = SMS_CAMPAIGNS.filter(c => c.status === 'sent').reduce((s, c) => s + c.recipients, 0);
-  const totalDelivered = SMS_CAMPAIGNS.filter(c => c.status === 'sent').reduce((s, c) => s + c.delivered, 0);
-  const deliveryRate = totalSent > 0 ? Math.round((totalDelivered / totalSent) * 100) : 0;
+  const [filter, setFilter] = useState('All Constituencies');
+  const maxLen = 160;
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(18px, 5vw, 24px)', color: '#0F172A', letterSpacing: '-0.02em' }}>SMS Campaigns</h1>
-          <p style={{ fontSize: 'clamp(11px, 2.5vw, 13px)', color: '#64748B', marginTop: 3 }}>Communications › SMS</p>
-        </div>
-        <button onClick={() => setTab('compose')}
-          className="flex items-center justify-center gap-1.5 rounded-lg sm:rounded-xl transition-all hover:opacity-90 whitespace-nowrap"
-          style={{ backgroundColor: PRIMARY, color: 'white', border: 'none', padding: '8px 16px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, cursor: 'pointer' }}>
-          <Plus size={13} className="sm:w-[15px] sm:h-[15px]" /> New SMS Blast
+    <div style={{ backgroundColor: '#0C1220', minHeight: '100vh', fontFamily: "'Inter',sans-serif" }}>
+
+      {/* Red top banner */}
+      <div style={{
+        background: 'linear-gradient(90deg,#B91C1C 0%,#7F1D1D 100%)',
+        padding: '0 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: 52,
+      }}>
+        <h2 style={{ color: 'white', fontSize: 18, fontWeight: 800, margin: 0 }}>SMS Blasts</h2>
+        <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'white', fontSize: 18 }}>🔍</button>
+      </div>
+
+      <div style={{ padding: '20px 20px' }}>
+        {/* Page title + button */}
+        <h1 style={{ color: 'white', fontSize: 26, fontWeight: 900, margin: '0 0 14px' }}>SMS Blasts</h1>
+
+        <button style={{
+          background: '#DC143C', color: 'white', border: 'none', borderRadius: 8,
+          padding: '12px 22px', fontSize: 15, fontWeight: 700, cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 8,
+          boxShadow: '0 4px 16px rgba(220,20,60,0.4)',
+          marginBottom: 12,
+        }}>
+          Send New SMS Blast <span style={{ fontSize: 18, fontWeight: 900 }}>+</span>
         </button>
-      </div>
 
-      {/* Stats - Responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[
-          { label: 'Total Sent', value: totalSent.toLocaleString(), icon: Send, color: PRIMARY },
-          { label: 'Delivery Rate', value: `${deliveryRate}%`, icon: CheckCircle2, color: '#16A34A' },
-          { label: 'Campaigns', value: SMS_CAMPAIGNS.length.toString(), icon: BarChart3, color: '#2563EB' },
-          { label: 'Opt-outs', value: '124', icon: Users, color: '#94A3B8' },
-        ].map(card => {
-          const Icon = card.icon;
-          return (
-            <div key={card.label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
-              <div style={{ width: 'clamp(30px, 7vw, 34px)', height: 'clamp(30px, 7vw, 34px)', borderRadius: 9, backgroundColor: card.color + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-                <Icon size={13} className="sm:w-[15px] sm:h-[15px]" style={{ color: card.color }} />
-              </div>
-              <p style={{ fontSize: 'clamp(18px, 4vw, 22px)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, color: '#0F172A' }}>{card.value}</p>
-              <p style={{ fontSize: 'clamp(10px, 2vw, 12px)', color: '#94A3B8', marginTop: 2 }}>{card.label}</p>
+        <p style={{ color: '#94A3B8', fontSize: 13, margin: '0 0 16px' }}>
+          Sent Today: <strong style={{ color: '#E2E8F0' }}>1,872</strong> &bull; Delivery Rate <strong style={{ color: '#4ADE80' }}>98%</strong>
+        </p>
+
+        {/* 2-col layout: table + composer */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 16 }}>
+
+          {/* Table */}
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, overflow: 'hidden',
+          }}>
+            {/* Header */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px',
+              padding: '10px 16px',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              color: '#94A3B8', fontSize: 12, fontWeight: 600,
+            }}>
+              <span>Campaign Name</span>
+              <span>Message Preview</span>
+              <span>Sent</span>
+              <span>Delivered</span>
+              <span>Responses</span>
             </div>
-          );
-        })}
-      </div>
 
-      {/* Tabs - Responsive */}
-      <div className="flex flex-wrap gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit">
-        {[['campaigns', 'All Campaigns'], ['compose', 'Send New SMS']].map(([key, label]) => (
-          <button key={key} onClick={() => setTab(key as any)}
-            className="whitespace-nowrap transition-all"
-            style={{ padding: 'clamp(5px, 1.5vw, 7px) clamp(12px, 3vw, 18px)', borderRadius: 8, border: 'none', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', backgroundColor: tab === key ? PRIMARY : 'transparent', color: tab === key ? 'white' : '#64748B' }}>
-            {label}
-          </button>
-        ))}
-      </div>
+            {BLASTS.map((b, i) => (
+              <div key={i} style={{
+                display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px',
+                padding: '11px 16px', alignItems: 'center',
+                borderBottom: i < BLASTS.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',
+              }}>
+                {/* Campaign name with phone icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{
+                    width: 22, height: 22, borderRadius: '50%',
+                    background: 'rgba(220,20,60,0.15)', border: '1.5px solid rgba(220,20,60,0.4)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, flexShrink: 0,
+                  }}>📱</div>
+                  <span style={{ color: '#94A3B8', fontSize: 12 }}>{b.campaign}</span>
+                </div>
+                {/* Preview tag */}
+                <div>
+                  <span style={{
+                    background: PREVIEW_TAGS[b.preview] || '#1E293B',
+                    color: 'white', fontSize: 11, fontWeight: 600,
+                    padding: '3px 10px', borderRadius: 5,
+                    display: 'inline-block',
+                  }}>{b.preview}</span>
+                </div>
+                <span style={{ color: '#E2E8F0', fontSize: 12 }}>{b.sent}</span>
+                <span style={{ color: '#94A3B8', fontSize: 12 }}>{b.delivered}</span>
+                <span style={{
+                  color: b.responses === '0 pnp' ? '#475569' : '#4ADE80',
+                  fontSize: 12, fontWeight: b.responses !== '0 pnp' ? 700 : 400,
+                }}>{b.responses}</span>
+              </div>
+            ))}
+          </div>
 
-      {tab === 'campaigns' && (
-        <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-          <div className="overflow-x-auto overflow-y-visible" style={{ WebkitOverflowScrolling: 'touch' }}>
-            <table className="w-full text-xs" style={{ minWidth: '800px' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#F8FAFC' }}>
-                  {['Campaign', 'Message Preview', 'Recipients', 'Delivered', 'Status', 'Date', ''].map(h => (
-                    <th key={h} style={{ padding: 'clamp(8px, 2vw, 10px) clamp(12px, 2.5vw, 16px)', fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, color: '#94A3B8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {SMS_CAMPAIGNS.map(c => {
-                  const sc = STATUS_CONFIG[c.status];
-                  const delivRate = c.recipients > 0 ? Math.round((c.delivered / c.recipients) * 100) : 0;
-                  return (
-                    <tr key={c.id} style={{ borderTop: '1px solid #F8FAFC' }}
-                      onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#FAFAFA')}
-                      onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, color: '#0F172A', whiteSpace: 'nowrap' }}>{c.name}</td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#64748B', maxWidth: 200 }}>
-                        <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }}>{c.message}</span>
-                      </td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', fontSize: 'clamp(12px, 2.5vw, 13px)', color: '#475569', whiteSpace: 'nowrap' }}>{c.recipients > 0 ? c.recipients.toLocaleString() : '—'}</td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', whiteSpace: 'nowrap' }}>
-                        {c.delivered > 0 ? (
-                          <div className="flex items-center gap-1.5 sm:gap-2">
-                            <div style={{ width: 'clamp(40px, 8vw, 50px)', height: 4, backgroundColor: '#F1F5F9', borderRadius: 99, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${delivRate}%`, backgroundColor: '#16A34A', borderRadius: 99 }} />
-                            </div>
-                            <span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#0F172A' }}>{delivRate}%</span>
-                          </div>
-                        ) : <span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#CBD5E1' }}>—</span>}
-                      </td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', whiteSpace: 'nowrap' }}>
-                        <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, color: sc.color, backgroundColor: sc.bg, padding: '2px 8px', borderRadius: 6 }}>{sc.label}</span>
-                      </td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#94A3B8', whiteSpace: 'nowrap' }}>{c.date}</td>
-                      <td style={{ padding: 'clamp(10px, 2.5vw, 13px) clamp(12px, 2.5vw, 16px)', whiteSpace: 'nowrap' }}>
-                        <button onClick={() => setTab('compose')} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, color: '#2563EB', background: '#EFF6FF', border: 'none', borderRadius: 6, padding: '4px 10px', cursor: 'pointer' }}>
-                          Duplicate <ChevronRight size={10} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+          {/* Composer */}
+          <div style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10,
+            padding: '18px',
+          }}>
+            <p style={{ color: 'white', fontSize: 16, fontWeight: 700, margin: '0 0 14px' }}>Compose SMS Blast</p>
+
+            {/* Recipient Filter */}
+            <label style={{ color: '#94A3B8', fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 5 }}>Recipient Filter</label>
+            <select
+              value={filter}
+              onChange={e => setFilter(e.target.value)}
+              style={{
+                width: '100%', background: '#1E293B', border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 6, color: '#E2E8F0', fontSize: 13, padding: '8px 10px',
+                marginBottom: 14, cursor: 'pointer', outline: 'none',
+              }}
+            >
+              <option>All Constituencies</option>
+              <option>Basseterre</option>
+              <option>Sandy Point</option>
+              <option>Cayon</option>
+              <option>Charlestown</option>
+            </select>
+
+            {/* Message label */}
+            <label style={{ color: '#94A3B8', fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 5 }}>Fundraised</label>
+            <textarea
+              value={message}
+              onChange={e => setMessage(e.target.value.slice(0, maxLen))}
+              placeholder="Type your SMS message..."
+              rows={7}
+              style={{
+                width: '100%', background: '#F8FAFC', border: '1px solid #CBD5E1',
+                borderRadius: 6, color: '#0F172A', fontSize: 13, padding: '10px',
+                resize: 'none', outline: 'none', boxSizing: 'border-box',
+                fontFamily: 'inherit', lineHeight: 1.5,
+                marginBottom: 10,
+              }}
+            />
+
+            {/* Char count */}
+            <div style={{
+              display: 'inline-block',
+              background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 6, padding: '4px 10px',
+              color: message.length >= maxLen ? '#EF4444' : '#94A3B8',
+              fontSize: 12, fontWeight: 600, marginBottom: 12,
+            }}>
+              {message.length}/{maxLen}
+            </div>
+
+            {/* Send Now */}
+            <button style={{
+              width: '100%', background: 'linear-gradient(90deg,#C4A000,#D4B000)',
+              color: '#1a1000', border: 'none', borderRadius: 8,
+              padding: '13px', fontSize: 14, fontWeight: 800, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              boxShadow: '0 4px 14px rgba(196,160,0,0.35)',
+            }}>
+              <span style={{ fontSize: 16 }}>✔</span> Send Now
+            </button>
           </div>
         </div>
-      )}
-
-      {tab === 'compose' && (
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-          <div className="flex-1 space-y-3 sm:space-y-4">
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 space-y-3 sm:space-y-4">
-              <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }}>Compose SMS</h3>
-              <div>
-                <label style={{ display: 'block', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#475569', marginBottom: 6 }}>Campaign Name</label>
-                <input value={campaignName} onChange={e => setCampaignName(e.target.value)} placeholder="e.g. GOTV Reminder — Nov 14"
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-2 text-xs sm:text-sm outline-none focus:border-red-400" />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#475569', marginBottom: 6 }}>Message</label>
-                <textarea value={message} onChange={e => setMessage(e.target.value)} rows={4}
-                  placeholder="Type your SMS message. Use {{first_name}} to personalize. Reply STOP to opt out."
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-2 text-xs sm:text-sm outline-none resize-none font-inherit focus:border-red-400" />
-                <div className="flex flex-wrap justify-between gap-2 mt-1.5">
-                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: charsLeft < 20 ? 'var(--tenant-primary)' : '#94A3B8' }}>{charsLeft} characters remaining</span>
-                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>{smsCount} SMS message{smsCount > 1 ? 's' : ''}</span>
-                </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#475569', marginBottom: 6 }}>Send To</label>
-                <select value={segment} onChange={e => setSegment(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 outline-none bg-white">
-                  <option value="all">All Contacts (12,840)</option>
-                  <option value="supporters">Supporters Only (7,420)</option>
-                  <option value="undecided">Undecided Voters (3,210)</option>
-                  <option value="constituency">Central Basseterre (2,100)</option>
-                </select>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                <button style={{ flex: 1, backgroundColor: '#F1F5F9', color: '#475569', border: 'none', borderRadius: 10, padding: 'clamp(10px, 2.5vw, 11px)', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer' }}>
-                  Schedule
-                </button>
-                <button onClick={() => setSent(true)}
-                  style={{ flex: 2, backgroundColor: sent ? '#16A34A' : PRIMARY, color: 'white', border: 'none', borderRadius: 10, padding: 'clamp(10px, 2.5vw, 11px)', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                  {sent ? <><CheckCircle2 size={13} className="sm:w-[14px] sm:h-[14px]" /> Sent!</> : <><Send size={13} className="sm:w-[14px] sm:h-[14px]" /> Send SMS Now</>}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Phone preview - Responsive */}
-          <div className="lg:w-80 xl:w-96">
-            <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Phone Preview</h3>
-            <div style={{ maxWidth: 'clamp(180px, 50vw, 200px)', margin: '0 auto', backgroundColor: '#0F172A', borderRadius: 36, padding: 'clamp(10px, 2.5vw, 12px)', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
-              <div style={{ backgroundColor: '#1E293B', borderRadius: 28, padding: 'clamp(12px, 3vw, 16px) clamp(10px, 2.5vw, 12px)', minHeight: 'clamp(280px, 60vw, 320px)' }}>
-                <p style={{ fontSize: 'clamp(8px, 2vw, 9px)', color: '#64748B', textAlign: 'center', marginBottom: 12 }}>SKNLP Campaign</p>
-                <div style={{ backgroundColor: '#334155', borderRadius: '12px 12px 12px 4px', padding: 'clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px)', maxWidth: '85%' }}>
-                  <p style={{ fontSize: 'clamp(10px, 2.5vw, 11px)', color: 'white', lineHeight: 1.5, margin: 0 }}>
-                    {message || 'Your SMS preview will appear here...'}
-                  </p>
-                </div>
-                <p style={{ fontSize: 'clamp(7px, 2vw, 8px)', color: '#64748B', marginTop: 6 }}>now · {message.length} chars</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

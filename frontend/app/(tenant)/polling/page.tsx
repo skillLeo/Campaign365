@@ -1,441 +1,209 @@
 'use client';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
-const PIE_DATA = [
-  { name: 'SKNLP',      value: 62, color: '#E05252' },
-  { name: 'Opposition', value: 28, color: '#C8A84B' },
-  { name: '10%',        value: 8,  color: '#A0896A' },
-  { name: 'Undecided',  value: 2,  color: '#D4D8E0' },
+const LIVE_POLLS = [
+  { title: 'Voter Intention - Constituency 5', sub: 'St. Kitts Nevis Labour 2 Labour Party - #059E0B', pct: 62 },
+  { title: 'Voter Intention - Constituency 5', sub: 'St. Kitts Nevis Labour 2 Labour Party - #F59E0B', pct: 62 },
+  { title: 'Voter Intention - Constituency 5', sub: 'St. Kitts Nevis Labour & Labour Party - #0FT72A', pct: 62 },
 ];
 
-const SUPPORT_TREND = [
-  { day: 'Aun', val: 16000 },
-  { day: '2ub', val: 20    },
-  { day: 'Aud', val: 8000  },
-  { day: 'Ted', val: 10000 },
-];
-
-const LIVE_RESULTS = [
-  { q: 'Preferred Party?', answer: 'St. Kitts Nevis Labour Party', response: 'Other', bars: [{ color: '#C8A84B', width: '68%' }] },
-  { q: 'Preferred Party?', answer: 'St. Kitts Nevis Labour Party', response: 'Other', bars: [{ color: '#C8A84B', width: '52%' }] },
-  { q: 'Preferred Party?', answer: 'St. Kitts Nevis Labour Party', response: 'Other', bars: [{ color: '#C8A84B', width: '52%' }] },
-  { q: 'Preferred Party?', answer: 'Other',                        response: '',      bars: [{ color: '#E05252', width: '32%' }, { color: '#C8A84B', width: '22%' }] },
-];
-
-/* Glowing dot for line chart */
-function GlowDot(props: any) {
-  const { cx, cy } = props;
-  if (!cx || !cy) return null;
+function MiniBar({ vals }: { vals: number[] }) {
+  const max = Math.max(...vals);
   return (
-    <g>
-      <circle cx={cx} cy={cy} r={11} fill="#DC143C" fillOpacity={0.15} />
-      <circle cx={cx} cy={cy} r={7}  fill="#DC143C" fillOpacity={0.30} />
-      <circle cx={cx} cy={cy} r={4}  fill="white" />
-    </g>
+    <svg width="100%" height="48" viewBox="0 0 120 48" preserveAspectRatio="none">
+      {vals.map((v, i) => {
+        const h = (v / max) * 40;
+        return <rect key={i} x={i * 14 + 2} y={48 - h} width="11" height={h} rx="2"
+          fill={i === vals.length - 1 ? '#FFD700' : 'rgba(220,20,60,0.5)'} />;
+      })}
+    </svg>
   );
 }
 
-/* Crowd rally illustration */
-function CrowdImage() {
-  const personColors  = ['#E67E22','#3498DB','#E74C3C','#27AE60','#9B59B6','#F1C40F','#1ABC9C','#E91E63','#00BCD4','#FF5722','#8BC34A','#FF9800'];
-  const skinTones     = ['#F5CBA7','#FDEBD0','#D4AC0D','#F1948A','#85C1E9','#A9DFBF','#F8C471','#BB8FCE','#76D7C4','#F0B27A','#AED6F1','#FAD7A0'];
+function DonutSmall({ pct, label }: { pct: number; label: string }) {
+  const r = 26, cx = 32, cy = 32;
+  const circ = 2 * Math.PI * r;
+  const filled = (pct / 100) * circ;
   return (
-    <svg viewBox="0 0 400 180" width="100%" height="100%" style={{ display: 'block' }}>
-      <defs>
-        <linearGradient id="cSky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#1A5276" />
-          <stop offset="100%" stopColor="#2471A3" />
-        </linearGradient>
-        <linearGradient id="cFade" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%"   stopColor="#1A1E2D" stopOpacity={1} />
-          <stop offset="35%"  stopColor="#1A1E2D" stopOpacity={0} />
-        </linearGradient>
-      </defs>
-      <rect width="400" height="180" fill="url(#cSky)" />
-      {/* Far row – small silhouettes */}
-      {Array.from({ length: 22 }, (_, i) => (
-        <g key={`f${i}`}>
-          <circle cx={i * 19 + 10} cy={128} r={7}  fill={personColors[i % 12]} />
-          <rect   x={i * 19 + 3}   y={134}  width={13} height={16} rx={3} fill={personColors[(i + 5) % 12]} />
-        </g>
-      ))}
-      {/* Mid row */}
-      {Array.from({ length: 17 }, (_, i) => (
-        <g key={`m${i}`}>
-          <circle cx={i * 24 + 12} cy={148} r={9}  fill={skinTones[i % 12]} />
-          <rect   x={i * 24 + 3}   y={156}  width={17} height={22} rx={3} fill={personColors[(i + 3) % 12]} />
-        </g>
-      ))}
-      {/* Front row – large */}
-      {Array.from({ length: 13 }, (_, i) => (
-        <g key={`fr${i}`}>
-          <circle cx={i * 32 + 16} cy={163} r={12} fill={skinTones[(i + 4) % 12]} />
-          <rect   x={i * 32 + 4}   y={174}  width={22} height={6}  rx={2} fill={personColors[(i + 7) % 12]} />
-        </g>
-      ))}
-      {/* Palm trees */}
-      <rect x={350} y={55} width={7} height={80} fill="#5D4037" rx={2} />
-      <ellipse cx={350} cy={52} rx={26} ry={16} fill="#229954" />
-      <ellipse cx={363} cy={46} rx={18} ry={12} fill="#2ECC71" />
-      <ellipse cx={337} cy={46} rx={18} ry={12} fill="#2ECC71" />
-      {/* Rally sign */}
-      <rect x={155} y={88} width={52} height={30} rx={4} fill="#DC143C" />
-      <text x={181} y={108} textAnchor="middle" fill="white" fontSize={9} fontWeight={800}>SKNLP</text>
-      {/* Left overlay fade */}
-      <rect width="400" height="180" fill="url(#cFade)" />
-    </svg>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+      <svg width="64" height="64" viewBox="0 0 64 64">
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#DC143C" strokeWidth="8"
+          strokeDasharray={`${filled} ${circ}`} strokeDashoffset={circ * 0.25}
+          strokeLinecap="round" />
+        <text x={cx} y={cx + 5} textAnchor="middle" fill="white" fontSize="12" fontWeight="900">{pct}%</text>
+      </svg>
+      <span style={{ color: 'white', fontSize: 10, fontWeight: 800, letterSpacing: '0.05em' }}>{label}</span>
+    </div>
   );
 }
 
 export default function PollingPage() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0B1320',
-      fontFamily: "'Inter', sans-serif",
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <div style={{ backgroundColor: '#080E1C', minHeight: '100vh', fontFamily: "'Inter',sans-serif" }}>
 
-      {/* ── 1. Header bar: dark crimson ── */}
+      {/* Red top bar */}
       <div style={{
-        background: 'linear-gradient(90deg, #7C0A1A 0%, #8B1919 100%)',
-        padding: '20px 28px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexShrink: 0,
+        background: 'linear-gradient(90deg,#B91C1C 0%,#991B1B 100%)',
+        padding: '14px 20px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <h1 style={{
-          fontFamily: "'Barlow', sans-serif",
-          fontWeight: 800,
-          fontSize: 34,
-          color: '#FFFFFF',
-          margin: 0,
-          letterSpacing: '-0.01em',
-        }}>
-          Polling &amp; Surveys
-        </h1>
-        <button style={{
-          padding: '10px 22px',
-          borderRadius: 8,
-          border: 'none',
-          background: 'linear-gradient(90deg, #DC143C 0%, #C01230 100%)',
-          color: 'white',
-          fontSize: 14,
-          fontWeight: 700,
-          cursor: 'pointer',
-          fontFamily: 'inherit',
-          boxShadow: '0 2px 12px rgba(220,20,60,0.5)',
-        }}>
-          Create New Poll
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* SKNLP logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg viewBox="0 0 30 20" width="24" height="16">
+                <polygon points="0,20 30,20 0,0" fill="#009E60" />
+                <polygon points="30,0 30,20 0,0" fill="#CE1126" />
+                <polygon points="0,0 3,0 30,17 27,20 0,20" fill="#000" />
+                <polygon points="3,0 6,0 30,14 30,17" fill="#FCD116" />
+                <polygon points="0,17 0,20 3,20 27,3 24,0" fill="#FCD116" />
+              </svg>
+            </div>
+            <div>
+              <p style={{ color: 'white', fontSize: 13, fontWeight: 900, margin: 0 }}>SKNLP</p>
+              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, margin: 0 }}>Campaign 365</p>
+            </div>
+          </div>
+          <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>|</span>
+          <span style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}>SKNLP Campaign 365 Client Web Dashboard</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13 }}>🔍 Search...</span>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span style={{ color: 'white', fontSize: 18 }}>🔔</span>
+            <div style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, borderRadius: '50%', background: '#FFD700', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontSize: 9, fontWeight: 800 }}>3</div>
+          </div>
+          <div style={{ position: 'relative' }}>
+            <span style={{ color: 'white', fontSize: 18 }}>💬</span>
+            <div style={{ position: 'absolute', top: -4, right: -4, width: 16, height: 16, borderRadius: '50%', background: '#DC143C', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 9, fontWeight: 800 }}>3</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 12, fontWeight: 700 }}>M</div>
+            <span style={{ color: 'white', fontSize: 12 }}>Marcus Liburd – Campaign Manager</span>
+            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11 }}>▼</span>
+          </div>
+        </div>
       </div>
 
-      {/* ── 2. Body: dark navy #111827 ── */}
-      <div style={{ flex: 1, padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-
-        {/* Dashboard header row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h2 style={{
-            fontFamily: "'Barlow', sans-serif",
-            fontWeight: 700,
-            fontSize: 22,
-            color: '#FFFFFF',
-            margin: 0,
-          }}>
-            Dashboard
-          </h2>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#FFFFFF' }}>Active Polls: 4</span>
+      <div style={{ padding: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h1 style={{ color: 'white', fontSize: 24, fontWeight: 900, margin: 0 }}>Polling &amp; Surveys</h1>
+          <span style={{ color: '#475569', fontSize: 13 }}>#B91C1C</span>
         </div>
 
-        {/* ── 3. Voter Intention Poll Card ── */}
-        <div style={{
-          backgroundColor: '#1A1E2D',
-          borderRadius: 12,
-          border: '1px solid rgba(255,255,255,0.08)',
-          overflow: 'hidden',
-        }}>
-
-          {/* Title row with crowd image on the right */}
-          <div style={{ position: 'relative', height: 160, overflow: 'hidden' }}>
-            {/* Crowd image fills the right half */}
-            <div style={{ position: 'absolute', inset: 0 }}>
-              <CrowdImage />
-            </div>
-            {/* Title text on dark overlay (left side) */}
-            <div style={{
-              position: 'absolute',
-              top: 0, left: 0, bottom: 0,
-              width: '55%',
-              background: 'linear-gradient(90deg, #1A1E2D 75%, transparent)',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 24px',
-              zIndex: 2,
+        {/* 4 stat cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
+          {[
+            { label: 'Active Polls',          value: '4',     bars: [20,45,30,55,40,38,50], color: '#FFD700' },
+            { label: 'Voters Polled Today',   value: '2,847', bars: [30,50,45,65,55,70,60], color: '#DC143C' },
+            { label: 'Average Response Rate', value: '87%',   bars: [55,70,60,80,75,85,82], color: '#DC143C' },
+            { label: 'Predicted Turnout',     value: '76%',   bars: [40,55,50,65,60,70,72], color: '#FFD700' },
+          ].map((c, i) => (
+            <div key={i} style={{
+              background: 'linear-gradient(135deg,rgba(220,20,60,0.12) 0%,rgba(220,20,60,0.05) 100%)',
+              border: '1px solid rgba(220,20,60,0.25)', borderRadius: 14,
+              padding: '14px 16px', overflow: 'hidden', position: 'relative',
             }}>
-              <h3 style={{
-                fontFamily: "'Barlow', sans-serif",
-                fontWeight: 700,
-                fontSize: 20,
-                color: '#FFFFFF',
-                margin: 0,
-                lineHeight: 1.3,
-              }}>
-                Voter Intention Poll – Constituency 5
-              </h3>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, opacity: 0.5 }}>
+                <MiniBar vals={c.bars} />
+              </div>
+              <p style={{ color: '#94A3B8', fontSize: 11, fontWeight: 600, margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.06em', position: 'relative' }}>{c.label}</p>
+              <p style={{ color: c.color, fontSize: 36, fontWeight: 900, margin: 0, lineHeight: 1, position: 'relative' }}>{c.value}</p>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {/* Donut + Legend + Live Results */}
+        {/* Bottom: Live Overview + Island image */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 16, marginBottom: 20 }}>
+
+          {/* Live Polling Overview */}
           <div style={{
-            display: 'flex',
-            padding: '20px 24px 24px',
-            gap: 20,
-            alignItems: 'flex-start',
+            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 14, padding: '18px',
           }}>
-
-            {/* Donut chart */}
-            <div style={{ position: 'relative', width: 170, height: 170, flexShrink: 0 }}>
-              <PieChart width={170} height={170}>
-                <Pie
-                  data={PIE_DATA}
-                  cx={80} cy={80}
-                  innerRadius={48} outerRadius={78}
-                  dataKey="value"
-                  startAngle={90} endAngle={-270}
-                  strokeWidth={0}
-                >
-                  {PIE_DATA.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-              {/* Center label */}
-              <div style={{
-                position: 'absolute',
-                top: '50%', left: '47%',
-                transform: 'translate(-50%, -50%)',
-                textAlign: 'center',
-                pointerEvents: 'none',
-              }}>
-                <p style={{
-                  fontFamily: "'Barlow', sans-serif",
-                  fontWeight: 900,
-                  fontSize: 30,
-                  color: '#FFFFFF',
-                  margin: 0,
-                  lineHeight: 1,
-                }}>62%</p>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#CBD5E1', margin: '2px 0 0' }}>SKNLP</p>
-              </div>
-              {/* 28% floating label near gold segment */}
-              <div style={{
-                position: 'absolute',
-                top: '30%',
-                right: '-2px',
-                fontSize: 13,
-                fontWeight: 700,
-                color: '#E2E8F0',
-              }}>28%</div>
-            </div>
-
-            {/* Legend */}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 12,
-              justifyContent: 'center',
-              minWidth: 110,
-              flexShrink: 0,
-              paddingTop: 16,
-            }}>
-              {[
-                { label: 'SKNLP',      color: '#E05252' },
-                { label: 'Opposition', color: '#C8A84B' },
-                { label: '10%',        color: '#A0896A' },
-                { label: 'Undecided',  color: '#D4D8E0' },
-              ].map(d => (
-                <div key={d.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 11, height: 11, borderRadius: 2, backgroundColor: d.color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, color: '#94A3B8' }}>{d.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* 4. Live Results table: 3 columns */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              {/* Column headers */}
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '0.8fr 1.4fr 1fr',
-                gap: '0 12px',
-                marginBottom: 10,
-              }}>
-                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Live Results</span>
-                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Sample Question</span>
-                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Responses</span>
-              </div>
-              {/* Data rows */}
-              {LIVE_RESULTS.map((row, i) => (
+            <p style={{ color: 'white', fontSize: 16, fontWeight: 700, margin: '0 0 14px' }}>Live Polling Overview</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {LIVE_POLLS.map((p, i) => (
                 <div key={i} style={{
-                  display: 'grid',
-                  gridTemplateColumns: '0.8fr 1.4fr 1fr',
-                  gap: '0 12px',
-                  padding: '9px 0',
-                  borderTop: '1px solid rgba(255,255,255,0.05)',
-                  alignItems: 'center',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: 10, padding: '12px 14px',
                 }}>
-                  <span style={{ fontSize: 13, color: '#CBD5E1' }}>{row.q}</span>
-                  <span style={{ fontSize: 13, color: '#E2E8F0', fontWeight: 500 }}>{row.answer}</span>
-                  {/* Responses column: label + bars */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    {row.response && (
-                      <span style={{ fontSize: 12, color: '#94A3B8' }}>{row.response}</span>
-                    )}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                      {row.bars.map((bar, j) => (
-                        <div key={j} style={{
-                          width: bar.width,
-                          height: 5,
-                          backgroundColor: bar.color,
-                          borderRadius: 3,
-                        }} />
-                      ))}
-                    </div>
+                  <div>
+                    <p style={{ color: '#E2E8F0', fontSize: 13, fontWeight: 700, margin: '0 0 3px' }}>{p.title}</p>
+                    <p style={{ color: '#475569', fontSize: 11, margin: 0 }}>{p.sub}</p>
                   </div>
+                  <DonutSmall pct={p.pct} label="SKNLP" />
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* ── Bottom row: Analytics+Turnout card | Speech-to-Text card ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.7fr 1fr', gap: 16 }}>
-
-          {/* Left card: Analytics chart + Predictive Turnout */}
+          {/* Island visual */}
           <div style={{
-            backgroundColor: '#1A1E2D',
-            borderRadius: 12,
-            padding: '20px 24px',
-            border: '1px solid rgba(255,255,255,0.08)',
-            display: 'grid',
-            gridTemplateColumns: '1.4fr 1fr',
-            gap: 20,
-            alignItems: 'center',
+            borderRadius: 14, overflow: 'hidden', position: 'relative',
+            background: 'linear-gradient(135deg,#0a1628 0%,#1a0a20 50%,#0d2040 100%)',
+            border: '1px solid rgba(255,255,255,0.07)',
           }}>
-            {/* 6. Analytics line chart */}
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 600, color: '#64748B', margin: '0 0 5px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                Analytics
-              </p>
-              <p style={{ fontSize: 17, fontWeight: 700, color: '#FFFFFF', margin: '0 0 16px' }}>
-                Support Over Last 7 Days
-              </p>
-              <ResponsiveContainer width="100%" height={140}>
-                <LineChart data={SUPPORT_TREND} margin={{ top: 12, right: 8, bottom: 0, left: -8 }}>
-                  <XAxis
-                    dataKey="day"
-                    tick={{ fill: '#64748B', fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: '#64748B', fontSize: 10 }}
-                    axisLine={false}
-                    tickLine={false}
-                    domain={[0, 16000]}
-                    ticks={[0, 20, 8000, 16000]}
-                    tickFormatter={v => v >= 1000 ? `${v / 1000}k` : `${v}`}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="val"
-                    stroke="#DC143C"
-                    strokeWidth={2.5}
-                    dot={<GlowDot />}
-                    activeDot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* 7. Predictive Turnout arc gauge */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', margin: '0 0 14px', textAlign: 'center', lineHeight: 1.3 }}>
-                Predictive<br/>Turnout
-              </p>
-              <div style={{ position: 'relative' }}>
-                <svg viewBox="0 0 120 72" width="170" height="102">
-                  {/* Grey track: full semi-circle */}
-                  <path
-                    d="M 10 65 A 50 50 0 0 1 110 65"
-                    fill="none" stroke="#2D3748" strokeWidth="11" strokeLinecap="round"
-                  />
-                  {/* Red arc: 10% of semi-circle
-                      10% of 180° = 18°
-                      End point at 162° from center (60,65) r=50:
-                      x = 60 + 50*cos(162°) ≈ 12.45
-                      y = 65 - 50*sin(162°) ≈ 49.55 */}
-                  <path
-                    d="M 10 65 A 50 50 0 0 1 12.45 49.55"
-                    fill="none" stroke="#DC143C" strokeWidth="11" strokeLinecap="round"
-                  />
-                  {/* Light grey: remainder of arc */}
-                  <path
-                    d="M 12.45 49.55 A 50 50 0 0 1 110 65"
-                    fill="none" stroke="#94A3B8" strokeWidth="11" strokeLinecap="round"
-                  />
+            {/* Sky gradient */}
+            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 20%, rgba(255,180,50,0.3) 0%, transparent 55%)' }} />
+            {/* SKNLP flags */}
+            {[{ x: '15%', y: '20%', rot: -12 }, { x: '55%', y: '10%', rot: 8 }, { x: '80%', y: '25%', rot: -6 }].map((f, i) => (
+              <div key={i} style={{ position: 'absolute', top: f.y, left: f.x, transform: `rotate(${f.rot}deg)` }}>
+                <svg viewBox="0 0 30 20" width="42" height="28" style={{ borderRadius: 3, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
+                  <polygon points="0,20 30,20 0,0" fill="#009E60" />
+                  <polygon points="30,0 30,20 0,0" fill="#CE1126" />
+                  <polygon points="0,0 3,0 30,17 27,20 0,20" fill="#000" />
+                  <polygon points="3,0 6,0 30,14 30,17" fill="#FCD116" />
+                  <polygon points="0,17 0,20 3,20 27,3 24,0" fill="#FCD116" />
                 </svg>
-                {/* Center text */}
-                <div style={{
-                  position: 'absolute',
-                  bottom: 6,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                }}>
-                  <p style={{
-                    fontFamily: "'Barlow', sans-serif",
-                    fontWeight: 900,
-                    fontSize: 30,
-                    color: '#FFFFFF',
-                    margin: 0,
-                    lineHeight: 1,
-                  }}>10%</p>
-                  <p style={{ fontSize: 12, color: '#64748B', margin: '3px 0 0' }}>Turnout</p>
-                </div>
+              </div>
+            ))}
+            {/* Island silhouette */}
+            <div style={{ position: 'absolute', bottom: '15%', left: '10%', right: '10%' }}>
+              <div style={{
+                height: 80,
+                background: 'linear-gradient(135deg,#1a3a20 0%,#2d6e3e 40%,#1a3a20 100%)',
+                borderRadius: '40% 60% 30% 70% / 50% 40% 60% 50%',
+                boxShadow: '0 0 30px rgba(220,20,60,0.3)',
+              }} />
+              {/* Red glow dots = polling station indicators */}
+              {[20, 40, 55, 70, 85].map((left, i) => (
+                <div key={i} style={{
+                  position: 'absolute', top: -8, left: `${left}%`,
+                  width: 12, height: 12, borderRadius: '50%',
+                  background: '#DC143C', boxShadow: '0 0 10px #DC143C',
+                }} />
+              ))}
+            </div>
+            {/* SKNLP label */}
+            <div style={{ position: 'absolute', bottom: '8%', right: '8%' }}>
+              <div style={{ background: 'rgba(220,20,60,0.8)', borderRadius: 6, padding: '4px 10px' }}>
+                <p style={{ color: 'white', fontSize: 16, fontWeight: 900, margin: 0 }}>SKNLP</p>
               </div>
             </div>
-          </div>
-
-          {/* 8. Speech-to-Text card */}
-          <div style={{
-            backgroundColor: '#1A1E2D',
-            borderRadius: 12,
-            padding: '20px',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}>
+            {/* Crowd silhouette bottom */}
             <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: '#0F172A',
-              borderRadius: 8,
-              padding: '7px 14px',
-              marginBottom: 16,
-            }}>
-              <span style={{ fontSize: 14 }}>🎤</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: '#E2E8F0' }}>Speech-to-Text Ready</span>
-            </div>
-            <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.7, margin: 0 }}>
-              Sample transcribed note: canvass next canvass note. Venelicht an Stadtle the
-              pocktubelat commenturlitve hat poumtes ileat comitive tisfumef say the vonwast
-              itind aorest apountit of give vaulting thenaptle calive oft thin politics raincoals.
-            </p>
+              position: 'absolute', bottom: 0, left: 0, right: 0, height: 50,
+              background: 'linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 100%)',
+            }} />
           </div>
+        </div>
 
+        {/* Quick Actions */}
+        <div>
+          <p style={{ color: 'white', fontSize: 15, fontWeight: 700, margin: '0 0 10px' }}>Quick Actions</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+            {['Create New Survey', 'View Live Results', 'Export Data'].map((btn, i) => (
+              <button key={i} style={{
+                background: '#DC143C', color: 'white', border: 'none', borderRadius: 10,
+                padding: '14px', fontSize: 14, fontWeight: 700, cursor: 'pointer',
+                boxShadow: '0 4px 16px rgba(220,20,60,0.4)',
+              }}>{btn}</button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

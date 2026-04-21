@@ -37,12 +37,12 @@ class SuperAdminLoginController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user('super_admin')->currentAccessToken()->delete();
+        $request->user('super_admin_sanctum')->currentAccessToken()->delete();
         return $this->success(null, 'Logged out successfully');
     }
 
     public function me(Request $request): JsonResponse
     {
-        return $this->success($request->user('super_admin'));
+        return $this->success($request->user('super_admin_sanctum'));
     }
 }
