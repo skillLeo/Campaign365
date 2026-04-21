@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 // ── SKNLP Flag Badge (red/black square) ──
@@ -195,11 +196,11 @@ function HeroBanner({ name }: { name: string }) {
 }
 
 // ── Stat Cards (DARK) ──
-const CARD_CONFIGS = [
-  { label: 'Voters Contacted',    value: '12,458', delta: '+14%',         deltaColor: '#4ADE80', valueBig: true,  bg: '#1E2D3E' },
-  { label: 'Constituencies\nActive', value: '11/11', delta: '11/11',       deltaColor: '#FFD700', valueBig: true,  bg: '#1A2C3A', valueColor: '#FFD700' },
-  { label: 'Fundraising\nRaised', value: '$184,720', delta: '+$12k this week', deltaColor: '#4ADE80', valueBig: true, bg: '#261810', valueColor: '#FFD700' },
-  { label: 'Canvassers\nOnline',  value: '47',      delta: '3 offline',   deltaColor: '#DC143C', valueBig: true,  bg: '#1B2434' },
+const DEFAULT_CARDS = [
+  { label: 'Voters Contacted',    value: '—', delta: '+14%',         deltaColor: '#4ADE80', valueBig: true,  bg: '#1E2D3E' },
+  { label: 'Constituencies\nActive', value: '—', delta: '—',       deltaColor: '#FFD700', valueBig: true,  bg: '#1A2C3A', valueColor: '#FFD700' },
+  { label: 'Active\nCampaigns', value: '—', delta: '—', deltaColor: '#4ADE80', valueBig: true, bg: '#261810', valueColor: '#FFD700' },
+  { label: 'Canvassers\nOnline',  value: '—',      delta: '—',   deltaColor: '#DC143C', valueBig: true,  bg: '#1B2434' },
 ];
 
 function StatCard({ label, value, delta, deltaColor, bg, valueColor }: {
@@ -407,8 +408,41 @@ function HeatmapMap() {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [cards, setCards] = useState(DEFAULT_CARDS);
+  const [firstName, setFirstName] = useState('there');
 
-  const firstName = 'Marcus';
+  useEffect(() => {
+    const token = localStorage.getItem('c365_token');
+    const raw   = localStorage.getItem('c365_user');
+    if (raw) {
+      try {
+        const u = JSON.parse(raw);
+        if (u?.name) setFirstName(u.name.split(' ')[0]);
+      } catch { /* ignore */ }
+    }
+    if (!token) return;
+
+    const tenantKey = localStorage.getItem('c365_tenant') || 'sknlp';
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/stats`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'X-Tenant-Subdomain': tenantKey,
+      },
+    })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.success) return;
+        const d = data.data;
+        setCards([
+          { label: 'Voters Contacted',    value: (d.voters_contacted ?? 0).toLocaleString(), delta: `${d.doors_knocked_today ?? 0} today`, deltaColor: '#4ADE80', valueBig: true, bg: '#1E2D3E' },
+          { label: 'Total\nVoters',        value: (d.total_voters ?? 0).toLocaleString(), delta: 'in database', deltaColor: '#FFD700', valueBig: true, bg: '#1A2C3A', valueColor: '#FFD700' },
+          { label: 'Active\nCampaigns',   value: String(d.active_campaigns ?? 0), delta: `${d.turnout_goal ?? 0}% goal`, deltaColor: '#4ADE80', valueBig: true, bg: '#261810', valueColor: '#FFD700' },
+          { label: 'Canvassers\nOnline',  value: String(d.canvassers_active ?? 0), delta: 'last 30 min', deltaColor: '#DC143C', valueBig: true, bg: '#1B2434' },
+        ]);
+      })
+      .catch(() => { /* keep defaults */ });
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#F8FAFC', fontFamily: "'Inter', sans-serif" }}>
@@ -500,7 +534,7 @@ export default function DashboardPage() {
 
         {/* Stat Cards — DARK */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
-          {CARD_CONFIGS.map(c => (
+          {cards.map(c => (
             <StatCard key={c.label} {...c} />
           ))}
         </div>

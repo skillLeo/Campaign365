@@ -18,20 +18,32 @@ export default function SuperAdminLoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-    await new Promise(r => setTimeout(r, 700));
-    if (email && password) {
-      const token = 'mock-super-admin-token-' + Date.now();
-      const user = { id: 1, name: 'Super Admin', email };
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPER_ADMIN_URL}/auth/login`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Invalid credentials');
+        return;
+      }
+      const { token, admin } = data.data;
       localStorage.setItem('c365_token', token);
       localStorage.setItem('c365_role', 'super_admin');
-      localStorage.setItem('c365_user', JSON.stringify(user));
-      setAuth(token, user);
+      localStorage.setItem('c365_user', JSON.stringify(admin));
+      setAuth(token, admin);
       setIsSuperAdmin(true);
       router.push('/super/login-success');
-    } else {
-      setError('Please enter your email and password');
+    } catch {
+      setError('Unable to connect to server. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

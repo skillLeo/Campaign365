@@ -63,14 +63,49 @@ function Sparkline({ color = '#2563EB' }: { color?: string }) {
 export default function SuperDashboardPage() {
   const { user } = useAuthStore();
   const [stats, setStats]               = useState<any>(null);
+  const [tenants, setTenants]           = useState<any[]>([]);
   const [loading, setLoading]           = useState(true);
   const [tenantOpen, setTenantOpen]     = useState(false);
   const [selectedTenant, setSelectedTenant] = useState('All Tenants');
   const dropdownRef                     = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setStats({ active_tenants: 47, total_revenue: '$184K', active_campaigns: 312 });
-    setLoading(false);
+    const token = localStorage.getItem('c365_token');
+    if (!token) return;
+
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+    };
+
+    // Fetch analytics + tenants in parallel
+    Promise.all([
+      fetch(`${process.env.NEXT_PUBLIC_SUPER_ADMIN_URL}/analytics`, { headers }),
+      fetch(`${process.env.NEXT_PUBLIC_SUPER_ADMIN_URL}/billing`, { headers }),
+      fetch(`${process.env.NEXT_PUBLIC_SUPER_ADMIN_URL}/tenants?per_page=5`, { headers }),
+    ])
+      .then(([aRes, bRes, tRes]) => Promise.all([aRes.json(), bRes.json(), tRes.json()]))
+      .then(([analytics, billing, tenantsData]) => {
+        const mrr = billing.data?.total_mrr ?? 0;
+        const mrrFormatted = mrr >= 1000 ? `$${Math.round(mrr / 1000)}K` : `$${mrr}`;
+        setStats({
+          active_tenants:   analytics.data?.active_tenants   ?? 0,
+          total_revenue:    mrrFormatted,
+          active_campaigns: analytics.data?.active_campaigns ?? 0,
+          by_plan:          analytics.data?.by_plan          ?? [],
+        });
+        const recentList = (tenantsData.data ?? []).slice(0, 5).map((t: any) => ({
+          name:    t.name,
+          initial: t.name.charAt(0).toUpperCase(),
+          color:   t.primary_color || '#2563EB',
+        }));
+        setTenants(recentList);
+      })
+      .catch(() => {
+        // Fallback to zeros on error — don't crash
+        setStats({ active_tenants: 0, total_revenue: '$0', active_campaigns: 0, by_plan: [] });
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   // Close on outside click

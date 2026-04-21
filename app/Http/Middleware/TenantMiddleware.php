@@ -19,6 +19,11 @@ class TenantMiddleware
         $parts = explode('.', $host);
         $subdomain = count($parts) >= 3 ? $parts[0] : null;
 
+        // Development fallback: allow X-Tenant-Subdomain header when no subdomain is in the host
+        if (!$subdomain && $request->hasHeader('X-Tenant-Subdomain')) {
+            $subdomain = $request->header('X-Tenant-Subdomain');
+        }
+
         if (!$subdomain) {
             return response()->json(['success' => false, 'error' => 'Tenant not found'], 404);
         }

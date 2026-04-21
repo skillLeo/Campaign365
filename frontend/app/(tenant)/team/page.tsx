@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // ── Person Face Avatar — photo-realistic SVG faces ────────────────────────────
 function PersonAvatar({ n, sz = 46 }: { n: number; sz?: number }) {
@@ -355,9 +355,37 @@ const CARD: React.CSSProperties = {
   border: '1px solid rgba(255,255,255,0.06)',
 };
 
+interface TeamMember {
+  id: number;
+  name: string;
+  email: string;
+  phone: string | null;
+  status: string;
+  roles: Array<{ name: string }>;
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function TeamPage() {
   const [activeTab, setActiveTab] = useState<typeof TABS[number]>('All Members');
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem('c365_token');
+    if (!token) return;
+    const tenantKey = localStorage.getItem('c365_tenant') || 'sknlp';
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/team?per_page=50`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'X-Tenant-Subdomain': tenantKey,
+      },
+    })
+      .then(r => r.json())
+      .then(data => { if (data.success) setMembers(data.data ?? []); })
+      .catch(() => {})
+      .finally(() => setLoadingMembers(false));
+  }, []);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'rgb(11, 19, 32)', fontFamily: "'Inter', sans-serif" }}>
@@ -578,42 +606,66 @@ export default function TeamPage() {
               </tr>
             </thead>
             <tbody>
-              {TABLE_ROWS.map((r, i) => (
-                <tr key={i} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-
-                  {/* Name: flag + overlapping face avatars */}
-                  <td style={{ padding: '10px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <FlagCircle type={r.flag} />
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        {r.avatarIds.map((id, j) => (
-                          <div key={j} style={{
-                            marginLeft: j > 0 ? -9 : 0,
-                            borderRadius: '50%',
-                            border: '2px solid #161D2E',
-                            flexShrink: 0,
-                          }}>
-                            <PersonAvatar n={id} sz={28} />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </td>
-
-                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>
-                    {r.role}
-                  </td>
-                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
-                    {r.turf}
-                  </td>
-                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
-                    {r.today}
-                  </td>
-                  <td style={{ padding: '10px 16px', fontSize: 13, color: '#E2E8F0', fontWeight: 500 }}>
-                    {r.status}
+              {loadingMembers && (
+                <tr>
+                  <td colSpan={5} style={{ padding: '28px', textAlign: 'center', color: '#64748B', fontSize: 14 }}>
+                    Loading team…
                   </td>
                 </tr>
-              ))}
+              )}
+              {!loadingMembers && members.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ padding: '28px', textAlign: 'center', color: '#64748B', fontSize: 14 }}>
+                    No team members yet
+                  </td>
+                </tr>
+              )}
+              {!loadingMembers && members.map((m, i) => {
+                const flags: FlagType[] = ['skn', 'ag', 'jm', 'tt', 'bb'];
+                const flag = flags[i % flags.length];
+                const roleLabel = m.roles?.[0]?.name?.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Member';
+                const isActive = m.status === 'active';
+                return (
+                  <tr key={m.id} style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '10px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <FlagCircle type={flag} />
+                        <div style={{ position: 'relative' }}>
+                          <PersonAvatar n={i} sz={32} />
+                          <div style={{
+                            position: 'absolute', bottom: 0, right: 0,
+                            width: 8, height: 8, borderRadius: '50%',
+                            backgroundColor: isActive ? '#22C55E' : '#6B7280',
+                            border: '2px solid #161D2E',
+                          }} />
+                        </div>
+                        <div>
+                          <p style={{ fontSize: 13, fontWeight: 700, color: '#FFFFFF', margin: 0 }}>{m.name}</p>
+                          <p style={{ fontSize: 11, color: '#64748B', margin: 0 }}>{m.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '10px 16px', fontSize: 13, color: '#FFFFFF', fontWeight: 600 }}>
+                      {roleLabel}
+                    </td>
+                    <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
+                      {m.phone || '—'}
+                    </td>
+                    <td style={{ padding: '10px 16px', fontSize: 13, color: '#9CA3AF' }}>
+                      —
+                    </td>
+                    <td style={{ padding: '10px 16px' }}>
+                      <span style={{
+                        padding: '3px 10px', borderRadius: 4, fontSize: 12, fontWeight: 600,
+                        backgroundColor: isActive ? 'rgba(34,197,94,0.15)' : 'rgba(107,114,128,0.2)',
+                        color: isActive ? '#22C55E' : '#9CA3AF',
+                      }}>
+                        {isActive ? 'Active' : m.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

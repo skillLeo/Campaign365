@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // Campaign 365 multi-tenancy
+    'super_admin_domain' => env('SUPER_ADMIN_DOMAIN', 'admin.campaign365.app'),
+    'central_domain'     => env('CENTRAL_DOMAIN', 'campaign365.app'),
+
 ];

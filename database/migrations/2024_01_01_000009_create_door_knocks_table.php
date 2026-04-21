@@ -13,7 +13,8 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
             $table->foreignId('canvassing_list_id')->constrained()->onDelete('cascade');
             $table->foreignId('voter_id')->constrained()->onDelete('cascade');
-            $table->foreignId('canvasser_id')->references('id')->on('users');
+            $table->unsignedBigInteger('canvasser_id')->nullable();
+            $table->foreign('canvasser_id')->references('id')->on('users')->nullOnDelete();
             $table->enum('result', ['answered', 'not_home', 'refused', 'moved', 'deceased', 'callback'])->nullable();
             $table->enum('sentiment', ['supporter', 'undecided', 'opposition', 'unknown'])->default('unknown');
             $table->text('notes')->nullable();

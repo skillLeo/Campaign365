@@ -1,201 +1,227 @@
 'use client';
 import { useState } from 'react';
-import { MessageCircle, Plus, Send, CheckCircle2, Users, BarChart3, X } from 'lucide-react';
 
-const PRIMARY = 'var(--tenant-primary)';
-const WA_GREEN = '#25D366';
-
-const BLASTS = [
-  { id: 1, name: 'Election Day GOTV', message: "🗳️ Today is Election Day! Polls open 7AM–6PM. Let's make history together! #SKNLP", status: 'sent', recipients: 4820, read: 4210, date: '2025-11-14' },
-  { id: 2, name: 'Town Hall Announcement', message: "📢 Join us TONIGHT at Independence Square, 6PM for our Grand Town Hall. Bring a friend!", status: 'sent', recipients: 3100, read: 2790, date: '2025-10-15' },
-  { id: 3, name: 'Policy Newsletter', message: "📋 Read our full healthcare policy plan. Link in bio. Questions? Reply to this message.", status: 'scheduled', recipients: 5200, read: 0, date: '2025-11-20' },
+const CONVERSATIONS = [
+  { id: 1, name: 'John Doe',         time: '0:34 Am',  online: true,  group: false },
+  { id: 2, name: 'John Doe',         time: '0:49 Am',  online: true,  group: false },
+  { id: 3, name: 'Jane Smith',       time: '10:39 Am', online: false, group: false },
+  { id: 4, name: 'SKNLP Supporters', time: '0:49 Am',  online: true,  group: true  },
+  { id: 5, name: 'SKNLP Supporters', time: '0:37 Am',  online: true,  group: true  },
+  { id: 6, name: 'SKNLP Supporters', time: '0:45 Am',  online: true,  group: true  },
+  { id: 7, name: 'SKNLP Supporters', time: '0:45 Am',  online: false, group: true  },
 ];
 
-const CHAT_MESSAGES = [
-  { from: 'them', text: 'Will there be transportation to the polls?', time: '9:14 AM' },
-  { from: 'bot', text: 'Yes! We have runners available. Reply with your address and we\'ll arrange a pickup. 🚗', time: '9:14 AM' },
-  { from: 'them', text: 'Great! 14 Cayon Street Basseterre', time: '9:16 AM' },
-  { from: 'bot', text: 'Perfect! A runner will pick you up at 10AM. You\'ll receive a confirmation shortly. ✅', time: '9:16 AM' },
+const TEMPLATES = [
+  'VoteYes2023', 'EventReminder', 'EventReminder',
+  'Policy Rempindes', 'Policy Camplates', 'PolicyUpdate', 'PolicyUpdate', 'PolicyUpdate',
 ];
+
+const CHAT = [
+  { from: 'a', text: 'Wor tedilisher chtre✅',          time: '3:44' },
+  { from: 'b', text: 'How?? 👍',                         time: '3:46' },
+  { from: 'a', text: 'SKNLP Official\nNow cwpun!😊',     time: '3:44' },
+  { from: 'a', text: 'SKNLP Official\nFlom Stop Yonu',   time: '3:4'  },
+  { from: 'b', text: 'St. Kitnevis Centre',               time: '3:32' },
+  { from: 'b', text: 'Hon teryou😊',                      time: '3:4'  },
+  { from: 'a', text: 'SKNLP Supporters for\nLabour Party 🎉', time: '22:30' },
+];
+
+function PhoneMockup() {
+  return (
+    <div style={{
+      width: 196, borderRadius: 28,
+      border: '2.5px solid #2a2a2a',
+      overflow: 'hidden', flexShrink: 0,
+      boxShadow: '0 16px 48px rgba(0,0,0,0.7)',
+      background: '#111',
+    }}>
+      {/* Status + chat header */}
+      <div style={{ background: '#DC143C' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 12px 2px' }}>
+          <span style={{ color: 'white', fontSize: 10, fontWeight: 700 }}>3:21</span>
+          <span style={{ color: 'white', fontSize: 8 }}>▲▲ 📶</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px 8px' }}>
+          <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 10 }}>←</span>
+          <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10 }}>S</div>
+          <div>
+            <p style={{ color: 'white', fontSize: 9, fontWeight: 700, margin: 0 }}>SKNLP Official</p>
+            <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 7.5, margin: 0 }}>On AILD</p>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 5 }}>
+            <span style={{ color: 'white', fontSize: 9 }}>📹</span>
+            <span style={{ color: 'white', fontSize: 9 }}>📞</span>
+            <span style={{ color: 'white', fontSize: 9 }}>⋮</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div style={{
+        background: '#E5DDD5',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='2'/%3E%3C/g%3E%3C/svg%3E")`,
+        padding: '8px 6px', minHeight: 268,
+        display: 'flex', flexDirection: 'column', gap: 4,
+        overflowY: 'hidden',
+      }}>
+        {CHAT.map((m, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: m.from === 'a' ? 'flex-start' : 'flex-end' }}>
+            <div style={{
+              maxWidth: '78%',
+              background: m.from === 'a' ? 'white' : '#DCF8C6',
+              borderRadius: m.from === 'a' ? '0 7px 7px 7px' : '7px 0 7px 7px',
+              padding: '3px 6px 2px',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+            }}>
+              {m.from === 'a' && <p style={{ color: '#DC143C', fontSize: 7, fontWeight: 700, margin: '0 0 1px' }}>SKNLP Official</p>}
+              <p style={{ color: '#222', fontSize: 7.5, margin: 0, whiteSpace: 'pre-line', lineHeight: 1.3 }}>{m.text}</p>
+              <p style={{ color: '#9BA3AA', fontSize: 6, margin: '1px 0 0', textAlign: 'right' }}>{m.time} ✓✓</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Input */}
+      <div style={{ background: '#F0F0F0', padding: '5px 8px', display: 'flex', alignItems: 'center', gap: 5 }}>
+        <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '4px 8px', fontSize: 7.5, color: '#9BA3AA' }}>@ Message</div>
+        <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#DC143C', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9 }}>🎤</div>
+      </div>
+    </div>
+  );
+}
 
 export default function WhatsAppPage() {
-  const [tab, setTab] = useState<'blasts' | 'compose' | 'inbox'>('blasts');
-  const [message, setMessage] = useState('');
-  const [segment, setSegment] = useState('all');
-  const [reply, setReply] = useState('');
-
-  const readRate = (r: number, total: number) => total > 0 ? Math.round((r / total) * 100) : 0;
+  const [selected, setSelected] = useState(1);
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden p-3 sm:p-4 md:p-5 lg:p-6 space-y-4 sm:space-y-5">
-      {/* Header - Responsive */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, fontSize: 'clamp(18px, 5vw, 24px)', color: '#0F172A', letterSpacing: '-0.02em' }}>WhatsApp Campaigns</h1>
-          <p style={{ fontSize: 'clamp(11px, 2.5vw, 13px)', color: '#64748B', marginTop: 3 }}>Communications › WhatsApp</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, padding: '5px 10px' }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: WA_GREEN }} />
-            <span style={{ fontSize: 'clamp(10px, 2.5vw, 12px)', fontWeight: 600, color: '#16A34A', whiteSpace: 'nowrap' }}>WhatsApp Connected</span>
-          </div>
-          <button onClick={() => setTab('compose')}
-            className="flex items-center justify-center gap-1.5 rounded-lg sm:rounded-xl transition-all hover:opacity-90 whitespace-nowrap"
-            style={{ backgroundColor: WA_GREEN, color: 'white', border: 'none', padding: '7px 14px', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, cursor: 'pointer' }}>
-            <Plus size={13} className="sm:w-[15px] sm:h-[15px]" /> New Blast
-          </button>
-        </div>
+    <div style={{ backgroundColor: '#0A0F1C', minHeight: '100vh', fontFamily: "'Inter',sans-serif" }}>
+
+      {/* Header */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '16px 20px',
+        background: 'linear-gradient(90deg,rgba(220,20,60,0.15) 0%,transparent 55%)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+      }}>
+        <h1 style={{ color: 'white', fontSize: 22, fontWeight: 800, margin: 0 }}>WhatsApp Messaging</h1>
+        <button style={{
+          background: '#DC143C', color: 'white', border: 'none', borderRadius: 8,
+          padding: '10px 20px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+          boxShadow: '0 4px 14px rgba(220,20,60,0.4)',
+        }}>Start New WhatsApp Campaign</button>
       </div>
 
-      {/* Stats - Responsive */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      {/* Stats */}
+      <div style={{ display: 'flex', gap: 14, padding: '14px 20px 10px' }}>
         {[
-          { label: 'Total Sent', value: BLASTS.filter(b => b.status === 'sent').reduce((s, b) => s + b.recipients, 0).toLocaleString(), color: WA_GREEN },
-          { label: 'Avg Read Rate', value: '87%', color: '#2563EB' },
-          { label: 'Active Contacts', value: '8,240', color: '#7C3AED' },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-3 sm:p-4 hover:shadow-md transition-shadow">
-            <p style={{ fontSize: 'clamp(20px, 5vw, 24px)', fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, color: s.color }}>{s.value}</p>
-            <p style={{ fontSize: 'clamp(10px, 2vw, 12px)', color: '#94A3B8', marginTop: 2 }}>{s.label}</p>
+          { label: 'Messages Sent Today:', value: '892', icon: '💬' },
+          { label: 'Response Rate:', value: '42%', extra: 'Arp' },
+        ].map((s, i) => (
+          <div key={i} style={{
+            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 12, padding: '14px 18px',
+            display: 'flex', alignItems: 'center', gap: 14,
+          }}>
+            <div>
+              <p style={{ color: '#94A3B8', fontSize: 12, margin: '0 0 4px' }}>{s.label}</p>
+              <p style={{ color: 'white', fontSize: 32, fontWeight: 900, margin: 0, lineHeight: 1 }}>{s.value}</p>
+            </div>
+            {s.icon && <span style={{ fontSize: 36 }}>{s.icon}</span>}
+            {s.extra && (
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#94A3B8', fontSize: 11, fontWeight: 600,
+              }}>{s.extra}</div>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Tabs - Responsive */}
-      <div className="flex flex-wrap gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit">
-        {[['blasts', 'Blasts'], ['compose', 'Compose'], ['inbox', 'Inbox (Auto-Reply)']].map(([key, label]) => (
-          <button key={key} onClick={() => setTab(key as any)}
-            className="whitespace-nowrap transition-all"
-            style={{ padding: 'clamp(5px, 1.5vw, 7px) clamp(12px, 3vw, 18px)', borderRadius: 8, border: 'none', fontSize: 'clamp(11px, 2.5vw, 13px)', fontWeight: 600, cursor: 'pointer', backgroundColor: tab === key ? WA_GREEN : 'transparent', color: tab === key ? 'white' : '#64748B' }}>
-            {label}
-          </button>
-        ))}
-      </div>
+      {/* 3-column layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: '230px 1fr 210px', margin: '0 20px 20px', borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
 
-      {tab === 'blasts' && (
-        <div className="space-y-3 sm:space-y-4">
-          {BLASTS.map(b => (
-            <div key={b.id} className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5 hover:shadow-md transition-shadow">
-              <div style={{ width: 'clamp(36px, 8vw, 44px)', height: 'clamp(36px, 8vw, 44px)', backgroundColor: WA_GREEN + '15', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <MessageCircle size={18} className="sm:w-[20px] sm:h-[20px]" style={{ color: WA_GREEN }} />
+        {/* Conversation list */}
+        <div style={{ background: 'rgba(255,255,255,0.03)', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+          {CONVERSATIONS.map(c => (
+            <div
+              key={c.id}
+              onClick={() => setSelected(c.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 9,
+                padding: '10px 12px', cursor: 'pointer',
+                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                backgroundColor: selected === c.id ? 'rgba(220,20,60,0.13)' : 'transparent',
+                transition: 'background 0.15s',
+              }}
+            >
+              <div style={{ position: 'relative', flexShrink: 0 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: '50%',
+                  background: c.group ? 'linear-gradient(135deg,#7C1010,#DC143C)' : 'linear-gradient(135deg,#1E3A5F,#0a1628)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'white', fontSize: 15, fontWeight: 700,
+                }}>{c.group ? '👥' : c.name.charAt(0)}</div>
+                <div style={{
+                  position: 'absolute', bottom: 1, right: 1,
+                  width: 9, height: 9, borderRadius: '50%',
+                  backgroundColor: c.online ? '#4ADE80' : '#DC143C',
+                  border: '1.5px solid #0A0F1C',
+                }} />
               </div>
-              <div className="flex-1 min-w-0">
-                <p style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }}>{b.name}</p>
-                <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#64748B', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{b.message}</p>
-              </div>
-              <div className="flex flex-wrap items-center justify-start sm:justify-end gap-3 sm:gap-6">
-                <div>
-                  <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, color: '#0F172A' }}>{b.recipients.toLocaleString()}</p>
-                  <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>sent</p>
-                </div>
-                {b.read > 0 && (
-                  <div>
-                    <p style={{ fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, color: WA_GREEN }}>{readRate(b.read, b.recipients)}%</p>
-                    <p style={{ fontSize: 'clamp(10px, 2vw, 11px)', color: '#94A3B8' }}>read</p>
-                  </div>
-                )}
-                <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 600, color: b.status === 'sent' ? '#16A34A' : '#D97706', backgroundColor: b.status === 'sent' ? '#F0FDF4' : '#FFFBEB', padding: '3px 9px', borderRadius: 6, whiteSpace: 'nowrap' }}>
-                  {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
-                </span>
-                <span style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#94A3B8', whiteSpace: 'nowrap' }}>{b.date}</span>
-              </div>
+              <span style={{ color: '#E2E8F0', fontSize: 12, fontWeight: 600, flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name}</span>
+              <span style={{ color: '#475569', fontSize: 10, flexShrink: 0 }}>{c.time}</span>
             </div>
           ))}
-        </div>
-      )}
-
-      {tab === 'compose' && (
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-          <div className="flex-1 space-y-3 sm:space-y-4">
-            <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 space-y-3 sm:space-y-4">
-              <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }}>Compose WhatsApp Blast</h3>
-              <div style={{ backgroundColor: '#FFFBEB', border: '1px solid #FEF3C7', borderRadius: 8, padding: '8px 12px' }}>
-                <p style={{ fontSize: 'clamp(10px, 2.5vw, 12px)', color: '#92400E', margin: 0 }}>⚠️ WhatsApp Business Policy: Messages must not be promotional without user opt-in. Include an opt-out option.</p>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#475569', marginBottom: 6 }}>Message</label>
-                <div style={{ border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
-                  <div style={{ backgroundColor: '#F8FAFC', padding: '6px 10px', borderBottom: '1px solid #E2E8F0', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                    {['😊', '📷', '📎', '🔗'].map(icon => (
-                      <button key={icon} style={{ width: 'clamp(26px, 6vw, 28px)', height: 'clamp(26px, 6vw, 28px)', borderRadius: 6, border: '1px solid #E2E8F0', background: 'white', cursor: 'pointer', fontSize: 'clamp(12px, 3vw, 13px)' }}>{icon}</button>
-                    ))}
-                  </div>
-                  <textarea value={message} onChange={e => setMessage(e.target.value)} rows={5}
-                    placeholder="Write your WhatsApp message. Emojis are supported! 🎉&#10;&#10;Reply STOP to unsubscribe."
-                    className="w-full border-none p-3 text-xs sm:text-sm outline-none resize-none font-inherit" />
-                </div>
-              </div>
-              <div>
-                <label style={{ display: 'block', fontSize: 'clamp(11px, 2.5vw, 12px)', fontWeight: 600, color: '#475569', marginBottom: 6 }}>Send To</label>
-                <select value={segment} onChange={e => setSegment(e.target.value)}
-                  className="w-full border border-slate-200 rounded-lg sm:rounded-xl px-3 py-2 text-xs sm:text-sm text-slate-700 outline-none bg-white">
-                  <option value="all">All WhatsApp Contacts (8,240)</option>
-                  <option value="supporters">Supporters (4,820)</option>
-                  <option value="undecided">Undecided (2,100)</option>
-                  <option value="donors">Donors (890)</option>
-                </select>
-              </div>
-              <button style={{ width: '100%', backgroundColor: WA_GREEN, color: 'white', border: 'none', borderRadius: 10, padding: 'clamp(10px, 2.5vw, 12px)', fontSize: 'clamp(12px, 2.5vw, 13px)', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-                <Send size={13} className="sm:w-[14px] sm:h-[14px]" /> Send WhatsApp Blast
-              </button>
-            </div>
-          </div>
-          {/* WA preview - Responsive */}
-          <div className="lg:w-80 xl:w-96">
-            <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Preview</h3>
-            <div style={{ backgroundColor: '#ECE5DD', borderRadius: 16, padding: 'clamp(10px, 2.5vw, 12px)', minHeight: 'clamp(260px, 50vw, 280px)' }}>
-              <p style={{ fontSize: 'clamp(8px, 2vw, 9px)', color: '#64748B', textAlign: 'center', marginBottom: 12 }}>SKNLP Campaign</p>
-              {message && (
-                <div style={{ backgroundColor: 'white', borderRadius: '8px 8px 8px 2px', padding: '8px 10px', maxWidth: '85%', boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
-                  <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#0F172A', lineHeight: 1.5, margin: 0, whiteSpace: 'pre-wrap' }}>{message}</p>
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 4, gap: 2, alignItems: 'center' }}>
-                    <span style={{ fontSize: 'clamp(8px, 2vw, 9px)', color: '#94A3B8' }}>now</span>
-                    <span style={{ fontSize: 'clamp(9px, 2vw, 10px)', color: WA_GREEN }}>✓✓</span>
-                  </div>
-                </div>
-              )}
-              {!message && <p style={{ fontSize: 'clamp(10px, 2.5vw, 11px)', color: '#94A3B8', textAlign: 'center', marginTop: 40 }}>Preview appears here</p>}
-            </div>
+          <div style={{ padding: 16, display: 'flex', justifyContent: 'center' }}>
+            <div style={{
+              width: 50, height: 50, borderRadius: '50%',
+              background: 'linear-gradient(135deg,#25D366,#128C7E)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
+              boxShadow: '0 4px 16px rgba(37,211,102,0.4)',
+            }}>💬</div>
           </div>
         </div>
-      )}
 
-      {tab === 'inbox' && (
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-5">
-          <div className="flex-1 bg-white rounded-xl sm:rounded-2xl border border-slate-100 overflow-hidden">
-            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100">
-              <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }}>Auto-Reply Bot Preview</h3>
-              <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#94A3B8', marginTop: 2 }}>How voters experience your WhatsApp bot</p>
-            </div>
-            <div style={{ padding: 'clamp(12px, 3vw, 16px)', backgroundColor: '#ECE5DD', minHeight: 'clamp(280px, 55vw, 300px)' }}>
-              {CHAT_MESSAGES.map((msg, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: msg.from === 'them' ? 'flex-start' : 'flex-end', marginBottom: 8 }}>
-                  <div style={{ backgroundColor: msg.from === 'them' ? 'white' : '#DCF8C6', borderRadius: msg.from === 'them' ? '8px 8px 8px 2px' : '8px 8px 2px 8px', padding: '8px 10px', maxWidth: '75%', boxShadow: '0 1px 1px rgba(0,0,0,0.1)' }}>
-                    <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#0F172A', margin: 0, lineHeight: 1.5 }}>{msg.text}</p>
-                    <p style={{ fontSize: 'clamp(8px, 2vw, 9px)', color: '#94A3B8', margin: '4px 0 0', textAlign: 'right' }}>{msg.time} {msg.from === 'bot' && '✓✓'}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="lg:w-80 xl:w-96 bg-white rounded-xl sm:rounded-2xl border border-slate-100 p-4 sm:p-5 space-y-3 sm:space-y-4">
-            <h3 style={{ fontSize: 'clamp(13px, 2.5vw, 14px)', fontWeight: 700, color: '#0F172A' }}>Bot Settings</h3>
-            {[
-              { keyword: 'RIDE', response: 'Reply with your address and we\'ll arrange a pickup.' },
-              { keyword: 'POLL', response: 'Your polling station is {polling_station}. Hours: 7AM-6PM.' },
-              { keyword: 'STOP', response: 'You have been removed from our list. Thank you.' },
-              { keyword: 'JOIN', response: 'Welcome! You\'ll receive updates from SKNLP. Reply STOP anytime.' },
-            ].map(rule => (
-              <div key={rule.keyword} style={{ padding: 'clamp(10px, 2.5vw, 12px)', backgroundColor: '#F8FAFC', borderRadius: 10, border: '1px solid #E2E8F0' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <span style={{ fontSize: 'clamp(10px, 2vw, 11px)', fontWeight: 700, color: WA_GREEN, backgroundColor: '#F0FDF4', padding: '2px 8px', borderRadius: 4, whiteSpace: 'nowrap' }}>Keyword: {rule.keyword}</span>
-                </div>
-                <p style={{ fontSize: 'clamp(11px, 2.5vw, 12px)', color: '#475569', margin: 0, lineHeight: 1.5 }}>{rule.response}</p>
+        {/* Center phone preview */}
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '24px 0',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <PhoneMockup />
+        </div>
+
+        {/* Templates */}
+        <div style={{ background: 'rgba(255,255,255,0.03)', padding: '14px' }}>
+          <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: '0 0 10px' }}>WhatsApp Templates</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {TEMPLATES.map((t, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: 7,
+                background: 'rgba(255,255,255,0.05)', borderRadius: 7,
+                padding: '7px 9px', cursor: 'pointer',
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                <div style={{
+                  width: 24, height: 24, borderRadius: '50%',
+                  background: 'linear-gradient(135deg,#1E3A5F,#0a1628)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, flexShrink: 0,
+                }}>🟢</div>
+                <span style={{ color: '#C9D1DA', fontSize: 11.5 }}>{t}</span>
               </div>
             ))}
+            <button style={{
+              marginTop: 6, width: '100%', background: '#DC143C', color: 'white',
+              border: 'none', borderRadius: 7, padding: '10px',
+              fontSize: 12, fontWeight: 700, cursor: 'pointer',
+              boxShadow: '0 4px 14px rgba(220,20,60,0.4)',
+            }}>Compose Broadcast</button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
