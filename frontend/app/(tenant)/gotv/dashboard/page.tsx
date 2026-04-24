@@ -526,7 +526,7 @@ export default function GotvPage() {
           </div>
 
           {/* Map + Final Push Tasks */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 12 }}>
+          <div className="rg-sidebar-r" style={{ gap: 12 }}>
             {/* Map */}
             <div style={{ backgroundColor: '#161D2E', borderRadius: 10, border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden' }}>
               <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -696,7 +696,7 @@ export default function GotvPage() {
           </div>
 
           {/* Stats row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+          <div className="rg-4" style={{ gap: 12 }}>
             {[
               { label: 'Active Runners', value: '18', color: '#22C55E' },
               { label: 'Tasks Complete', value: '142', color: '#FFD700' },
@@ -744,7 +744,7 @@ export default function GotvPage() {
           </div>
 
           {/* Map + AI Insights */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 14, alignItems: 'start' }}>
+          <div className="rg-sidebar-r" style={{ gap: 14, alignItems: 'start' }}>
             {/* Results map */}
             <div style={{ backgroundColor: '#161D2E', borderRadius: 10, border: '1px solid rgba(255,255,255,0.07)', overflow: 'hidden' }}>
               <div style={{ padding: '12px 16px 8px', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -849,7 +849,7 @@ export default function GotvPage() {
           </div>
 
           {/* Top stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <div className="rg-3" style={{ gap: 12 }}>
             {/* National Turnout */}
             <div style={{ backgroundColor: '#161D2E', borderRadius: 10, border: '1px solid rgba(255,255,255,0.07)', padding: '18px 20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -922,7 +922,7 @@ export default function GotvPage() {
           </div>
 
           {/* Charts row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <div className="rg-3" style={{ gap: 12 }}>
             {/* Hourly Turnout Trend */}
             <div style={{ backgroundColor: '#161D2E', borderRadius: 10, border: '1px solid rgba(255,255,255,0.07)', padding: '16px' }}>
               <h3 style={{ fontSize: 14, fontWeight: 700, margin: '0 0 16px' }}>Hourly Turnout Trend</h3>
@@ -982,7 +982,7 @@ export default function GotvPage() {
           </div>
 
           {/* Gauge row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div className="rg-2" style={{ gap: 12 }}>
             {[
               { label: 'Final Projected Turnout', pct: 82, color: '#22C55E' },
               { label: 'Final Projected Turnout', pct: 82, color: '#DC143C' },

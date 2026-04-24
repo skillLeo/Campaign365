@@ -91,7 +91,7 @@ export default function ReportsPage() {
         </div>
 
         {/* ── 4 KPI metrics ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
+        <div className="rg-4" style={{ gap: 14 }}>
           {KPIS.map(({ label, value, pct, iconPath }) => (
             <div key={label} style={{ backgroundColor: '#1E293B', borderRadius: 14, padding: '20px 18px', border: '1px solid rgba(255,255,255,0.08)' }}>
               <p style={{ fontSize: 12, fontWeight: 600, color: '#94A3B8', margin: '0 0 8px' }}>{label}</p>
@@ -111,7 +111,7 @@ export default function ReportsPage() {
         </div>
 
         {/* ── 4 chart panels in 2x2 grid ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="rg-2" style={{ gap: 14 }}>
 
           {/* Voter Turnout Chart */}
           <div style={{ backgroundColor: '#1E293B', borderRadius: 14, padding: '18px 20px', border: '1px solid rgba(255,255,255,0.08)' }}>
@@ -196,7 +196,7 @@ export default function ReportsPage() {
         </div>
 
         {/* ── Daily Voter Outreach + Constituency ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="rg-2" style={{ gap: 14 }}>
           <div style={{ backgroundColor: '#1E293B', borderRadius: 14, padding: '18px 20px', border: '1px solid rgba(255,255,255,0.08)' }}>
             <h3 style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 700, fontSize: 16, color: '#F1F5F9', margin: '0 0 14px' }}>Daily Voter Outreach</h3>
             <ResponsiveContainer width="100%" height={180}>

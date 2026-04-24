@@ -54,7 +54,7 @@ export default function SMSBlastsPage() {
         </p>
 
         {/* 2-col layout: table + composer */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 16 }}>
+        <div className="rg-chart-panel" style={{ gap: 16 }}>
 
           {/* Table */}
           <div style={{
@@ -63,7 +63,7 @@ export default function SMSBlastsPage() {
           }}>
             {/* Header */}
             <div style={{
-              display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px',
+              display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px', minWidth: 'max-content',
               padding: '10px 16px',
               borderBottom: '1px solid rgba(255,255,255,0.08)',
               color: '#94A3B8', fontSize: 12, fontWeight: 600,
@@ -77,7 +77,7 @@ export default function SMSBlastsPage() {
 
             {BLASTS.map((b, i) => (
               <div key={i} style={{
-                display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px',
+                display: 'grid', gridTemplateColumns: '130px 1fr 90px 100px 100px', minWidth: 'max-content',
                 padding: '11px 16px', alignItems: 'center',
                 borderBottom: i < BLASTS.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                 background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',

@@ -503,7 +503,7 @@ export default function CommunicationsPage() {
                 maxWidth: 540,
               }}>
                 {/* Recipient + Filter File */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 12 }}>
+                <div className="rg-2" style={{ gap: 14, marginBottom: 12 }}>
                   <div>
                     <label style={{ fontSize: 12, color: '#374151', fontWeight: 600, display: 'block', marginBottom: 5 }}>
                       Recipient

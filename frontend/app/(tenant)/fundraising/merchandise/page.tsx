@@ -160,7 +160,7 @@ export default function MerchandisePage() {
       <div style={{ padding: '16px 20px' }}>
 
         {/* 4 stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 16 }}>
+        <div className="rg-4" style={{ gap: 14, marginBottom: 16 }}>
 
           {/* Total Merch Sales */}
           <div style={{
@@ -217,7 +217,7 @@ export default function MerchandisePage() {
         </div>
 
         {/* Product grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        <div className="rg-4" style={{ gap: 14 }}>
           {products.map(p => <ProductCard key={p.id} p={p} onSold={handleSold} />)}
         </div>
       </div>

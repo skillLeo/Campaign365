@@ -205,10 +205,7 @@ export default function TrackingPage() {
       </div>
 
       {/* ── KPI stats ─────────────────────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4,1fr)',
-        gap: 12,
+      <div className="rg-4" style={{ gap: 12,
         padding: '16px 24px',
       }}>
         {[
@@ -235,10 +232,7 @@ export default function TrackingPage() {
       </div>
 
       {/* ── Map + Right panel ─────────────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 260px',
-        gap: 14,
+      <div className="rg-chart-panel" style={{ gap: 14,
         padding: '0 24px 24px',
         alignItems: 'start',
       }}>

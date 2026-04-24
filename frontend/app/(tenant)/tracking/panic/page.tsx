@@ -231,10 +231,7 @@ export default function PanicAlertsPage() {
       </div>
 
       {/* ── Map + Emergency Contacts ──────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 230px',
-        gap: 0,
+      <div className="rg-chart-panel" style={{ gap: 0,
         padding: '12px 20px',
       }}>
 
@@ -378,7 +375,7 @@ export default function PanicAlertsPage() {
           {/* Column headers */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '120px 130px 160px 180px 100px 1fr',
+            gridTemplateColumns: '120px 130px 160px 180px 100px 1fr', minWidth: 'max-content',
             padding: '10px 16px',
             borderBottom: '1px solid #1A2235',
             backgroundColor: '#0A1018',
@@ -397,7 +394,7 @@ export default function PanicAlertsPage() {
           {INCIDENTS.map((row, i) => (
             <div key={i} style={{
               display: 'grid',
-              gridTemplateColumns: '120px 130px 160px 180px 100px 1fr',
+              gridTemplateColumns: '120px 130px 160px 180px 100px 1fr', minWidth: 'max-content',
               padding: '12px 16px',
               borderBottom: i < INCIDENTS.length - 1 ? '1px solid #131A28' : 'none',
               alignItems: 'center',

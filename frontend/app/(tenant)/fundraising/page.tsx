@@ -127,7 +127,7 @@ export default function FundraisingDashboardPage() {
         </div>
 
         {/* 4 KPI Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 16 }}>
+        <div className="rg-4" style={{ gap: 14, marginBottom: 16 }}>
 
           {/* Total Raised */}
           <div style={{
@@ -179,7 +179,7 @@ export default function FundraisingDashboardPage() {
         </div>
 
         {/* Charts row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+        <div className="rg-2" style={{ gap: 14, marginBottom: 16 }}>
 
           {/* Fundraising Last 30 Days bar chart */}
           <div style={{
@@ -239,7 +239,7 @@ export default function FundraisingDashboardPage() {
         </div>
 
         {/* Action buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+        <div className="rg-3" style={{ gap: 14 }}>
           {[
             { label: 'Launch Donation Drive', icon: '🚀' },
             { label: 'Send Pledge Reminder', icon: '📩' },

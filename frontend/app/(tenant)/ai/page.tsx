@@ -399,7 +399,7 @@ export default function AiPage() {
         </div>
 
         {/* ── KPI Row ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        <div className="rg-4" style={{ gap: 14 }}>
           {KPI_CARDS.map(k => (
             <div key={k.label} style={{
               backgroundColor: '#111320',
@@ -429,7 +429,7 @@ export default function AiPage() {
         </div>
 
         {/* ── Middle Row: Support Over Time + Ask Grok AI ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 14 }}>
+        <div className="rg-2" style={{ gap: 14 }}>
 
           {/* Support Over Time */}
           <div style={{
@@ -528,7 +528,7 @@ export default function AiPage() {
         </div>
 
         {/* ── Bottom Row: Bar + Donut + Map ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+        <div className="rg-3" style={{ gap: 14 }}>
 
           {/* Issue Priorities — Bar Chart */}
           <div style={{

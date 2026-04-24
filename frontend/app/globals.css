@@ -94,64 +94,97 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Global responsive fixes ─────────────────────────────────── */
 
-/* Prevent horizontal scroll on entire app */
 html, body {
   overflow-x: hidden;
   max-width: 100vw;
 }
 
-/* All images responsive */
-img {
-  max-width: 100%;
-  height: auto;
-}
+img { max-width: 100%; height: auto; }
 
-/* Prevent iOS zoom on input focus (must be 16px or larger) */
-input, select, textarea {
-  font-size: 16px;
-}
+input, select, textarea { font-size: 16px; }
 
-/* Every element box-sized and word-wrapped */
-* {
-  box-sizing: border-box;
-  word-break: break-word;
-}
+* { box-sizing: border-box; word-break: break-word; }
 
-/* Tables always scroll horizontally on small screens */
-.table-container {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+.table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
-/* Responsive stats grid: 4 → 2 → 2 columns */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-}
-@media (max-width: 1023px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 479px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-}
+.sidebar-fixed { overflow-y: auto; overflow-x: hidden; }
 
-/* Ensure sidebar never causes horizontal overflow */
-.sidebar-fixed {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* Slide-in animation for sidebar on mobile */
 @keyframes slide-in-left {
   from { transform: translateX(-100%); }
   to   { transform: translateX(0); }
 }
 
-/* Bottom nav safe area for devices with home bar */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .bottom-nav-safe {
     padding-bottom: env(safe-area-inset-bottom);
     height: calc(60px + env(safe-area-inset-bottom));
   }
+}
+
+/* ─── Responsive Grid Utilities ────────────────────────────────── */
+/* Use these class names on grid containers instead of inline gridTemplateColumns */
+
+/* 4-col → 2-col (tablet) → 2-col (mobile) */
+.rg-4 { display: grid; grid-template-columns: repeat(4, 1fr); }
+
+/* 3-col → 2-col (tablet) → 1-col (mobile) */
+.rg-3 { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+/* 2-col → 1-col (mobile) */
+.rg-2 { display: grid; grid-template-columns: repeat(2, 1fr); }
+
+/* 1fr + fixed right sidebar → stacked */
+.rg-sidebar-r     { display: grid; grid-template-columns: 1fr 280px; }
+.rg-sidebar-r-300 { display: grid; grid-template-columns: 1fr 300px; }
+.rg-sidebar-r-320 { display: grid; grid-template-columns: 1fr 320px; }
+.rg-sidebar-r-340 { display: grid; grid-template-columns: 340px 1fr; }
+
+/* fixed left sidebar + 1fr → stacked */
+.rg-sidebar-l { display: grid; grid-template-columns: 280px 1fr; }
+
+/* chart + right panel */
+.rg-chart-panel { display: grid; grid-template-columns: 1fr 260px; }
+
+@media (max-width: 1100px) {
+  .rg-4           { grid-template-columns: repeat(2, 1fr); }
+  .rg-sidebar-r   { grid-template-columns: 1fr; }
+  .rg-sidebar-r-300 { grid-template-columns: 1fr; }
+  .rg-sidebar-r-320 { grid-template-columns: 1fr; }
+  .rg-sidebar-r-340 { grid-template-columns: 1fr; }
+  .rg-sidebar-l   { grid-template-columns: 1fr; }
+  .rg-chart-panel { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .rg-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .rg-3 { grid-template-columns: 1fr; }
+  .rg-2 { grid-template-columns: 1fr; }
+}
+
+/* ─── Responsive typography helpers ───────────────────────────── */
+@media (max-width: 768px) {
+  .rh1 { font-size: 20px !important; }
+  .rh2 { font-size: 16px !important; }
+}
+
+/* ─── Responsive table scroll wrapper ─────────────────────────── */
+.rtable-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.rtable-wrap > * { min-width: 600px; }
+
+/* ─── Make all fixed-col grid rows scroll on small screens ──────── */
+/* Any div with minWidth:max-content inside a card scrolls horizontally */
+@media (max-width: 768px) {
+  /* Padding adjustments for mobile */
+  .rg-4, .rg-3, .rg-2, .rg-sidebar-r, .rg-sidebar-r-300,
+  .rg-sidebar-r-320, .rg-sidebar-r-340, .rg-sidebar-l,
+  .rg-chart-panel {
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .rg-4 { grid-template-columns: 1fr 1fr !important; }
 }

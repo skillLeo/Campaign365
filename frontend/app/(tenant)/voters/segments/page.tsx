@@ -335,9 +335,7 @@ export default function SegmentsPage() {
             </div>
 
             {/* Stats strip */}
-            <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr',
-              borderTop: '1px solid rgba(255,255,255,0.06)',
+            <div className="rg-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)',
             }}>
               <div style={{ padding: '14px 18px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
                 <p style={{ fontSize: 11, color: '#6B7280', margin: '0 0 3px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Persuadable</p>

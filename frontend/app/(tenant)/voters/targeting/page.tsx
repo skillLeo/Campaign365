@@ -286,10 +286,7 @@ export default function VoterTargetingPage() {
         </div>
 
         {/* ── Stats row ── */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: 1,
+        <div className="rg-2" style={{ gap: 1,
           background: 'rgba(255,255,255,0.06)',
           borderRadius: '0 0 14px 14px',
           overflow: 'hidden',

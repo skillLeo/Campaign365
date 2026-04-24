@@ -218,7 +218,7 @@ export default function ElectionDayLivePage() {
       </div>
 
       {/* Body */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 270px', gap: 14, padding: 14 }}>
+      <div className="rg-sidebar-r" style={{ gap: 14, padding: 14 }}>
 
         {/* Left */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -231,7 +231,7 @@ export default function ElectionDayLivePage() {
           }}>
             {/* Header */}
             <div style={{
-              display: 'grid', gridTemplateColumns: '1.5fr 85px 65px 1.4fr 65px',
+              display: 'grid', gridTemplateColumns: '1.5fr 85px 65px 1.4fr 65px', minWidth: 'max-content',
               padding: '8px 14px', borderBottom: '1px solid rgba(255,255,255,0.07)',
               color: '#475569', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
             }}>
@@ -239,7 +239,7 @@ export default function ElectionDayLivePage() {
             </div>
             {rows.map((r, i) => (
               <div key={i} style={{
-                display: 'grid', gridTemplateColumns: '1.5fr 85px 65px 1.4fr 65px',
+                display: 'grid', gridTemplateColumns: '1.5fr 85px 65px 1.4fr 65px', minWidth: 'max-content',
                 padding: '9px 14px', alignItems: 'center',
                 borderBottom: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
               }}>
