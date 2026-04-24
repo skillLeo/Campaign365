@@ -180,10 +180,7 @@ export default function WalkListPage() {
       </div>
 
       {/* ── Content area ──────────────────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 380px',
-        gap: 0,
+      <div className="rg-sidebar-r" style={{ gap: 0,
         padding: '16px 24px',
         alignItems: 'start',
       }}>

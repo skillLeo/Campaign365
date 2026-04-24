@@ -263,7 +263,7 @@ export default function FundraisingEventsPage() {
         </div>
 
         {/* Event cards grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <div className="rg-4" style={{ gap: 12 }}>
           {EVENTS.map((e, i) => <EventCard key={i} event={e} />)}
         </div>
       </div>

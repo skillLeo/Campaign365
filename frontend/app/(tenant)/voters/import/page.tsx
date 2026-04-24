@@ -289,7 +289,7 @@ export default function ImportVotersPage() {
               {/* Column headers */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1.7fr 72px 110px',
+                gridTemplateColumns: '1.7fr 72px 110px', minWidth: 'max-content',
                 padding: '11px 20px',
                 borderBottom: '1px solid rgba(255,255,255,0.08)',
                 backgroundColor: 'rgba(255,255,255,0.045)',
@@ -306,7 +306,7 @@ export default function ImportVotersPage() {
               {HISTORY.map((row, i) => (
                 <div key={i} style={{
                   display: 'grid',
-                  gridTemplateColumns: '1.7fr 72px 110px',
+                  gridTemplateColumns: '1.7fr 72px 110px', minWidth: 'max-content',
                   padding: '14px 20px',
                   borderBottom: i < HISTORY.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
                   backgroundColor: i % 2 === 1 ? 'rgba(255,255,255,0.03)' : 'transparent',

@@ -57,7 +57,7 @@ export default function SurveyBuilderPage() {
       </div>
 
       {/* Main 2-col */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 16, padding: '0 20px 20px' }}>
+      <div className="rg-sidebar-r" style={{ gap: 16, padding: '0 20px 20px' }}>
 
         {/* Left — Builder */}
         <div style={{

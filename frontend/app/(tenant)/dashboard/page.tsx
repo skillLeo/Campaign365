@@ -533,14 +533,14 @@ export default function DashboardPage() {
         <HeroBanner name={firstName} />
 
         {/* Stat Cards — DARK */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+        <div className="rg-4" style={{ gap: 10 }}>
           {cards.map(c => (
             <StatCard key={c.label} {...c} />
           ))}
         </div>
 
         {/* Activity Feed + Map */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="rg-2" style={{ gap: 14 }}>
 
           {/* Activity Feed — white card matching client design */}
           <div style={{
@@ -615,7 +615,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Action buttons — all three RED */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+        <div className="rg-3" style={{ gap: 12 }}>
           <button
             onClick={() => router.push('/canvassing')}
             style={{

@@ -702,7 +702,7 @@ export default function VotersPage() {
 
             <form onSubmit={handleAddVoter} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* Row: First + Last name */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="rg-2" style={{ gap: 12 }}>
                 {[
                   { key: 'first_name', label: 'First Name', placeholder: 'John', required: true },
                   { key: 'last_name',  label: 'Last Name',  placeholder: 'Doe',  required: true },
@@ -732,7 +732,7 @@ export default function VotersPage() {
               </div>
 
               {/* Row: Constituency + Phone */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="rg-2" style={{ gap: 12 }}>
                 <div>
                   <label style={labelStyle}>Constituency</label>
                   <input value={form.constituency}
@@ -750,7 +750,7 @@ export default function VotersPage() {
               </div>
 
               {/* Row: Email + Age */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="rg-2" style={{ gap: 12 }}>
                 <div>
                   <label style={labelStyle}>Email</label>
                   <input type="email" value={form.email}
@@ -768,7 +768,7 @@ export default function VotersPage() {
               </div>
 
               {/* Row: Gender + Sentiment */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="rg-2" style={{ gap: 12 }}>
                 <div>
                   <label style={labelStyle}>Gender</label>
                   <select value={form.gender}

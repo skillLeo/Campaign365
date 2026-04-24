@@ -82,7 +82,7 @@ export default function ExpenditurePage() {
         </div>
 
         {/* Charts row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 16, margin: '20px 0' }}>
+        <div className="rg-sidebar-r-340" style={{ gap: 16, margin: '20px 0' }}>
 
           {/* Pie chart */}
           <div style={{
@@ -148,7 +148,7 @@ export default function ExpenditurePage() {
           background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden',
         }}>
           <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr',
+            display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr', minWidth: 'max-content',
             padding: '10px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)',
             color: '#94A3B8', fontSize: 12, fontWeight: 700,
           }}>
@@ -156,7 +156,7 @@ export default function ExpenditurePage() {
           </div>
           {EXPENSES.map((e, i) => (
             <div key={i} style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr',
+              display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr', minWidth: 'max-content',
               padding: '12px 20px', alignItems: 'center',
               borderBottom: i < EXPENSES.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
               background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',

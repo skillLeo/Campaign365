@@ -268,10 +268,7 @@ export default function TurfManagementPage() {
       </h1>
 
       {/* ── Top section: Map + Quick Assignment ─────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 260px',
-        gap: 16,
+      <div className="rg-chart-panel" style={{ gap: 16,
         marginBottom: 20,
         alignItems: 'start',
       }}>
@@ -391,10 +388,7 @@ export default function TurfManagementPage() {
       </div>
 
       {/* ── Cluster Cards Grid ──────────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 14,
+      <div className="rg-4" style={{ gap: 14,
       }}>
         {CLUSTERS.map(cluster => (
           <ClusterCard key={cluster.id} cluster={cluster} />

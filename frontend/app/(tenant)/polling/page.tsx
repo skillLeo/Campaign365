@@ -94,7 +94,7 @@ export default function PollingPage() {
         </div>
 
         {/* 4 stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
+        <div className="rg-4" style={{ gap: 14, marginBottom: 20 }}>
           {[
             { label: 'Active Polls',          value: '4',     bars: [20,45,30,55,40,38,50], color: '#FFD700' },
             { label: 'Voters Polled Today',   value: '2,847', bars: [30,50,45,65,55,70,60], color: '#DC143C' },
@@ -116,7 +116,7 @@ export default function PollingPage() {
         </div>
 
         {/* Bottom: Live Overview + Island image */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 16, marginBottom: 20 }}>
+        <div className="rg-sidebar-r" style={{ gap: 16, marginBottom: 20 }}>
 
           {/* Live Polling Overview */}
           <div style={{
@@ -195,7 +195,7 @@ export default function PollingPage() {
         {/* Quick Actions */}
         <div>
           <p style={{ color: 'white', fontSize: 15, fontWeight: 700, margin: '0 0 10px' }}>Quick Actions</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+          <div className="rg-3" style={{ gap: 12 }}>
             {['Create New Survey', 'View Live Results', 'Export Data'].map((btn, i) => (
               <button key={i} style={{
                 background: '#DC143C', color: 'white', border: 'none', borderRadius: 10,

@@ -75,7 +75,7 @@ export default function HistoricalPollingPage() {
         </div>
 
         {/* Main 2-col */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, marginBottom: 16 }}>
+        <div className="rg-sidebar-r-300" style={{ gap: 16, marginBottom: 16 }}>
 
           {/* Left — Trend chart + table */}
           <div style={{
@@ -108,14 +108,14 @@ export default function HistoricalPollingPage() {
             {/* Table */}
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
               <div style={{
-                display: 'grid', gridTemplateColumns: '80px 80px 1fr 1fr 80px 80px 80px',
+                display: 'grid', gridTemplateColumns: '80px 80px 1fr 1fr 80px 80px 80px', minWidth: 'max-content',
                 padding: '8px 16px', color: '#475569', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em',
               }}>
                 {['Date', 'Detalty', 'Constituenccy', 'Flipor', 'Support%', 'Sample', 'Sample Size'].map(h => <span key={h}>{h}</span>)}
               </div>
               {HISTORY_ROWS.map((r, i) => (
                 <div key={i} style={{
-                  display: 'grid', gridTemplateColumns: '80px 80px 1fr 1fr 80px 80px 80px',
+                  display: 'grid', gridTemplateColumns: '80px 80px 1fr 1fr 80px 80px 80px', minWidth: 'max-content',
                   padding: '9px 16px', alignItems: 'center',
                   borderTop: '1px solid rgba(255,255,255,0.05)',
                   background: i === 2 ? 'rgba(220,20,60,0.06)' : 'transparent',
@@ -174,7 +174,7 @@ export default function HistoricalPollingPage() {
         </div>
 
         {/* 4 Past Poll Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
+        <div className="rg-4" style={{ gap: 14 }}>
           {PAST_CARDS.map((card, i) => (
             <div key={i} style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, padding: '16px',

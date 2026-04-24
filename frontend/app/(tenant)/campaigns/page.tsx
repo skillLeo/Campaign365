@@ -353,7 +353,7 @@ export default function CampaignsPage() {
                   onBlur={e => (e.target.style.borderColor = '#E5E7EB')}
                 />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div className="rg-2" style={{ gap: 12 }}>
                 <div>
                   <label style={{ fontSize: 12, fontWeight: 700, color: '#6B7280', display: 'block', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Voter Target</label>
                   <input type="number" value={form.votersTargeted} onChange={e => setForm(p => ({ ...p, votersTargeted: e.target.value }))} placeholder="5000"

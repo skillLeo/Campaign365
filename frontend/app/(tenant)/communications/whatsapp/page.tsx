@@ -140,7 +140,7 @@ export default function WhatsAppPage() {
       </div>
 
       {/* 3-column layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '230px 1fr 210px', margin: '0 20px 20px', borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '230px 1fr 210px', minWidth: 'max-content', margin: '0 20px 20px', borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.07)' }}>
 
         {/* Conversation list */}
         <div style={{ background: 'rgba(255,255,255,0.03)', borderRight: '1px solid rgba(255,255,255,0.06)' }}>

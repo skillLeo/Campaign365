@@ -2,260 +2,233 @@
 import {
   AreaChart, Area, LineChart, Line, BarChart, Bar,
   PieChart, Pie, Cell,
-  XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
+  XAxis, YAxis, ResponsiveContainer, Tooltip,
 } from 'recharts';
+import { useState } from 'react';
 
 const DAILY_CONTACTS = [
-  { day: 'Apr 1',  contacts: 820,  goal: 1000 },
-  { day: 'Apr 3',  contacts: 1240, goal: 1000 },
-  { day: 'Apr 5',  contacts: 980,  goal: 1000 },
-  { day: 'Apr 7',  contacts: 1420, goal: 1000 },
-  { day: 'Apr 9',  contacts: 1100, goal: 1000 },
-  { day: 'Apr 11', contacts: 1680, goal: 1000 },
-  { day: 'Apr 13', contacts: 1320, goal: 1000 },
-  { day: 'Apr 15', contacts: 1850, goal: 1000 },
-  { day: 'Apr 17', contacts: 1540, goal: 1000 },
-  { day: 'Apr 19', contacts: 2100, goal: 1000 },
-  { day: 'Apr 21', contacts: 1780, goal: 1000 },
+  { d: 'Ah',  contacts: 2000,  goal: 4000  },
+  { d: 'Ab',  contacts: 6000,  goal: 5000  },
+  { d: 'Ab',  contacts: 10000, goal: 8000  },
+  { d: '6b',  contacts: 20000, goal: 12000 },
+  { d: '9b',  contacts: 38000, goal: 20000 },
+  { d: '200', contacts: 48000, goal: 25000 },
 ];
 
 const ISSUE_PRIORITIES = [
-  { name: 'Healthcare',    value: 38, color: '#DC143C' },
-  { name: 'Education',     value: 28, color: '#D4A017' },
-  { name: 'Economy',       value: 22, color: '#60A5FA' },
-  { name: 'Infrastructure',value: 12, color: '#4ADE80' },
+  { name: 'Healthcare', value: 42, color: '#DC143C' },
+  { name: 'Economy',    value: 32, color: '#D4A017' },
+  { name: 'Education',  value: 26, color: '#3B82F6' },
 ];
 
-const CANVASSING_BY_CLUSTER = [
-  { cluster: 'Basseterre C.',  efficiency: 88, doors: 1240 },
-  { cluster: 'Sandy Point',    efficiency: 72, doors: 890 },
-  { cluster: 'Cayon',          efficiency: 91, doors: 720 },
-  { cluster: 'Nevis — N.',     efficiency: 65, doors: 540 },
-  { cluster: 'Charlestown',    efficiency: 78, doors: 480 },
-  { cluster: 'Trinity Pal.',   efficiency: 83, doors: 620 },
+const CANVASSING_CLUSTERS = [
+  { c: 'Ah',  eff: 58 },
+  { c: 'Mb',  eff: 38 },
+  { c: 'Ab',  eff: 52 },
+  { c: '9fb', eff: 48 },
+  { c: '20b', eff: 44 },
 ];
 
 const TREND_A = [
-  { m: 'Jan', v: 42 }, { m: 'Feb', v: 58 }, { m: 'Mar', v: 51 },
-  { m: 'Apr', v: 74 }, { m: 'May', v: 68 }, { m: 'Jun', v: 85 },
+  { m: 'Ah', v: 5  }, { m: 'Ab', v: 25 }, { m: 'Ab', v: 42 },
+  { m: '9b', v: 58 }, { m: '20b', v: 72 },
 ];
 const TREND_B = [
-  { m: 'Jan', v: 28 }, { m: 'Feb', v: 35 }, { m: 'Mar', v: 44 },
-  { m: 'Apr', v: 56 }, { m: 'May', v: 61 }, { m: 'Jun', v: 72 },
+  { m: 'Ah', v: 10 }, { m: 'Ab', v: 30 }, { m: 'Ab', v: 28 },
+  { m: '9b', v: 52 }, { m: '20b', v: 68 },
 ];
 
-const AI_RECOMMENDATIONS = [
-  { icon: '🎯', title: 'Focus on Constituency 3', detail: 'Only 54% of target voters contacted. Increase canvassing by 30%.' },
-  { icon: '🚪', title: 'Increase Door-to-Door Efforts', detail: 'Conversion rate 3× higher than phone bank in swing areas.' },
-  { icon: '👥', title: 'Target Youth Voters (18–34)', detail: 'Sentiment analysis shows +18% persuasion rate in this segment.' },
-  { icon: '📱', title: 'Leverage Social Media', detail: 'Facebook engagement up 42% — boost messaging in Sandy Point.' },
+const AI_RECS = [
+  'Focus on Constituency X',
+  'Increase Door-to-Door Efforts',
+  'Target Youth Voters',
+  'Leverage Social Media',
 ];
 
-const KPIS = [
-  { label: 'Voter Contact Rate', value: '75%', change: '+8%',  color: '#DC143C' },
-  { label: 'Doors Knocked',      value: '4,872', change: '+12%', color: '#D4A017' },
-  { label: 'Avg Response Time',  value: '2.4s',  change: '-18%', color: '#4ADE80' },
-  { label: 'Sentiment Score',    value: '8.2/10', change: '+0.4', color: '#60A5FA' },
-];
+function SKNSilhouette() {
+  return (
+    <svg width="130" height="90" viewBox="0 0 140 100" fill="none">
+      <path d="M10,55 Q18,30 35,22 Q52,14 70,18 Q88,22 98,35 Q108,48 105,62 Q102,76 88,82 Q74,88 58,84 Q42,80 28,70 Q14,60 10,55 Z"
+        fill="#C9A227" opacity="0.85" />
+      <path d="M112,50 Q118,38 128,36 Q138,34 140,44 Q142,54 134,62 Q126,70 116,66 Q108,62 112,50 Z"
+        fill="#C9A227" opacity="0.85" />
+    </svg>
+  );
+}
 
 export default function CampaignAnalyticsPage() {
+  const [, setTrendAZoom] = useState(0);
+  const [, setTrendBZoom] = useState(0);
+
   return (
     <div style={{ backgroundColor: '#080E1C', minHeight: '100vh', fontFamily: "'Inter',sans-serif" }}>
-
-      {/* Header */}
-      <div style={{
-        position: 'relative', padding: '22px 24px 18px', overflow: 'hidden',
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-        background: 'rgba(255,255,255,0.02)',
-      }}>
-        {/* St Kitts island silhouette top-right */}
-        <div style={{ position: 'absolute', right: 24, top: 0, opacity: 0.08 }}>
-          <svg viewBox="0 0 200 140" width="200" height="140">
-            <path d="M10,100 Q30,80 60,70 Q90,60 120,55 Q150,50 170,45 Q190,40 195,35 L195,120 L10,120 Z" fill="white" />
-            <path d="M60,70 Q80,50 100,40 Q120,30 140,35 Q160,40 180,30 L180,50 Q160,55 140,50 Q120,45 100,55 Q80,65 60,75 Z" fill="white" opacity="0.5" />
-          </svg>
-        </div>
-        <div style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-            <div>
-              <p style={{ color: '#DC143C', fontSize: 11, fontWeight: 700, margin: '0 0 4px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Intelligence</p>
-              <h1 style={{ color: 'white', fontSize: 26, fontWeight: 900, margin: '0 0 4px' }}>Campaign Analytics</h1>
-              <p style={{ color: '#64748B', fontSize: 13, margin: 0 }}>AI-Powered Insights · Powered by Grok</p>
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button style={{
-                background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.12)',
-                color: '#94A3B8', borderRadius: 8, padding: '8px 14px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
-              }}>Last 30 Days ▾</button>
-              <button style={{
-                background: '#DC143C', color: 'white', border: 'none', borderRadius: 8,
-                padding: '8px 16px', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                boxShadow: '0 4px 14px rgba(220,20,60,0.35)',
-              }}>Export Report</button>
-            </div>
-          </div>
-
-          {/* KPI strip */}
-          <div style={{ display: 'flex', gap: 20, marginTop: 16 }}>
-            {KPIS.map((kpi, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 3, height: 28, background: kpi.color, borderRadius: 2 }} />
-                <div>
-                  <p style={{ color: 'white', fontSize: 16, fontWeight: 900, margin: 0, lineHeight: 1 }}>{kpi.value}</p>
-                  <p style={{ color: '#64748B', fontSize: 10, margin: '2px 0 0' }}>{kpi.label}</p>
-                </div>
-                <span style={{ color: kpi.change.startsWith('+') ? '#4ADE80' : '#DC143C', fontSize: 11, fontWeight: 700 }}>{kpi.change}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       <div style={{ padding: '20px 24px' }}>
 
-        {/* Row 1: Daily contacts + Issue priorities */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 16, marginBottom: 16 }}>
+        {/* Title row + map silhouette */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+          <h1 style={{ color: '#DC143C', fontSize: 28, fontWeight: 900, margin: 0 }}>Campaign Analytics</h1>
+          <div style={{
+            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 12, padding: '10px 14px',
+          }}>
+            <SKNSilhouette />
+          </div>
+        </div>
+
+        {/* Filter buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
+          <button style={{
+            background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+            color: 'white', borderRadius: 20, padding: '7px 16px', fontSize: 12, fontWeight: 600, cursor: 'pointer',
+          }}>Last 30 Days ▾</button>
+          <button style={{
+            background: '#DC143C', color: 'white', border: 'none',
+            borderRadius: 20, padding: '7px 18px', fontSize: 12, fontWeight: 700, cursor: 'pointer',
+            boxShadow: '0 3px 10px rgba(220,20,60,0.4)',
+          }}>All Constituencies</button>
+        </div>
+
+        {/* Top 3-col row */}
+        <div className="rg-3" style={{ gap: 14, marginBottom: 14 }}>
 
           {/* Daily Voter Contacts */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 14, padding: '20px',
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-              <div>
-                <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: '0 0 2px' }}>Daily Voter Contacts</p>
-                <p style={{ color: '#64748B', fontSize: 11, margin: 0 }}>Contacts vs. daily goal — April 2026</p>
-              </div>
-              <div style={{ display: 'flex', gap: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <div style={{ width: 10, height: 3, background: '#DC143C', borderRadius: 2 }} />
-                  <span style={{ color: '#94A3B8', fontSize: 11 }}>Contacts</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <div style={{ width: 10, height: 3, background: 'rgba(255,255,255,0.2)', borderRadius: 2, borderTop: '1px dashed rgba(255,255,255,0.3)' }} />
-                  <span style={{ color: '#94A3B8', fontSize: 11 }}>Goal</span>
-                </div>
-              </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: 0 }}>Daily Voter Contacts</p>
+              <span style={{ color: '#DC143C', fontSize: 14, cursor: 'pointer' }}>›</span>
             </div>
-            <ResponsiveContainer width="100%" height={200}>
-              <AreaChart data={DAILY_CONTACTS} margin={{ top: 4, right: 4, bottom: 0, left: -10 }}>
+            <ResponsiveContainer width="100%" height={180}>
+              <AreaChart data={DAILY_CONTACTS} margin={{ top: 4, right: 0, bottom: 0, left: -20 }}>
                 <defs>
-                  <linearGradient id="contactGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#DC143C" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#DC143C" stopOpacity={0.02} />
+                  <linearGradient id="dcGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#D4A017" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#D4A017" stopOpacity={0.05} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
-                <XAxis dataKey="day" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: '1px solid #334155', borderRadius: 8, fontSize: 11 }} />
-                <Area type="monotone" dataKey="goal" stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" strokeWidth={1.5} fill="none" />
-                <Area type="monotone" dataKey="contacts" stroke="#DC143C" strokeWidth={2.5} fill="url(#contactGrad)" dot={false} activeDot={{ r: 5, fill: '#DC143C' }} />
+                <XAxis dataKey="d" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}k`} />
+                <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: 'none', borderRadius: 8, fontSize: 10 }} />
+                <Area type="monotone" dataKey="goal" stroke="#D4A017" strokeWidth={1.5} fill="url(#dcGrad)" dot={false} />
+                <Line type="monotone" dataKey="contacts" stroke="#DC143C" strokeWidth={2.5} dot={{ fill: '#DC143C', r: 4, strokeWidth: 0 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Issue Priorities Donut */}
+          {/* Issue Priorities donut */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 14, padding: '20px',
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
           }}>
-            <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: '0 0 12px' }}>Issue Priorities</p>
-            <p style={{ color: '#64748B', fontSize: 11, margin: '0 0 12px' }}>What voters care about most</p>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <PieChart width={160} height={160}>
-                <Pie data={ISSUE_PRIORITIES} cx={75} cy={75} innerRadius={45} outerRadius={72} dataKey="value" startAngle={90} endAngle={-270}>
-                  {ISSUE_PRIORITIES.map((e, i) => <Cell key={i} fill={e.color} stroke="rgba(0,0,0,0.3)" strokeWidth={1} />)}
-                </Pie>
-              </PieChart>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 6 }}>
+            <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: '0 0 10px', alignSelf: 'flex-start' }}>Issue Priorities</p>
+            <PieChart width={170} height={170}>
+              <Pie data={ISSUE_PRIORITIES} cx={80} cy={80} innerRadius={48} outerRadius={78} dataKey="value" startAngle={90} endAngle={-270}>
+                {ISSUE_PRIORITIES.map((e, i) => (
+                  <Cell key={i} fill={e.color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />
+                ))}
+              </Pie>
+            </PieChart>
+            <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
               {ISSUE_PRIORITIES.map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: 2, background: item.color, flexShrink: 0 }} />
-                    <span style={{ color: '#94A3B8', fontSize: 11 }}>{item.name}</span>
-                  </div>
-                  <span style={{ color: item.color, fontSize: 12, fontWeight: 700 }}>{item.value}%</span>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color }} />
+                  <span style={{ color: '#94A3B8', fontSize: 10 }}>{item.name}</span>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Row 2: Canvassing efficiency bar + 2 trend lines */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-
-          {/* Canvassing Efficiency by Cluster */}
+          {/* Canvassing Efficiency */}
           <div style={{
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 14, padding: '20px',
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
           }}>
-            <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: '0 0 14px' }}>Canvassing Efficiency by Cluster</p>
+            <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: '0 0 10px' }}>Canvassing Efficiency by Cluster</p>
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={CANVASSING_BY_CLUSTER} layout="vertical" margin={{ top: 0, right: 16, bottom: 0, left: 60 }}>
-                <XAxis type="number" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} domain={[0, 100]} tickFormatter={v => `${v}%`} />
-                <YAxis type="category" dataKey="cluster" tick={{ fill: '#94A3B8', fontSize: 10 }} axisLine={false} tickLine={false} width={58} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1E293B', border: '1px solid #334155', borderRadius: 8, fontSize: 11 }}
-                  formatter={(v) => [`${v}%`, 'Efficiency']}
-                />
-                <Bar dataKey="efficiency" radius={[0, 4, 4, 0]}>
-                  {CANVASSING_BY_CLUSTER.map((entry, i) => (
-                    <Cell key={i} fill={entry.efficiency >= 80 ? '#DC143C' : entry.efficiency >= 70 ? '#D4A017' : '#475569'} />
+              <BarChart data={CANVASSING_CLUSTERS} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <XAxis dataKey="c" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: 'none', borderRadius: 8, fontSize: 10 }} />
+                <Bar dataKey="eff" radius={[4, 4, 0, 0]}>
+                  {CANVASSING_CLUSTERS.map((_, i) => (
+                    <Cell key={i} fill={i % 2 === 0 ? '#DC143C' : '#D4A017'} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-
-          {/* 2 Trend Analysis charts */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {[
-              { label: 'Voter Enthusiasm Trend', data: TREND_A, color: '#DC143C' },
-              { label: 'Digital Engagement Trend', data: TREND_B, color: '#D4A017' },
-            ].map((chart, ci) => (
-              <div key={ci} style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 14, padding: '14px',
-              }}>
-                <p style={{ color: 'white', fontSize: 12, fontWeight: 700, margin: '0 0 8px' }}>{chart.label}</p>
-                <ResponsiveContainer width="100%" height={72}>
-                  <LineChart data={chart.data} margin={{ top: 2, right: 4, bottom: 0, left: -20 }}>
-                    <XAxis dataKey="m" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: '1px solid #334155', borderRadius: 6, fontSize: 10 }} />
-                    <Line type="monotone" dataKey="v" stroke={chart.color} strokeWidth={2} dot={{ fill: chart.color, r: 3, strokeWidth: 0 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            ))}
-          </div>
         </div>
 
-        {/* AI Recommendations */}
-        <div style={{
-          background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 14, padding: '20px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-            <div style={{ fontSize: 20 }}>🤖</div>
-            <div>
-              <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: 0 }}>AI-Powered Recommendations</p>
-              <p style={{ color: '#64748B', fontSize: 11, margin: 0 }}>Generated by Grok · Updated 2 hours ago</p>
-            </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
-            {AI_RECOMMENDATIONS.map((rec, i) => (
-              <div key={i} style={{
-                background: 'rgba(220,20,60,0.05)', border: '1px solid rgba(220,20,60,0.15)',
-                borderRadius: 10, padding: '14px',
-              }}>
-                <span style={{ fontSize: 22 }}>{rec.icon}</span>
-                <p style={{ color: '#E2E8F0', fontSize: 12, fontWeight: 700, margin: '8px 0 6px', lineHeight: 1.3 }}>{rec.title}</p>
-                <p style={{ color: '#64748B', fontSize: 11, margin: 0, lineHeight: 1.4 }}>{rec.detail}</p>
+        {/* Bottom 3-col row */}
+        <div className="rg-3" style={{ gap: 14 }}>
+
+          {/* Trend Analysis 1 */}
+          <div style={{
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: 0 }}>Trend Analysis</p>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button onClick={() => setTrendAZoom(z => z + 1)} style={{ width: 24, height: 24, borderRadius: 4, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#4ADE80', fontSize: 14, cursor: 'pointer' }}>+</button>
+                <button onClick={() => setTrendAZoom(z => z + 1)} style={{ width: 24, height: 24, borderRadius: 4, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#4ADE80', fontSize: 14, cursor: 'pointer' }}>+</button>
               </div>
-            ))}
+            </div>
+            <ResponsiveContainer width="100%" height={140}>
+              <LineChart data={TREND_A} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <XAxis dataKey="m" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: 'none', borderRadius: 6, fontSize: 10 }} />
+                <Line type="monotone" dataKey="v" stroke="#DC143C" strokeWidth={2.5}
+                  dot={{ fill: 'none', r: 4, strokeWidth: 2, stroke: '#DC143C' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Trend Analysis 2 */}
+          <div style={{
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: 0 }}>Trend Analysis</p>
+              <div style={{ display: 'flex', gap: 4 }}>
+                <button onClick={() => setTrendBZoom(z => z + 1)} style={{ width: 24, height: 24, borderRadius: 4, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#4ADE80', fontSize: 14, cursor: 'pointer' }}>+</button>
+                <button onClick={() => setTrendBZoom(z => z - 1)} style={{ width: 24, height: 24, borderRadius: 4, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#DC143C', fontSize: 14, cursor: 'pointer' }}>−</button>
+              </div>
+            </div>
+            <ResponsiveContainer width="100%" height={140}>
+              <LineChart data={TREND_B} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                <XAxis dataKey="m" tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: '#475569', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ backgroundColor: '#1E293B', border: 'none', borderRadius: 6, fontSize: 10 }} />
+                <Line type="monotone" dataKey="v" stroke="#DC143C" strokeWidth={2.5}
+                  dot={{ fill: 'none', r: 4, strokeWidth: 2, stroke: '#DC143C' }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* AI Recommendations */}
+          <div style={{
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)',
+            borderRadius: 14, padding: '16px',
+          }}>
+            <p style={{ color: 'white', fontSize: 13, fontWeight: 700, margin: '0 0 14px' }}>AI-Powered Recommendations</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {AI_RECS.map((rec, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{
+                    width: 18, height: 18, borderRadius: '50%', background: '#DC143C',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, fontSize: 10, color: 'white', fontWeight: 900,
+                  }}>✓</div>
+                  <span style={{ color: '#C9D1DA', fontSize: 13 }}>{rec}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

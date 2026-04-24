@@ -133,7 +133,7 @@ export default function PushNotificationsPage() {
           <p style={{ color: '#475569', fontSize: 12, margin: '0 0 10px' }}>#Campaign</p>
 
           {/* 2-col: table + composer */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 16 }}>
+          <div className="rg-chart-panel" style={{ gap: 16 }}>
 
             {/* Campaign table */}
             <div style={{
@@ -141,7 +141,7 @@ export default function PushNotificationsPage() {
               border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, overflow: 'hidden',
             }}>
               <div style={{
-                display: 'grid', gridTemplateColumns: '1fr 90px 80px 90px',
+                display: 'grid', gridTemplateColumns: '1fr 90px 80px 90px', minWidth: 'max-content',
                 padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)',
                 color: '#94A3B8', fontSize: 12, fontWeight: 600,
               }}>
@@ -149,7 +149,7 @@ export default function PushNotificationsPage() {
               </div>
               {CAMPAIGNS.map((c, i) => (
                 <div key={i} style={{
-                  display: 'grid', gridTemplateColumns: '1fr 90px 80px 90px',
+                  display: 'grid', gridTemplateColumns: '1fr 90px 80px 90px', minWidth: 'max-content',
                   padding: '11px 16px', alignItems: 'center',
                   borderBottom: i < CAMPAIGNS.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                   background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',

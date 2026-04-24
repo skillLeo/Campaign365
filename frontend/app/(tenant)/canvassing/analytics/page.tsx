@@ -89,7 +89,7 @@ export default function CanvassingAnalyticsPage() {
       </div>
 
       {/* ── KPI Cards ───────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 16 }}>
+      <div className="rg-3" style={{ gap: 14, marginBottom: 16 }}>
 
         {/* Card 1 — Total Voters Contacted */}
         <div style={{
@@ -154,7 +154,7 @@ export default function CanvassingAnalyticsPage() {
       </div>
 
       {/* ── Charts row ──────────────────────────────── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 14, marginBottom: 16 }}>
+      <div className="rg-sidebar-r-300" style={{ gap: 14, marginBottom: 16 }}>
 
         {/* Line chart card */}
         <div style={{
@@ -302,7 +302,7 @@ export default function CanvassingAnalyticsPage() {
         {/* Column headers */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '36px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+          gridTemplateColumns: '36px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr', minWidth: 'max-content',
           padding: '10px 20px',
           borderBottom: '1px solid #1E2235',
           backgroundColor: '#0E1018',
@@ -320,7 +320,7 @@ export default function CanvassingAnalyticsPage() {
         {tableRows.map((row, i) => (
           <div key={row.id} style={{
             display: 'grid',
-            gridTemplateColumns: '36px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+            gridTemplateColumns: '36px 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr', minWidth: 'max-content',
             padding: '11px 20px',
             borderBottom: i < tableRows.length - 1 ? '1px solid #1A1D2E' : 'none',
             alignItems: 'center',

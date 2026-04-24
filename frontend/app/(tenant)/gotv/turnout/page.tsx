@@ -141,7 +141,7 @@ export default function TurnoutDashboardPage() {
       <div style={{ padding: '14px 18px' }}>
 
         {/* Row 1 — 3 stat cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 14 }}>
+        <div className="rg-3" style={{ gap: 14, marginBottom: 14 }}>
 
           {/* National Turnout */}
           <div style={{ ...card, padding: '18px 20px', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -205,7 +205,7 @@ export default function TurnoutDashboardPage() {
         </div>
 
         {/* Row 2 — Trend + Polling + AI */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 14 }}>
+        <div className="rg-3" style={{ gap: 14, marginBottom: 14 }}>
 
           {/* Hourly Turnout Trend */}
           <div style={{ ...card, padding: '16px' }}>
@@ -318,7 +318,7 @@ export default function TurnoutDashboardPage() {
         </div>
 
         {/* Row 3 — 2 gauge cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+        <div className="rg-2" style={{ gap: 14 }}>
           {[
             { color: '#22C55E', label: 'Poeil' },
             { color: '#DC143C', label: 'Poeil' },

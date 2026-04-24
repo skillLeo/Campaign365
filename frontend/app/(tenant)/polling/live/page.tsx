@@ -131,7 +131,7 @@ export default function LivePollsPage() {
           </div>
 
           {/* 4 Poll cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 20 }}>
+          <div className="rg-4" style={{ gap: 14, marginBottom: 20 }}>
             {POLL_CARDS.map((card, i) => (
               <div key={i} style={{
                 background: card.bg, borderRadius: 14, overflow: 'hidden',
@@ -171,12 +171,12 @@ export default function LivePollsPage() {
               <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: 0 }}>Live Results</p>
               <button style={{ background: '#DC143C', color: 'white', border: 'none', borderRadius: 6, padding: '5px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Pause Poll</button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 80px 90px 90px 80px', padding: '8px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)', color: '#475569', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 80px 90px 90px 80px', minWidth: 'max-content', padding: '8px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)', color: '#475569', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               <span>Poll Hame</span><span>Response</span><span>Response</span><span>Voter</span><span>Cuane</span>
             </div>
             {LIVE_RESULTS.map((r, i) => (
               <div key={i} style={{
-                display: 'grid', gridTemplateColumns: '2fr 80px 90px 90px 80px',
+                display: 'grid', gridTemplateColumns: '2fr 80px 90px 90px 80px', minWidth: 'max-content',
                 padding: '10px 16px', alignItems: 'center',
                 borderBottom: i < LIVE_RESULTS.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
                 background: i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.015)',
