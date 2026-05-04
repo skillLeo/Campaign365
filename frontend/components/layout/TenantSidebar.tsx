@@ -158,9 +158,10 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Compliance',
     icon: ShieldCheck,
     children: [
-      { href: '/compliance',           label: 'Data Privacy' },
-      { href: '/compliance/election',  label: 'Election Compliance' },
-      { href: '/compliance/exports',   label: 'Export Requests' },
+      { href: '/compliance',               label: 'Overview' },
+      { href: '/compliance/election',      label: 'Election Compliance' },
+      { href: '/compliance/data-privacy',  label: 'Data Privacy' },
+      { href: '/compliance/exports',       label: 'Export Requests' },
     ],
   },
   {
@@ -168,7 +169,8 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Team',
     icon: UsersRound,
     children: [
-      { href: '/team',                  label: 'All Members' },
+      { href: '/team',                  label: 'Team Dashboard' },
+      { href: '/team/members',          label: 'All Members' },
       { href: '/team/canvassers',       label: 'Canvassers' },
       { href: '/team/runners',          label: 'Runners' },
       { href: '/team/outdoor-agents',   label: 'Outdoor Agents' },

@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+frontend/.next
+frontend/node_modules
+mobile/node_modules
+.git
+.env.local
+*.sqlite
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
