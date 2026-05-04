@@ -3,6 +3,22 @@
 .env
 .env.backup
 .env.production
+
+# Mobile
+mobile/node_modules/
+mobile/.expo/
+mobile/android/
+mobile/ios/
+
+# Frontend
+frontend/.env.local
+frontend/.env*.local
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Database
+database/*.sqlite
 .phpactor.json
 .phpunit.result.cache
 /.fleet

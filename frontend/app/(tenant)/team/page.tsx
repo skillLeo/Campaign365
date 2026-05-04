@@ -1,210 +1,248 @@
 'use client';
-import { useState } from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import Link from 'next/link';
 
-const MEMBERS = [
-  { name: 'Samuel Brown',    role: 'Canvasser',        status: 'online',  time: 'Online',    skin: '#7B4F2E' },
-  { name: 'Marcus James',    role: 'Campaign Manager', status: 'offline', time: 'Offline',   skin: '#5C3317' },
-  { name: 'Gentily Clarke',  role: 'Phone Bank',       status: 'offline', time: '01:47 9Pm', skin: '#8B5E3C' },
-  { name: 'Planbro Nevis',   role: 'Runner',           status: 'online',  time: '01:31 4Pm', skin: '#4A2C17' },
-  { name: 'Sedlad Thompson', role: 'Volunteer',        status: 'online',  time: '02:33 4Pm', skin: '#6B4226' },
-  { name: 'SKNLP Agent',     role: 'Field Agent',      status: 'offline', time: 'Offline',   skin: '#3D2B1F' },
-  { name: 'Kitts Nevis',     role: 'Labour Organiser', status: 'offline', time: 'Offline',   skin: '#9A7050' },
-  { name: 'Sktts Nevis',     role: 'Volunteer',        status: 'online',  time: '04:17 9Pm', skin: '#6D4C41' },
+const STATS = [
+  { icon: '🚴', label: 'Total Team Members', value: '1,847' },
+  { icon: '🚴', label: 'Canvassers Online',   value: '312' },
+  { icon: '🚴', label: 'Runners Active',       value: '47' },
+  { icon: '🔆', label: 'Panic Button Incidents Today', value: '0' },
 ];
 
-const ROLE_DATA = [
-  { name: 'Canvassers', value: 38, color: '#DC143C' },
-  { name: 'Runners',    value: 24, color: '#D4A017' },
-  { name: 'Phone Bank', value: 22, color: '#374151' },
-  { name: 'Volunteers', value: 16, color: '#1E40AF' },
+const FEED = [
+  { initials: 'SB', name: 'Samuel Brown',   action: 'Recent Team Check-in', detail: '42 doors knocked · Basseterre Central', time: '2m ago', skin: '#7B4F2E' },
+  { initials: 'MJ', name: 'Marcus James',   action: 'Recent Team Check-in', detail: '25 voters contacted · Sandy Point',      time: '5m ago', skin: '#5C3317' },
+  { initials: 'GC', name: 'Gentily Clarke', action: 'Recent Team Check-in', detail: '25 calls completed · Nevis North',       time: '9m ago', skin: '#8B5E3C' },
+  { initials: 'PN', name: 'Planbro Nevis',  action: 'Runner Check-in',       detail: '10% route completed · Basseterre',      time: '12m ago', skin: '#4A2C17' },
 ];
 
-const FILTERS = ['All Roles', 'Active', 'Offline'];
-
-function MemberCard({ m }: { m: typeof MEMBERS[0] }) {
-  const initials = m.name.split(' ').map(w => w[0]).join('').slice(0, 2);
-  const isOnline = m.status === 'online';
+function LiveMap() {
   return (
-    <div style={{
-      background: '#1E293B',
-      border: `1px solid ${isOnline ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.06)'}`,
-      borderRadius: 14,
-      padding: '18px 16px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 12,
-      transition: 'transform 0.15s, box-shadow 0.15s',
-    }}>
-      {/* Top row: avatar + status dot */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: '50%', flexShrink: 0,
-            background: `radial-gradient(circle at 40% 35%, ${m.skin}ee, ${m.skin}66)`,
-            border: '2px solid rgba(255,255,255,0.15)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'white', fontSize: 15, fontWeight: 800, letterSpacing: '0.5px',
-          }}>{initials}</div>
-          <div>
-            <p style={{ color: 'white', fontSize: 14, fontWeight: 700, margin: '0 0 3px' }}>{m.name}</p>
-            <p style={{ color: '#64748B', fontSize: 12, margin: 0 }}>{m.role}</p>
-          </div>
-        </div>
-        {/* Status badge */}
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 5,
-          background: isOnline ? 'rgba(34,197,94,0.12)' : 'rgba(100,116,139,0.15)',
-          borderRadius: 20, padding: '4px 10px',
-        }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: isOnline ? '#22C55E' : '#64748B' }} />
-          <span style={{ color: isOnline ? '#22C55E' : '#94A3B8', fontSize: 10, fontWeight: 700 }}>
-            {isOnline ? 'Online' : 'Offline'}
-          </span>
-        </div>
-      </div>
+    <svg width="100%" height="100%" viewBox="0 0 340 220" preserveAspectRatio="xMidYMid meet">
+      {/* Dark ocean bg */}
+      <rect width="340" height="220" fill="#0d2540" />
+      {/* Grid */}
+      {[50,100,150,200,250,300].map(x => <line key={x} x1={x} y1={0} x2={x} y2={220} stroke="rgba(255,255,255,0.03)" strokeWidth="1" />)}
+      {[40,80,120,160,200].map(y => <line key={y} x1={0} y1={y} x2={340} y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="1" />)}
 
-      {/* Time + button row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ color: '#475569', fontSize: 11 }}>
-          {isOnline ? '● Active now' : `Last seen: ${m.time}`}
-        </span>
-        <button style={{
-          background: 'rgba(220,20,60,0.12)', border: '1px solid rgba(220,20,60,0.3)',
-          color: '#DC143C', borderRadius: 8, padding: '6px 14px',
-          fontSize: 11, fontWeight: 700, cursor: 'pointer',
-        }}>View Profile</button>
-      </div>
-    </div>
+      {/* St Kitts main island */}
+      <path d="M42,72 L62,58 L88,48 L112,42 L136,44 L158,52 L174,64 L180,80 L176,96 L168,108 L156,116 L162,130 L168,144 L162,155 L150,158 L140,150 L132,140 L118,132 L102,128 L88,120 L76,108 L64,94 Z"
+        fill="#1E3A1E" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+      {/* Basseterre area highlight */}
+      <ellipse cx="125" cy="95" rx="20" ry="14" fill="rgba(220,20,60,0.3)" />
+
+      {/* Nevis island */}
+      <ellipse cx="220" cy="165" rx="32" ry="28" fill="#1E3A1E" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+      <ellipse cx="220" cy="165" rx="14" ry="12" fill="rgba(220,20,60,0.2)" />
+
+      {/* Location pins - active runners/canvassers */}
+      {[
+        { cx: 110, cy: 80, large: true },
+        { cx: 135, cy: 100, large: false },
+        { cx: 148, cy: 112, large: false },
+        { cx: 88, cy: 68, large: false },
+        { cx: 160, cy: 95, large: false },
+        { cx: 220, cy: 158, large: false },
+        { cx: 210, cy: 172, large: false },
+      ].map((pin, i) => (
+        <g key={i}>
+          {pin.large && <circle cx={pin.cx} cy={pin.cy} r="14" fill="rgba(220,20,60,0.25)" />}
+          <circle cx={pin.cx} cy={pin.cy} r={pin.large ? 7 : 5} fill="#DC143C" opacity="0.9" />
+          <circle cx={pin.cx} cy={pin.cy} r={pin.large ? 3 : 2} fill="white" />
+          {pin.large && <path d={`M${pin.cx},${pin.cy + 7} L${pin.cx},${pin.cy + 14}`} stroke="#DC143C" strokeWidth="2" strokeLinecap="round" />}
+        </g>
+      ))}
+
+      {/* St Kitts & Nevis label */}
+      <text x="200" y="50" fontSize="10" fontWeight="700" fill="white" opacity="0.8">St. Kitts &amp; Nevis</text>
+
+      {/* Live badge */}
+      <rect x="8" y="8" width="48" height="18" rx="4" fill="rgba(220,20,60,0.8)" />
+      <text x="32" y="21" textAnchor="middle" fontSize="9" fontWeight="800" fill="white">● LIVE</text>
+    </svg>
   );
 }
 
-export default function TeamAllMembersPage() {
-  const [filter, setFilter] = useState('All Roles');
-
-  const filtered = MEMBERS.filter(m => {
-    if (filter === 'Active') return m.status === 'online';
-    if (filter === 'Offline') return m.status === 'offline';
-    return true;
-  });
-
-  const onlineCount = MEMBERS.filter(m => m.status === 'online').length;
-
+export default function TeamManagementPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#080E1C', fontFamily: "'Inter',sans-serif" }}>
 
-      {/* Hero banner */}
+      {/* Red banner header */}
       <div style={{
-        position: 'relative', overflow: 'hidden',
-        background: 'linear-gradient(135deg, #DC143C 0%, #8B000A 50%, #1a0a0a 100%)',
-        marginBottom: 24,
+        background: '#DC143C',
+        padding: '18px 28px',
+        marginBottom: 0,
       }}>
-        {/* Glow overlay */}
-        <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 70% 50%, rgba(255,255,255,0.07) 0%, transparent 60%)' }} />
-        {/* Floating avatar circles */}
-        {[0,1,2,3,4,5].map(i => (
-          <div key={i} style={{
-            position: 'absolute', top: '18%', right: `${6 + i * 10}%`,
-            width: 56, height: 56, borderRadius: '50%',
-            background: `radial-gradient(circle at 40% 35%, ${['#7B4F2E','#5C3317','#8B5E3C','#4A2C17','#6B4226','#3D2B1F'][i]}cc, ${['#7B4F2E','#5C3317','#8B5E3C','#4A2C17','#6B4226','#3D2B1F'][i]}55)`,
-            border: '2px solid rgba(255,255,255,0.2)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'rgba(255,255,255,0.9)', fontSize: 14, fontWeight: 800,
-          }}>{['SB','MJ','GC','PN','ST','SK'][i]}</div>
-        ))}
-        {/* St Kitts flag stripe */}
-        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 200, background: 'linear-gradient(90deg, transparent 0%, rgba(0,158,96,0.35) 40%, rgba(252,209,22,0.25) 70%, rgba(206,17,38,0.35) 100%)' }} />
-        <div style={{ position: 'relative', zIndex: 1, padding: '32px 28px' }}>
-          <h1 style={{ color: 'white', fontSize: 34, fontWeight: 900, margin: 0, textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>All Members</h1>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, margin: '8px 0 0' }}>
-            {MEMBERS.length} total members · <span style={{ color: '#22C55E' }}>{onlineCount} online</span>
-          </p>
-        </div>
+        <h1 style={{ color: 'white', fontSize: 22, fontWeight: 900, margin: 0, letterSpacing: '-0.01em' }}>Team Management</h1>
       </div>
 
-      <div style={{ padding: '0 28px 28px' }}>
-        {/* Filter bar */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 24, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', background: '#1E293B', borderRadius: 10, padding: 4, border: '1px solid rgba(255,255,255,0.08)' }}>
-            {FILTERS.map(f => (
-              <button key={f} onClick={() => setFilter(f)} style={{
-                background: filter === f ? '#DC143C' : 'transparent',
-                border: 'none', color: filter === f ? 'white' : '#94A3B8',
-                borderRadius: 7, padding: '7px 18px', fontSize: 12, fontWeight: filter === f ? 700 : 500,
-                cursor: 'pointer',
-              }}>{f}</button>
+      {/* Hero image card */}
+      <div style={{
+        position: 'relative', overflow: 'hidden', height: 200,
+        background: 'linear-gradient(135deg, #1a0505 0%, #3d0a0a 30%, #0a1a0a 60%, #0a0a2a 100%)',
+        marginBottom: 24,
+      }}>
+        {/* Crowd silhouette simulation */}
+        <div style={{ position: 'absolute', inset: 0 }}>
+          {/* Simulated crowd of people silhouettes */}
+          <svg width="100%" height="100%" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <radialGradient id="sunGlow" cx="50%" cy="20%" r="50%">
+                <stop offset="0%" stopColor="rgba(255,200,100,0.6)" />
+                <stop offset="100%" stopColor="transparent" />
+              </radialGradient>
+              <radialGradient id="skyGrad" cx="50%" cy="0%" r="80%">
+                <stop offset="0%" stopColor="#1a4a6a" />
+                <stop offset="100%" stopColor="#0a1628" />
+              </radialGradient>
+            </defs>
+            <rect width="800" height="200" fill="url(#skyGrad)" />
+            <ellipse cx="400" cy="-20" rx="200" ry="120" fill="url(#sunGlow)" />
+
+            {/* Red flags */}
+            {[80,160,240,320,400,480,560,640,720].map((x, i) => (
+              <g key={i}>
+                <line x1={x} y1={60} x2={x} y2={150} stroke="rgba(255,255,255,0.5)" strokeWidth="2" />
+                <path d={`M${x},60 Q${x + 30},70 ${x},80`} fill="#DC143C" opacity="0.9" />
+              </g>
             ))}
-          </div>
-          {['↑', '−', '🗑'].map((icon, i) => (
-            <button key={i} style={{
-              width: 36, height: 36, borderRadius: 8, background: '#1E293B',
-              border: '1px solid rgba(255,255,255,0.1)', color: '#94A3B8', fontSize: 14, cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>{icon}</button>
-          ))}
-          <div style={{ flex: 1 }} />
-          <button style={{
-            background: '#DC143C', color: 'white', border: 'none', borderRadius: 8,
-            padding: '10px 22px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(220,20,60,0.35)',
-          }}>Add New Member</button>
+
+            {/* Crowd (simplified silhouettes) */}
+            {Array.from({ length: 40 }).map((_, i) => {
+              const x = 15 + (i % 20) * 40 + (Math.floor(i / 20)) * 20;
+              const y = 110 + (i % 3) * 15;
+              const h = 55 + (i % 4) * 8;
+              return (
+                <g key={i}>
+                  {/* Body */}
+                  <rect x={x - 8} y={y} width={16} height={h} rx="4"
+                    fill={`rgba(${[180,120,80][i % 3]},${[80,50,40][i % 3]},${[40,30,20][i % 3]},0.8)`} />
+                  {/* Head */}
+                  <circle cx={x} cy={y - 10} r="10"
+                    fill={`rgba(${[150,100,60][i % 3]},${[70,40,30][i % 3]},${[30,20,10][i % 3]},0.9)`} />
+                </g>
+              );
+            })}
+          </svg>
         </div>
 
-        {/* Main 2-column layout */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
+        {/* Text overlay */}
+        <div style={{ position: 'absolute', bottom: 24, left: 28, zIndex: 2 }}>
+          <p style={{ color: 'white', fontSize: 28, fontWeight: 900, margin: 0, textShadow: '0 2px 12px rgba(0,0,0,0.8)', lineHeight: 1.2 }}>
+            SKNLP Team —<br />Red Wave Rising
+          </p>
+        </div>
 
-          {/* Member grid — 2 cols inside */}
-          <div className="rg-2" style={{ gap: 12 }}>
-            {filtered.map((m, i) => <MemberCard key={i} m={m} />)}
+        {/* Teal overlay at right */}
+        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40%', background: 'linear-gradient(90deg, transparent, rgba(0,80,80,0.4))' }} />
+      </div>
+
+      <div style={{ padding: '0 24px 24px' }}>
+
+        {/* 4 KPI cards */}
+        <div className="rg-4" style={{ gap: 14, marginBottom: 24 }}>
+          {STATS.map((s, i) => (
+            <div key={i} style={{
+              background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 14, padding: '20px',
+            }}>
+              <div style={{ fontSize: 28, marginBottom: 10 }}>{s.icon}</div>
+              <p style={{ color: '#94A3B8', fontSize: 12, fontWeight: 500, margin: '0 0 8px' }}>{s.label}</p>
+              <p style={{ color: 'white', fontSize: 36, fontWeight: 900, margin: 0, letterSpacing: '-0.02em', lineHeight: 1 }}>{s.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 2-col: Activity Feed + Live Map */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+
+          {/* Real-Time Activity Feed */}
+          <div style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <p style={{ color: '#E2E8F0', fontSize: 14, fontWeight: 700, margin: 0 }}>Real-Time Activity Feed</p>
+              <div style={{ position: 'relative' }}>
+                <select style={{
+                  background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#94A3B8', borderRadius: 6, padding: '5px 24px 5px 10px',
+                  fontSize: 11, cursor: 'pointer', appearance: 'none', outline: 'none', fontFamily: 'inherit',
+                }}>
+                  <option>People Feed</option>
+                  <option>All Activity</option>
+                </select>
+                <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: '#64748B', fontSize: 9, pointerEvents: 'none' }}>▼</span>
+              </div>
+            </div>
+            {FEED.map((item, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 12, padding: '14px 16px',
+                borderBottom: i < FEED.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+              }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                  background: `radial-gradient(circle at 40% 35%, ${item.skin}ee, ${item.skin}66)`,
+                  border: '1.5px solid rgba(255,255,255,0.15)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'white', fontSize: 11, fontWeight: 800,
+                }}>{item.initials}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ color: '#CBD5E1', fontSize: 12, fontWeight: 700, margin: '0 0 2px' }}>{item.action}</p>
+                  <p style={{ color: '#64748B', fontSize: 11, margin: '0 0 6px' }}>{item.detail}</p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button style={{ background: '#DC143C', color: 'white', border: 'none', borderRadius: 5, padding: '4px 12px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}>Badge</button>
+                    <button style={{ background: 'rgba(255,255,255,0.08)', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 5, padding: '4px 12px', fontSize: 10, cursor: 'pointer' }}>Tipt</button>
+                  </div>
+                </div>
+                <span style={{ color: '#475569', fontSize: 10, flexShrink: 0 }}>{item.time}</span>
+              </div>
+            ))}
           </div>
 
-          {/* Role Breakdown panel */}
-          <div style={{
-            background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 14, padding: '20px', position: 'sticky', top: 24,
-          }}>
-            <p style={{ color: 'white', fontSize: 15, fontWeight: 700, margin: '0 0 4px' }}>Role Breakdown</p>
-            <p style={{ color: '#475569', fontSize: 12, margin: '0 0 16px' }}>{MEMBERS.length} members total</p>
-
-            <ResponsiveContainer width="100%" height={180}>
-              <PieChart>
-                <Pie data={ROLE_DATA} cx="50%" cy="50%" innerRadius={52} outerRadius={82} dataKey="value" startAngle={90} endAngle={-270}>
-                  {ROLE_DATA.map((e, i) => <Cell key={i} fill={e.color} stroke="rgba(0,0,0,0.3)" strokeWidth={2} />)}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#0F172A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 11 }} />
-              </PieChart>
-            </ResponsiveContainer>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
-              {ROLE_DATA.map((r, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 10, height: 10, borderRadius: 3, background: r.color, flexShrink: 0 }} />
-                    <span style={{ color: '#94A3B8', fontSize: 12 }}>{r.name}</span>
-                  </div>
-                  <span style={{ color: 'white', fontSize: 12, fontWeight: 700 }}>{r.value}%</span>
+          {/* Live Map */}
+          <div style={{ background: '#1E293B', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 14, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <p style={{ color: '#E2E8F0', fontSize: 14, fontWeight: 700, margin: 0 }}>Live Field Map</p>
+              <div style={{ position: 'relative' }}>
+                <select style={{
+                  background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#94A3B8', borderRadius: 6, padding: '5px 24px 5px 10px',
+                  fontSize: 11, cursor: 'pointer', appearance: 'none', outline: 'none', fontFamily: 'inherit',
+                }}>
+                  <option>St. Kitts &amp; Nevis</option>
+                  <option>Basseterre</option>
+                </select>
+                <span style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: '#64748B', fontSize: 9, pointerEvents: 'none' }}>▼</span>
+              </div>
+            </div>
+            <div style={{ height: 280 }}>
+              <LiveMap />
+            </div>
+            {/* Pin legend */}
+            <div style={{ padding: '10px 16px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', gap: 16 }}>
+              {[['#DC143C', '7 Active Pins'], ['#D4A017', '3 Zones']].map(([c, l], i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: c }} />
+                  <span style={{ color: '#64748B', fontSize: 11 }}>{l}</span>
                 </div>
               ))}
             </div>
-
-            {/* Quick stats */}
-            <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                {[
-                  { label: 'Online', value: onlineCount, color: '#22C55E' },
-                  { label: 'Offline', value: MEMBERS.length - onlineCount, color: '#DC143C' },
-                ].map((s, i) => (
-                  <div key={i} style={{
-                    background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '12px',
-                    textAlign: 'center',
-                  }}>
-                    <p style={{ color: s.color, fontSize: 22, fontWeight: 900, margin: '0 0 3px', lineHeight: 1 }}>{s.value}</p>
-                    <p style={{ color: '#64748B', fontSize: 11, margin: 0 }}>{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
+        </div>
+
+        {/* Bottom action bar */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          <button style={{
+            background: '#1E293B', color: '#E2E8F0', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10, padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+          }}>+ Add New Member</button>
+          <Link href="/team/members" style={{
+            background: '#1E293B', color: '#E2E8F0', border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10, padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>View All Members</Link>
+          <button style={{
+            background: '#DC143C', color: 'white', border: 'none',
+            borderRadius: 10, padding: '14px', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+            boxShadow: '0 4px 16px rgba(220,20,60,0.35)',
+          }}>Export Team Report</button>
         </div>
       </div>
     </div>

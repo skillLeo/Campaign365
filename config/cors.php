@@ -20,15 +20,18 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        'http://localhost:3000',          // Next.js dev
+        'http://localhost:3000',
         'http://localhost:3001',
-        'https://*.campaign365.app',      // All tenant subdomains
-        'https://campaign365.app',        // Main domain
-        'https://admin.campaign365.app',  // Super admin
+        'https://*.campaign365.app',
+        'https://campaign365.app',
+        'https://admin.campaign365.app',
+        'https://*.vercel.app',           // Vercel preview deployments
+        'https://campaign365-*.vercel.app',
     ],
 
     'allowed_origins_patterns' => [
         '#^https://[a-z0-9\-]+\.campaign365\.app$#',
+        '#^https://[a-z0-9\-]+\.vercel\.app$#',
     ],
 
     'allowed_headers' => ['*'],
