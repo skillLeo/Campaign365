@@ -13,7 +13,7 @@ export default function PlaceholderScreen({ route }) {
 
 const styles = StyleSheet.create({
   c:     { flex: 1, backgroundColor: '#080E1C', alignItems: 'center', justifyContent: 'center' },
-  icon:  { fontSize: 48, marginBottom: 16 },
-  title: { color: 'white', fontSize: 22, fontWeight: '800', marginBottom: 8 },
-  sub:   { color: 'rgba(255,255,255,0.4)', fontSize: 14 },
+  icon:  { fontSize: 60, marginBottom: 16 },
+  title: { color: 'white', fontSize: 28, fontWeight: '800', marginBottom: 8 },
+  sub:   { color: 'rgba(255,255,255,0.4)', fontSize: 18 },
 });

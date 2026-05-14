@@ -19,8 +19,8 @@ class TenantMiddleware
         $parts = explode('.', $host);
         $subdomain = count($parts) >= 3 ? $parts[0] : null;
 
-        // Development fallback: allow X-Tenant-Subdomain header when no subdomain is in the host
-        if (!$subdomain && $request->hasHeader('X-Tenant-Subdomain')) {
+        // Always prefer X-Tenant-Subdomain header (used by mobile app and dev environments)
+        if ($request->hasHeader('X-Tenant-Subdomain')) {
             $subdomain = $request->header('X-Tenant-Subdomain');
         }
 
@@ -35,6 +35,15 @@ class TenantMiddleware
             })
             ->where('status', 'active')
             ->first();
+
+        // If header-based lookup failed, try hostname-based subdomain
+        if (!$tenant && $request->hasHeader('X-Tenant-Subdomain') && count($parts) >= 3) {
+            $hostSubdomain = $parts[0];
+            $tenant = Tenant::withoutGlobalScopes()
+                ->where('subdomain', $hostSubdomain)
+                ->where('status', 'active')
+                ->first();
+        }
 
         if (!$tenant) {
             return response()->json(['success' => false, 'error' => 'Tenant not found or inactive'], 404);

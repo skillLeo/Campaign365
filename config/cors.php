@@ -19,20 +19,9 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'https://*.campaign365.app',
-        'https://campaign365.app',
-        'https://admin.campaign365.app',
-        'https://*.vercel.app',           // Vercel preview deployments
-        'https://campaign365-*.vercel.app',
-    ],
+    'allowed_origins' => ['*'],
 
-    'allowed_origins_patterns' => [
-        '#^https://[a-z0-9\-]+\.campaign365\.app$#',
-        '#^https://[a-z0-9\-]+\.vercel\.app$#',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
@@ -40,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];

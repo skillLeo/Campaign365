@@ -95,7 +95,7 @@ const s = StyleSheet.create({
     flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   logoTxt: {
-    color: 'white', fontSize: 38, fontWeight: '900', letterSpacing: 4,
+    color: 'white', fontSize: 48, fontWeight: '900', letterSpacing: 4,
   },
 
   sheet: {
@@ -104,7 +104,7 @@ const s = StyleSheet.create({
     borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
   title: {
-    color: 'white', fontSize: 28, fontWeight: '900', letterSpacing: -0.5,
+    color: 'white', fontSize: 35, fontWeight: '900', letterSpacing: -0.5,
     textAlign: 'center', marginBottom: 10,
   },
   titleLine: {
@@ -112,19 +112,19 @@ const s = StyleSheet.create({
     alignSelf: 'center', marginBottom: 14,
   },
   subtitle: {
-    color: 'rgba(255,255,255,0.55)', fontSize: 14, textAlign: 'center',
-    lineHeight: 20, marginBottom: 28,
+    color: 'rgba(255,255,255,0.55)', fontSize: 18, textAlign: 'center',
+    lineHeight: 25, marginBottom: 28,
   },
   logoutBtn: {
     backgroundColor: RED, borderRadius: 14, paddingVertical: 18,
     alignItems: 'center', marginBottom: 12,
     shadowColor: RED, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14,
   },
-  logoutTxt: { color: 'white', fontWeight: '900', fontSize: 17 },
+  logoutTxt: { color: 'white', fontWeight: '900', fontSize: 21 },
   cancelBtn: {
     backgroundColor: 'white', borderRadius: 14, paddingVertical: 18, alignItems: 'center',
   },
-  cancelTxt: { color: '#111', fontWeight: '800', fontSize: 17 },
+  cancelTxt: { color: '#111', fontWeight: '800', fontSize: 21 },
 
   waveBanner: {
     backgroundColor: '#1a0505',
@@ -132,7 +132,7 @@ const s = StyleSheet.create({
     paddingVertical: 18, paddingHorizontal: 20, alignItems: 'center', gap: 10,
   },
   waveBannerInner: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  waveEmoji: { fontSize: 22 },
-  waveTxt: { color: 'white', fontWeight: '800', fontSize: 15 },
+  waveEmoji: { fontSize: 28 },
+  waveTxt: { color: 'white', fontWeight: '800', fontSize: 19 },
   crowdRow: { flexDirection: 'row', gap: 12, alignItems: 'center' },
 });

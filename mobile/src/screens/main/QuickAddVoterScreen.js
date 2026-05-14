@@ -63,17 +63,17 @@ export default function QuickAddVoterScreen({ navigation }) {
           <View style={{ flex: 1 }}>
             <Text style={s.label}>Email</Text>
             <View style={[s.input, s.rowInput]}>
-              <TextInput style={{ flex: 1, color: 'white', fontSize: 14 }}
+              <TextInput style={{ flex: 1, color: 'white', fontSize: 18 }}
                 placeholder="Email" placeholderTextColor="rgba(255,255,255,0.3)"
                 value={email} onChangeText={setEmail} keyboardType="email-address" />
-              <Text style={{ fontSize: 16 }}>✉️</Text>
+              <Text style={{ fontSize: 20 }}>✉️</Text>
             </View>
           </View>
           <View style={{ flex: 1 }}>
             <Text style={s.label}>Age Group</Text>
             <View style={[s.input, s.rowInput]}>
-              <Text style={{ color: 'white', fontSize: 14, flex: 1 }}>{ageGroup}</Text>
-              <Text style={{ fontSize: 14 }}>⌄</Text>
+              <Text style={{ color: 'white', fontSize: 18, flex: 1 }}>{ageGroup}</Text>
+              <Text style={{ fontSize: 18 }}>⌄</Text>
             </View>
           </View>
         </View>
@@ -104,11 +104,11 @@ export default function QuickAddVoterScreen({ navigation }) {
         <Text style={s.label}>Notes</Text>
         <View style={[s.input, s.notesWrap]}>
           <TextInput
-            style={{ flex: 1, color: 'white', fontSize: 14, minHeight: 50 }}
+            style={{ flex: 1, color: 'white', fontSize: 18, minHeight: 50 }}
             placeholder="Notes" placeholderTextColor="rgba(255,255,255,0.3)"
             value={notes} onChangeText={setNotes} multiline
           />
-          <Text style={{ fontSize: 18, alignSelf: 'flex-end' }}>🎤</Text>
+          <Text style={{ fontSize: 22, alignSelf: 'flex-end' }}>🎤</Text>
         </View>
 
         {/* Save button */}
@@ -148,7 +148,7 @@ export default function QuickAddVoterScreen({ navigation }) {
         style={s.panicFab}
         onPress={() => navigation.navigate('Panic')}
       >
-        <Text style={{ fontSize: 18 }}>🆘</Text>
+        <Text style={{ fontSize: 22 }}>🆘</Text>
       </TouchableOpacity>
     </View>
   );
@@ -161,25 +161,25 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 10,
   },
   menuBtn:    { padding: 6, marginRight: 4 },
-  menuIcon:   { color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  menuIcon:   { color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   headerMid:  { flex: 1, alignItems: 'center' },
   sknlp: {
-    color: GOLD, fontWeight: '900', fontSize: 22, letterSpacing: 2,
+    color: GOLD, fontWeight: '900', fontSize: 28, letterSpacing: 2,
     textShadowColor: GOLD, textShadowRadius: 8, textShadowOffset: { width: 0, height: 0 },
   },
-  camp365: { color: 'white', fontWeight: '900', fontSize: 14, textAlign: 'right' },
+  camp365: { color: 'white', fontWeight: '900', fontSize: 18, textAlign: 'right' },
 
   scroll: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 },
   title: {
-    color: 'white', fontSize: 26, fontWeight: '900', marginBottom: 20,
+    color: 'white', fontSize: 32, fontWeight: '900', marginBottom: 20,
     letterSpacing: -0.5,
   },
-  label: { color: 'rgba(255,255,255,0.7)', fontWeight: '700', fontSize: 13, marginBottom: 8 },
+  label: { color: 'rgba(255,255,255,0.7)', fontWeight: '700', fontSize: 16, marginBottom: 8 },
   input: {
     backgroundColor: 'rgba(201,168,76,0.12)',
     borderWidth: 1.5, borderColor: GOLD,
     borderRadius: 12, paddingHorizontal: 14, paddingVertical: 13,
-    color: 'white', fontSize: 14, marginBottom: 16,
+    color: 'white', fontSize: 18, marginBottom: 16,
   },
   rowFields: { flexDirection: 'row', gap: 10, marginBottom: 0 },
   rowInput:  { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
@@ -191,9 +191,9 @@ const s = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 12, marginBottom: 16,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
   },
-  gpsLabel:    { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600' },
+  gpsLabel:    { color: 'rgba(255,255,255,0.6)', fontSize: 16, fontWeight: '600' },
   autoFillBtn: { backgroundColor: GOLD, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 },
-  autoFillTxt: { color: '#0A0F1E', fontWeight: '800', fontSize: 12 },
+  autoFillTxt: { color: '#0A0F1E', fontWeight: '800', fontSize: 15 },
 
   supportRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginBottom: 16 },
   supportPill: {
@@ -202,7 +202,7 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.05)',
   },
   supportPillActive: { backgroundColor: GOLD, borderColor: GOLD },
-  supportTxt:        { color: 'rgba(255,255,255,0.6)', fontWeight: '700', fontSize: 13 },
+  supportTxt:        { color: 'rgba(255,255,255,0.6)', fontWeight: '700', fontSize: 16 },
   supportTxtActive:  { color: '#0A0F1E' },
 
   saveBtn: {
@@ -210,7 +210,7 @@ const s = StyleSheet.create({
     alignItems: 'center', marginTop: 8,
     shadowColor: RED, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.45, shadowRadius: 14,
   },
-  saveTxt: { color: 'white', fontWeight: '900', fontSize: 17 },
+  saveTxt: { color: 'white', fontWeight: '900', fontSize: 21 },
 
   panicFab: {
     position: 'absolute', bottom: 32, right: 20,

@@ -104,7 +104,7 @@ export default function HelpScreen({ navigation }) {
               style={s.tabItem}
               onPress={() => t.route && navigation.navigate(t.route)}
             >
-              <Text style={{ fontSize: 20 }}>{t.icon}</Text>
+              <Text style={{ fontSize: 25 }}>{t.icon}</Text>
               <Text style={[s.tabLabel, t.active && s.tabLabelActive]}>{t.label}</Text>
             </TouchableOpacity>
           ))}
@@ -123,17 +123,17 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn:   { width: 32, padding: 4 },
-  backArrow: { color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  backArrow: { color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   headerTextWrap: { flex: 1, alignItems: 'center' },
   headerTitle: {
-    color: GOLD, fontSize: 26, fontWeight: '900', fontStyle: 'italic', letterSpacing: -0.5,
+    color: GOLD, fontSize: 32, fontWeight: '900', fontStyle: 'italic', letterSpacing: -0.5,
   },
-  headerSub: { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '500' },
+  headerSub: { color: 'rgba(255,255,255,0.6)', fontSize: 16, fontWeight: '500' },
 
   scroll: { paddingHorizontal: 16, paddingTop: 24, paddingBottom: 20 },
 
   sectionTitle: {
-    color: 'white', fontSize: 26, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5,
+    color: 'white', fontSize: 32, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5,
   },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 28 },
@@ -149,16 +149,16 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: 'rgba(201,168,76,0.3)',
   },
-  helpIcon:  { fontSize: 22 },
+  helpIcon:  { fontSize: 28 },
   helpTitle: {
-    color: 'white', fontSize: 14, fontWeight: '700', lineHeight: 20,
+    color: 'white', fontSize: 18, fontWeight: '700', lineHeight: 25,
   },
   helpSub: {
-    color: 'rgba(255,255,255,0.4)', fontSize: 11, lineHeight: 16,
+    color: 'rgba(255,255,255,0.4)', fontSize: 14, lineHeight: 20,
   },
 
   faqTitle: {
-    color: 'white', fontSize: 22, fontWeight: '900', marginBottom: 12, letterSpacing: -0.3,
+    color: 'white', fontSize: 28, fontWeight: '900', marginBottom: 12, letterSpacing: -0.3,
   },
   faqList: { gap: 8 },
   faqItem: {
@@ -167,17 +167,17 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
   faqRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  faqIcon:    { fontSize: 16 },
-  faqQ:       { flex: 1, color: 'rgba(255,255,255,0.85)', fontSize: 14, fontWeight: '600' },
-  faqChevron: { color: 'rgba(255,255,255,0.4)', fontSize: 18, fontWeight: '300' },
+  faqIcon:    { fontSize: 20 },
+  faqQ:       { flex: 1, color: 'rgba(255,255,255,0.85)', fontSize: 18, fontWeight: '600' },
+  faqChevron: { color: 'rgba(255,255,255,0.4)', fontSize: 22, fontWeight: '300' },
   faqA: {
-    color: 'rgba(255,255,255,0.55)', fontSize: 13, lineHeight: 20,
+    color: 'rgba(255,255,255,0.55)', fontSize: 16, lineHeight: 25,
     marginTop: 10, paddingTop: 10,
     borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
 
   tabBar:       { flexDirection: 'row', paddingVertical: 10 },
   tabItem:      { flex: 1, alignItems: 'center', gap: 4 },
-  tabLabel:     { color: 'rgba(255,255,255,0.4)', fontSize: 11, fontWeight: '600' },
+  tabLabel:     { color: 'rgba(255,255,255,0.4)', fontSize: 14, fontWeight: '600' },
   tabLabelActive: { color: GOLD },
 });

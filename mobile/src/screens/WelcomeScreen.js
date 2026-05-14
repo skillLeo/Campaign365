@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   logoNumber: {
     color: 'white',
-    fontSize: 26,
+    fontSize: 32,
     fontWeight: '900',
     letterSpacing: -1,
   },
@@ -192,19 +192,19 @@ const styles = StyleSheet.create({
   },
   brand: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 50,
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: 6,
-    lineHeight: 44,
+    lineHeight: 55,
   },
   brandAccent: {
     color: RED,
-    fontSize: 52,
+    fontSize: 65,
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: -2,
-    lineHeight: 56,
+    lineHeight: 70,
     marginTop: -4,
   },
   divider: {
@@ -217,9 +217,9 @@ const styles = StyleSheet.create({
   },
   tagline: {
     color: 'rgba(255,255,255,0.5)',
-    fontSize: 14,
+    fontSize: 18,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 28,
     letterSpacing: 0.2,
   },
   pillRow: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
   },
   pillText: {
     color: 'rgba(255,255,255,0.7)',
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '600',
   },
   bottom: {
@@ -262,13 +262,13 @@ const styles = StyleSheet.create({
   },
   ctaBtnText: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 21,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   version: {
     color: 'rgba(255,255,255,0.25)',
-    fontSize: 11,
+    fontSize: 14,
     marginTop: 16,
     letterSpacing: 0.3,
   },

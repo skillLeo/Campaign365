@@ -13,7 +13,7 @@ const RED = '#DC143C';
 function PanicMapVisual() {
   return (
     <View style={vis.wrap}>
-      <Svg width={260} height={200} viewBox="0 0 260 200">
+      <Svg width={325} height={250} viewBox="0 0 260 200">
         {/* Map bg */}
         <Rect width={260} height={200} rx={16} fill="#1a2035" />
         {/* Grid roads */}
@@ -77,7 +77,7 @@ function OfflineVisual() {
     <View style={vis.wrap}>
       {/* Shield */}
       <View style={vis.shieldWrap}>
-        <Svg width={160} height={180} viewBox="0 0 160 180">
+        <Svg width={200} height={225} viewBox="0 0 160 180">
           <Path
             d="M80,10 L140,35 L140,90 Q140,145 80,170 Q20,145 20,90 L20,35 Z"
             fill="#1a3a8a"
@@ -225,15 +225,15 @@ const vis = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.06)',
   },
-  contactLabel: { color: 'white', fontSize: 13, fontWeight: '600' },
-  contactNum:   { color: 'rgba(255,255,255,0.6)', fontSize: 13 },
+  contactLabel: { color: 'white', fontSize: 16, fontWeight: '600' },
+  contactNum:   { color: 'rgba(255,255,255,0.6)', fontSize: 16 },
   shieldWrap: { position: 'relative', width: 260, height: 220, alignItems: 'center' },
   offlineBadge: {
     position: 'absolute', top: 30, left: 10,
     backgroundColor: '#2563EB', borderRadius: 20,
     paddingHorizontal: 14, paddingVertical: 6,
   },
-  offlineBadgeText: { color: 'white', fontWeight: '700', fontSize: 13 },
+  offlineBadgeText: { color: 'white', fontWeight: '700', fontSize: 16 },
   syncBadge: {
     position: 'absolute', bottom: 30, right: 5,
     backgroundColor: '#1E293B', borderRadius: 10,
@@ -243,11 +243,11 @@ const vis = StyleSheet.create({
   },
   waveRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 3, marginBottom: 5 },
   waveBar: { width: 3, borderRadius: 2, backgroundColor: '#22C55E' },
-  syncBadgeText: { color: 'white', fontSize: 11, fontWeight: '600' },
+  syncBadgeText: { color: 'white', fontSize: 14, fontWeight: '600' },
   arrow: { position: 'absolute', top: '45%' },
   arrowRight: { right: 0 },
   arrowLeft:  { left: 0, transform: [{ scaleX: -1 }] },
-  arrowText: { fontSize: 28, color: '#2563EB', fontWeight: '900' },
+  arrowText: { fontSize: 35, color: '#2563EB', fontWeight: '900' },
 });
 
 const styles = StyleSheet.create({
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 8,
   },
-  headerIcon: { fontSize: 24 },
-  panicIcon:  { fontSize: 24 },
+  headerIcon: { fontSize: 30 },
+  panicIcon:  { fontSize: 30 },
   slide: {
     paddingHorizontal: 28,
     paddingTop: 24,
@@ -270,18 +270,18 @@ const styles = StyleSheet.create({
   },
   title: {
     color: 'white',
-    fontSize: 34,
+    fontSize: 42,
     fontWeight: '900',
     textAlign: 'center',
-    lineHeight: 40,
+    lineHeight: 50,
     marginBottom: 14,
     letterSpacing: -0.5,
   },
   sub: {
     color: 'rgba(255,255,255,0.55)',
-    fontSize: 15,
+    fontSize: 19,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 28,
     marginBottom: 28,
     paddingHorizontal: 10,
   },
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 21,
     fontWeight: '800',
     letterSpacing: 0.3,
   },

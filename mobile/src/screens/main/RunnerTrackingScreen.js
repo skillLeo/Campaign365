@@ -107,7 +107,7 @@ export default function RunnerTrackingScreen({ navigation }) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 6, marginRight: 4 }}>
-            <Text style={{ color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 }}>‹</Text>
+            <Text style={{ color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 }}>‹</Text>
           </TouchableOpacity>
           <View style={styles.logoRow}>
             <View style={styles.logoCircle}><Text style={styles.logoTxt}>365</Text></View>
@@ -141,14 +141,14 @@ export default function RunnerTrackingScreen({ navigation }) {
         <View style={styles.mapSidebar}>
           {['🚗','📍','❤'].map((icon, i) => (
             <TouchableOpacity key={i} style={styles.sidebarBtn}>
-              <Text style={{ fontSize: 16 }}>{icon}</Text>
+              <Text style={{ fontSize: 20 }}>{icon}</Text>
               {i === 2 && <Text style={styles.sidebarLabel}>Vitie</Text>}
             </TouchableOpacity>
           ))}
         </View>
         {/* Car FAB */}
         <TouchableOpacity style={styles.carFab}>
-          <Text style={{ fontSize: 20 }}>🚗</Text>
+          <Text style={{ fontSize: 25 }}>🚗</Text>
         </TouchableOpacity>
       </View>
 
@@ -191,17 +191,17 @@ const styles = StyleSheet.create({
   },
   logoRow:     { flexDirection: 'row', alignItems: 'center', gap: 8 },
   logoCircle:  { width: 32, height: 32, borderRadius: 8, backgroundColor: '#DC143C', alignItems: 'center', justifyContent: 'center' },
-  logoTxt:     { color: 'white', fontWeight: '900', fontSize: 10 },
-  headerTitle: { color: 'white', fontWeight: '800', fontSize: 15 },
+  logoTxt:     { color: 'white', fontWeight: '900', fontSize: 12 },
+  headerTitle: { color: 'white', fontWeight: '800', fontSize: 19 },
   liveTeam:    { flexDirection: 'row', alignItems: 'center', gap: 6 },
   liveDot:     { width: 8, height: 8, borderRadius: 4, backgroundColor: '#22C55E' },
-  liveText:    { color: 'white', fontWeight: '700', fontSize: 13 },
+  liveText:    { color: 'white', fontWeight: '700', fontSize: 16 },
   legend: {
     flexDirection: 'row', gap: 16, paddingHorizontal: 16, paddingBottom: 8,
   },
   legendItem:  { flexDirection: 'row', alignItems: 'center', gap: 6 },
   legendDot:   { width: 10, height: 10, borderRadius: 5 },
-  legendTxt:   { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: '600' },
+  legendTxt:   { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: '600' },
   mapWrap:     { flex: 1, position: 'relative' },
   mapSidebar: {
     position: 'absolute', left: 12, top: 16, gap: 8,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center',
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
   },
-  sidebarLabel: { color: 'white', fontSize: 8, marginTop: 2 },
+  sidebarLabel: { color: 'white', fontSize: 10, marginTop: 2 },
   carFab: {
     position: 'absolute', bottom: 12, right: 12,
     width: 44, height: 44, borderRadius: 22,
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#111827', padding: 16,
     borderTopLeftRadius: 20, borderTopRightRadius: 20,
   },
-  sheetTitle: { color: 'white', fontWeight: '900', fontSize: 17, marginBottom: 12 },
+  sheetTitle: { color: 'white', fontWeight: '900', fontSize: 21, marginBottom: 12 },
   runnerRow: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     marginBottom: 10, paddingBottom: 10,
@@ -233,24 +233,24 @@ const styles = StyleSheet.create({
     backgroundColor: RED, alignItems: 'center', justifyContent: 'center',
     position: 'relative',
   },
-  runnerAvatarTxt: { color: 'white', fontWeight: '900', fontSize: 14 },
+  runnerAvatarTxt: { color: 'white', fontWeight: '900', fontSize: 18 },
   runnerOnline: {
     position: 'absolute', bottom: 0, right: 0,
     width: 10, height: 10, borderRadius: 5, backgroundColor: '#22C55E',
     borderWidth: 2, borderColor: '#111827',
   },
-  runnerName:  { color: 'white', fontWeight: '700', fontSize: 13 },
-  runnerTask:  { color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 2 },
-  runnerEta:   { color: 'rgba(255,255,255,0.6)', fontSize: 12 },
+  runnerName:  { color: 'white', fontWeight: '700', fontSize: 16 },
+  runnerTask:  { color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 2 },
+  runnerEta:   { color: 'rgba(255,255,255,0.6)', fontSize: 15 },
   actionRow:   { flexDirection: 'row', gap: 10, marginTop: 4 },
   contactBtn: {
     flex: 1, backgroundColor: '#1E293B', borderRadius: 12, paddingVertical: 14,
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
   },
-  contactTxt: { color: 'white', fontWeight: '700', fontSize: 13 },
+  contactTxt: { color: 'white', fontWeight: '700', fontSize: 16 },
   backupBtn: {
     flex: 1, backgroundColor: '#1E293B', borderRadius: 12, paddingVertical: 14,
     alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
   },
-  backupTxt: { color: 'white', fontWeight: '700', fontSize: 13 },
+  backupTxt: { color: 'white', fontWeight: '700', fontSize: 16 },
 });

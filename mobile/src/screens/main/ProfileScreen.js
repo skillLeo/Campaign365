@@ -1,236 +1,354 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  Switch, StatusBar,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path, Rect, Circle, G } from 'react-native-svg';
 import { useAuth } from '../../store/authStore';
 
-const RED  = '#DC143C';
-const GOLD = '#D4A017';
+const NAVY     = '#001F3F';
+const GOLD     = '#C9A227';
+const WHITE    = '#FFFFFF';
+const LIGHT_BG = '#F4F5F7';
 
-export default function ProfileScreen({ navigation }) {
-  const [pushNotif, setPushNotif] = useState(true);
-  const [emailAlert, setEmailAlert] = useState(true);
-  const { user, tenant } = useAuth();
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
 
+function BackArrow({ size = 24, color = NAVY }) {
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M20,11H7.83L13.42,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z" fill={color} />
+    </Svg>
+  );
+}
 
-      {/* SKNLP corner ribbon */}
-      <View style={styles.ribbon}>
-        <Text style={styles.ribbonTxt}>SKNLP</Text>
-      </View>
+function UKFlagSmall() {
+  return (
+    <Svg width={30} height={20} viewBox="0 0 44 28">
+      <Rect width="44" height="28" fill="#012169" />
+      <Path d="M0,0 L44,28 M44,0 L0,28" stroke="#fff" strokeWidth="5" />
+      <Path d="M0,0 L44,28 M44,0 L0,28" stroke="#C8102E" strokeWidth="3" />
+      <Path d="M22,0 V28 M0,14 H44" stroke="#fff" strokeWidth="9" />
+      <Path d="M22,0 V28 M0,14 H44" stroke="#C8102E" strokeWidth="5.5" />
+    </Svg>
+  );
+}
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <SafeAreaView>
-          {/* Top bar */}
-          <View style={styles.topBar}>
-            <View style={styles.userRow}>
-              <View style={styles.avatarCircle}>
-                <Text style={styles.avatarTxt}>
-                  {(user?.name || 'SJ').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
-                </Text>
-                <View style={styles.onlineDot} />
-              </View>
-              <Text style={styles.userName}>
-                {user?.name || 'Sarah James'} — {user?.roles?.[0]?.name?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Canvasser'}
-              </Text>
-            </View>
-            <TouchableOpacity style={styles.settingsBtn}>
-              <Text style={{ fontSize: 20 }}>⚙️</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
+function JamFlagSmall() {
+  return (
+    <Svg width={30} height={20} viewBox="0 0 44 28">
+      <Rect width="44" height="28" fill="#000" />
+      <Path d="M0,0 L44,28 M0,28 L44,0" stroke="#FFD700" strokeWidth="8" />
+      <Path d="M0,0 L22,14 L0,28Z" fill="#00A551" />
+      <Path d="M44,0 L22,14 L44,28Z" fill="#00A551" />
+    </Svg>
+  );
+}
 
-        {/* SKNLP banner */}
-        <View style={styles.banner}>
-          <View style={styles.bannerContent}>
-            <Text style={styles.bannerSKNLP}>SKNLP</Text>
-          </View>
-          <TouchableOpacity style={styles.editBtn}>
-            <Text style={styles.editTxt}>Edit</Text>
-          </TouchableOpacity>
-        </View>
+function EditIcon({ size = 18, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M3,17.25V21H6.75L17.81,9.94L14.06,6.19L3,17.25ZM20.71,7.04C21.1,6.65 21.1,6.02 20.71,5.63L18.37,3.29C17.98,2.9 17.35,2.9 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
 
-        {/* Dots */}
-        <View style={styles.dotsRow}>
-          {[0,1,2,3].map(i => (
-            <View key={i} style={[styles.dot, i === 0 && styles.dotActive]} />
-          ))}
-        </View>
+function ChevronRight({ size = 20, color = '#999' }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M10,6L8.59,7.41L13.17,12L8.59,16.59L10,18L16,12L10,6Z" fill={color} />
+    </Svg>
+  );
+}
 
-        <View style={styles.sections}>
+function PersonRedIcon({ size = 22 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx="12" cy="7" r="5" fill="#EF4444" />
+      <Path d="M4,21 C4,16.58 7.58,13 12,13 C16.42,13 20,16.58 20,21Z" fill="#EF4444" />
+    </Svg>
+  );
+}
 
-          {/* Account Settings */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account Settings</Text>
-            <TouchableOpacity style={styles.settingRow}>
-              <Text style={styles.settingLabel}>Change Password</Text>
-            </TouchableOpacity>
-            <Text style={styles.settingDesc}>Alerts to your devices when you're ready to canvassing, resync.</Text>
-            <TouchableOpacity style={styles.settingRowBorder}>
-              <Text style={styles.settingLabel}>Privacy Policy</Text>
-              <Text style={styles.chevron}>›</Text>
-            </TouchableOpacity>
-          </View>
+function PersonGrayIcon({ size = 22 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx="12" cy="7" r="5" fill="#9CA3AF" />
+      <Path d="M4,21 C4,16.58 7.58,13 12,13 C16.42,13 20,16.58 20,21Z" fill="#9CA3AF" />
+    </Svg>
+  );
+}
 
-          {/* Notification Preferences */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Notification Preferences</Text>
-            <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>Push Notifications</Text>
-              <Switch
-                value={pushNotif}
-                onValueChange={setPushNotif}
-                trackColor={{ false: '#334155', true: '#22C55E' }}
-                thumbColor="white"
-              />
-            </View>
-            <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>Email Alerts</Text>
-              <Switch
-                value={emailAlert}
-                onValueChange={setEmailAlert}
-                trackColor={{ false: '#334155', true: RED }}
-                thumbColor="white"
-              />
-            </View>
-          </View>
+function PersonGreenIcon({ size = 22 }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx="12" cy="7" r="5" fill="#22C55E" />
+      <Path d="M4,21 C4,16.58 7.58,13 12,13 C16.42,13 20,16.58 20,21Z" fill="#22C55E" />
+    </Svg>
+  );
+}
 
-          {/* Offline Sync */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Offline Sync Status</Text>
-            <Text style={styles.syncStatus}>Last Sync: Today, 2:15 PM</Text>
-          </View>
+// ─── Components ───────────────────────────────────────────────────────────────
 
-          {/* Panic Button Test */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Panic Button Test</Text>
-            <TouchableOpacity
-              style={styles.panicBtn}
-              onPress={() => navigation.navigate('Panic')}
-            >
-              <Text style={styles.panicBtnTxt}>Test Panic Button</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Logout */}
-          <TouchableOpacity
-            style={styles.logoutBtn}
-            onPress={() => navigation.navigate('Logout')}
-          >
-            <Text style={styles.logoutTxt}>Log Out</Text>
-          </TouchableOpacity>
-
-          <View style={{ height: 40 }} />
-        </View>
-      </ScrollView>
-
-      {/* Bottom tabs */}
-      <SafeAreaView style={{ backgroundColor: '#0F172A' }}>
-        <View style={styles.tabBar}>
-          {[
-            { icon: '🏠', label: 'Home'    },
-            { icon: '🗺️', label: 'Map'     },
-            { icon: '📋', label: 'Tasks'   },
-            { icon: '📊', label: 'Reports' },
-            { icon: '👤', label: 'Profile', active: true },
-          ].map((t, i) => (
-            <TouchableOpacity
-              key={i}
-              style={styles.tabItem}
-              onPress={() => {
-                if (t.label === 'Home') {
-                  navigation.navigate('Main');
-                }
-              }}
-            >
-              <Text style={{ fontSize: 20 }}>{t.icon}</Text>
-              <Text style={[styles.tabLabel, t.active && styles.tabLabelActive]}>{t.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </SafeAreaView>
+function StatCard({ value, label }) {
+  return (
+    <View style={st.statCard}>
+      <Text style={st.statValue}>{value}</Text>
+      <Text style={st.statLabel}>{label}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#080E1C' },
-  ribbon: {
-    position: 'absolute', top: 0, left: 0, zIndex: 10,
-    backgroundColor: RED, paddingHorizontal: 14, paddingVertical: 4,
-    borderBottomRightRadius: 10,
+function InfoRow({ label, value, last = false }) {
+  return (
+    <View style={[st.infoRow, !last && st.infoRowBorder]}>
+      <Text style={st.infoLabel}>{label}</Text>
+      <View style={st.infoRight}>
+        {value ? <Text style={st.infoValue}>{value}</Text> : null}
+        <ChevronRight size={18} color="#bbb" />
+      </View>
+    </View>
+  );
+}
+
+// ─── ProfileScreen ────────────────────────────────────────────────────────────
+
+export default function ProfileScreen({ navigation }) {
+  const { user: authUser, logout } = useAuth();
+  const user      = authUser || {};
+  const userName  = user.name || 'Alex Johnson';
+  const initials  = userName
+    .split(' ')
+    .slice(0, 2)
+    .map(w => w[0])
+    .join('')
+    .toUpperCase();
+
+  return (
+    <View style={st.root}>
+      <StatusBar barStyle="light-content" backgroundColor={NAVY} />
+
+      {/* Navy header bar */}
+      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']}>
+        <View style={st.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={st.headerBtn}>
+            <BackArrow size={24} color={WHITE} />
+          </TouchableOpacity>
+          <Text style={st.headerTitle}>Profile</Text>
+          <View style={st.headerBtn} />
+        </View>
+      </SafeAreaView>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ flex: 1 }}
+        contentContainerStyle={st.scroll}
+      >
+        {/* Avatar section */}
+        <View style={st.avatarSection}>
+          <View style={st.avatarRing}>
+            <View style={st.avatarCircle}>
+              <Text style={st.avatarText}>{initials}</Text>
+            </View>
+          </View>
+          <Text style={st.profileName}>Alex Johnson - Canvasser</Text>
+          <Text style={st.profileLocation}>Kingston Central</Text>
+        </View>
+
+        {/* 3 stat cards */}
+        <View style={st.statsRow}>
+          <StatCard value="187" label="Doors Knocked" />
+          <StatCard value="68%" label="Avg Support"   />
+          <StatCard value="14"  label="Voice Notes Recorded" />
+        </View>
+
+        {/* Achievements */}
+        <View style={st.sectionCard}>
+          <Text style={st.sectionTitle}>My Achievements</Text>
+          <View style={st.achieveRow}>
+            <UKFlagSmall />
+            <View style={st.achieveBadge}>
+              <Text style={st.achieveBadgeText}>Top Canvasser Week 1</Text>
+            </View>
+          </View>
+          <View style={[st.achieveRow, { marginTop: 10 }]}>
+            <JamFlagSmall />
+            <View style={st.achieveBadge}>
+              <Text style={st.achieveBadgeText}>100 Doors Club</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Account Information */}
+        <View style={st.sectionCard}>
+          <Text style={st.sectionTitle}>Account Information</Text>
+          <InfoRow label="Email"             />
+          <InfoRow label="Phone"             />
+          <InfoRow label="Emergency Contact" last />
+        </View>
+
+        {/* Language */}
+        <View style={st.sectionCard}>
+          <View style={st.langRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={st.sectionTitle}>Preferred Language</Text>
+              <Text style={st.langValue}>English / Jamaican Patois</Text>
+            </View>
+            <View style={st.langIcons}>
+              <PersonRedIcon   size={20} />
+              <PersonGrayIcon  size={20} />
+              <PersonGreenIcon size={20} />
+            </View>
+          </View>
+          <ChevronRight size={18} color="#bbb" />
+        </View>
+
+        {/* Edit Profile button */}
+        <TouchableOpacity style={st.editBtn} activeOpacity={0.85}>
+          <EditIcon size={18} color={NAVY} />
+          <Text style={st.editBtnText}>Edit Profile</Text>
+        </TouchableOpacity>
+
+        {/* Logout button */}
+        <TouchableOpacity
+          style={st.logoutBtn}
+          activeOpacity={0.85}
+          onPress={async () => {
+            await logout();
+            navigation.getParent()?.reset({ index: 0, routes: [{ name: 'Login' }] });
+          }}
+        >
+          <Text style={st.logoutBtnText}>Log Out</Text>
+        </TouchableOpacity>
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </View>
+  );
+}
+
+const st = StyleSheet.create({
+  root:   { flex: 1, backgroundColor: LIGHT_BG },
+  scroll: { paddingHorizontal: 20, paddingTop: 20 },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  ribbonTxt: { color: 'white', fontWeight: '900', fontSize: 11, letterSpacing: 1 },
-  topBar: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
+  headerBtn:   { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: {
+    flex: 1, color: GOLD, fontWeight: '900', fontSize: 25, textAlign: 'center',
   },
-  userRow:    { flexDirection: 'row', alignItems: 'center', gap: 10 },
+
+  // Avatar
+  avatarSection: { alignItems: 'center', marginBottom: 24 },
+  avatarRing: {
+    width: 88, height: 88, borderRadius: 44,
+    borderWidth: 3, borderColor: GOLD,
+    padding: 3,
+    marginBottom: 12,
+  },
   avatarCircle: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: '#7B4F2E', alignItems: 'center', justifyContent: 'center',
-    position: 'relative',
+    flex: 1, borderRadius: 40,
+    backgroundColor: NAVY,
+    alignItems: 'center', justifyContent: 'center',
   },
-  avatarTxt:  { color: 'white', fontWeight: '900', fontSize: 14 },
-  onlineDot:  {
-    position: 'absolute', bottom: 0, right: 0,
-    width: 10, height: 10, borderRadius: 5, backgroundColor: RED,
-    borderWidth: 2, borderColor: '#080E1C',
+  avatarText:    { color: WHITE, fontWeight: '900', fontSize: 30 },
+  profileName:   { color: NAVY, fontWeight: '800', fontSize: 21, marginBottom: 4 },
+  profileLocation: { color: '#888', fontSize: 18 },
+
+  // Stats
+  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
+  statCard: {
+    flex: 1,
+    backgroundColor: GOLD,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  userName:    { color: 'white', fontWeight: '700', fontSize: 14 },
-  settingsBtn: { padding: 4 },
-  banner: {
-    marginHorizontal: 20, height: 100, borderRadius: 14,
-    backgroundColor: RED, overflow: 'hidden',
-    position: 'relative', marginBottom: 10,
+  statValue: { color: NAVY, fontWeight: '900', fontSize: 28, lineHeight: 32 },
+  statLabel: { color: 'rgba(0,31,63,0.75)', fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 3 },
+
+  // Section card
+  sectionCard: {
+    backgroundColor: WHITE,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  bannerContent: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  bannerSKNLP:   { color: 'white', fontWeight: '900', fontSize: 36, letterSpacing: 4 },
+  sectionTitle: { color: NAVY, fontWeight: '800', fontSize: 20, marginBottom: 12 },
+
+  // Achievements
+  achieveRow:      { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  achieveBadge: {
+    backgroundColor: GOLD,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+  },
+  achieveBadgeText: { color: NAVY, fontWeight: '700', fontSize: 16 },
+
+  // Info rows
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  infoRowBorder:   { borderBottomWidth: 1, borderBottomColor: '#F0F0F0' },
+  infoLabel:       { color: NAVY, fontWeight: '600', fontSize: 18 },
+  infoRight:       { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  infoValue:       { color: '#888', fontSize: 16 },
+
+  // Language row
+  langRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  langValue: { color: '#666', fontSize: 16, marginTop: 2 },
+  langIcons: { flexDirection: 'row', gap: 2 },
+
+  // Edit button
   editBtn: {
-    position: 'absolute', top: 10, right: 10,
-    backgroundColor: 'rgba(255,255,255,0.9)', borderRadius: 8,
-    paddingHorizontal: 14, paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: GOLD,
+    borderRadius: 14,
+    paddingVertical: 16,
+    marginBottom: 16,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  editTxt: { color: '#111', fontWeight: '700', fontSize: 12 },
-  dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginBottom: 20 },
-  dot:       { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)' },
-  dotActive: { backgroundColor: 'white', width: 16 },
-  sections:    { paddingHorizontal: 20, gap: 6 },
-  section: {
-    backgroundColor: '#111827', borderRadius: 14, padding: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.07)', marginBottom: 10,
-  },
-  sectionTitle: { color: 'white', fontWeight: '800', fontSize: 16, marginBottom: 12 },
-  settingRow: {
-    backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 10,
-    paddingHorizontal: 14, paddingVertical: 11, marginBottom: 8,
-  },
-  settingLabel: { color: 'white', fontWeight: '600', fontSize: 14 },
-  settingDesc:  { color: 'rgba(255,255,255,0.4)', fontSize: 12, marginBottom: 10, lineHeight: 18 },
-  settingRowBorder: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingVertical: 10, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.06)',
-  },
-  chevron:    { color: 'rgba(255,255,255,0.3)', fontSize: 18 },
-  toggleRow:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 },
-  toggleLabel: { color: 'white', fontSize: 14, fontWeight: '600' },
-  syncStatus:  { color: 'rgba(255,255,255,0.6)', fontSize: 13 },
-  panicBtn: {
-    backgroundColor: RED, borderRadius: 12, paddingVertical: 15, alignItems: 'center',
-    shadowColor: RED, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 10,
-  },
-  panicBtnTxt: { color: 'white', fontWeight: '900', fontSize: 15 },
+  editBtnText: { color: NAVY, fontWeight: '900', fontSize: 20 },
+
   logoutBtn: {
-    paddingVertical: 14, alignItems: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FEE2E2',
+    borderRadius: 14,
+    paddingVertical: 16,
+    marginBottom: 16,
+    borderWidth: 1.5,
+    borderColor: '#FECACA',
   },
-  logoutTxt: { color: 'rgba(255,255,255,0.5)', fontWeight: '700', fontSize: 14 },
-  tabBar:       { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 8 },
-  tabItem:      { flex: 1, alignItems: 'center', gap: 3 },
-  tabLabel:     { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: '600' },
-  tabLabelActive: { color: RED },
+  logoutBtnText: { color: '#DC2626', fontWeight: '800', fontSize: 20 },
 });

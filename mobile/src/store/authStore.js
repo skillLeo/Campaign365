@@ -57,23 +57,29 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password, subdomain = 'sknlp') => {
-    dispatch({ type: 'SET_LOADING', payload: true });
     try {
       await AsyncStorage.setItem('c365_subdomain', subdomain);
       const res = await authAPI.login(email, password);
-      const { user, token } = res.data;
+
+      // Handle multiple API response formats
+      const data  = res?.data || res;
+      const token = data?.token || data?.access_token;
+      const user  = data?.user  || data?.data?.user;
+
+      if (!token) throw new Error('Invalid credentials');
 
       await AsyncStorage.setItem('c365_token',  token);
-      await AsyncStorage.setItem('c365_user',   JSON.stringify(user));
-      await AsyncStorage.setItem('c365_tenant', JSON.stringify(user.tenant));
+      await AsyncStorage.setItem('c365_user',   JSON.stringify(user || {}));
+      if (user?.tenant) {
+        await AsyncStorage.setItem('c365_tenant', JSON.stringify(user.tenant));
+      }
 
       dispatch({
         type: 'SET_SESSION',
-        payload: { user, token, tenant: user.tenant },
+        payload: { user: user || {}, token, tenant: user?.tenant || null },
       });
       return { success: true };
     } catch (err) {
-      dispatch({ type: 'SET_ERROR', payload: err.message });
       return { success: false, error: err.message };
     }
   };

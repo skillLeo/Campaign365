@@ -95,7 +95,7 @@ export default function QuickReportsScreen({ navigation }) {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 6, marginRight: 4 }}>
-            <Text style={{ color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 }}>‹</Text>
+            <Text style={{ color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 }}>‹</Text>
           </TouchableOpacity>
           <View style={styles.logoRow}>
             <View style={styles.sknlpBadge}>
@@ -163,7 +163,7 @@ export default function QuickReportsScreen({ navigation }) {
             { icon: '👤', label: 'Reports' },
           ].map((t, i) => (
             <TouchableOpacity key={i} style={styles.tabItem}>
-              <Text style={{ fontSize: 20 }}>{t.icon}</Text>
+              <Text style={{ fontSize: 25 }}>{t.icon}</Text>
               <Text style={[styles.tabLabel, t.active && styles.tabLabelActive]}>{t.label}</Text>
             </TouchableOpacity>
           ))}
@@ -181,12 +181,12 @@ const styles = StyleSheet.create({
   },
   logoRow:   { flexDirection: 'row', alignItems: 'center' },
   sknlpBadge: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sknlpFlag:  { fontSize: 28 },
-  sknlpTxt:   { color: 'white', fontWeight: '900', fontSize: 16 },
-  sknlpSub:   { color: 'rgba(255,255,255,0.4)', fontSize: 9 },
-  camp365:    { color: 'rgba(255,255,255,0.6)', fontSize: 14, fontWeight: '600' },
+  sknlpFlag:  { fontSize: 35 },
+  sknlpTxt:   { color: 'white', fontWeight: '900', fontSize: 20 },
+  sknlpSub:   { color: 'rgba(255,255,255,0.4)', fontSize: 11 },
+  camp365:    { color: 'rgba(255,255,255,0.6)', fontSize: 18, fontWeight: '600' },
   scroll: { paddingHorizontal: 20, paddingBottom: 20 },
-  title: { color: 'white', fontSize: 26, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5 },
+  title: { color: 'white', fontSize: 32, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 20 },
   card: {
     width: (width - 52) / 2,
@@ -198,20 +198,20 @@ const styles = StyleSheet.create({
     borderColor: GOLD, borderWidth: 1.5,
     shadowColor: GOLD, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.3, shadowRadius: 10,
   },
-  cardLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600', marginBottom: 6 },
-  cardValue: { color: 'white', fontSize: 48, fontWeight: '900', lineHeight: 52, letterSpacing: -1 },
-  cardUnit:  { color: 'rgba(255,255,255,0.4)', fontSize: 13 },
+  cardLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 16, fontWeight: '600', marginBottom: 6 },
+  cardValue: { color: 'white', fontSize: 60, fontWeight: '900', lineHeight: 65, letterSpacing: -1 },
+  cardUnit:  { color: 'rgba(255,255,255,0.4)', fontSize: 16 },
   exportBtn: {
     backgroundColor: RED, borderRadius: 14, paddingVertical: 17, alignItems: 'center',
     marginBottom: 14,
     shadowColor: RED, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
   },
-  exportTxt: { color: 'white', fontWeight: '900', fontSize: 17 },
+  exportTxt: { color: 'white', fontWeight: '900', fontSize: 21 },
   shareRow:  { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
-  shareIcon: { color: 'rgba(255,255,255,0.5)', fontSize: 16 },
-  shareTxt:  { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600' },
+  shareIcon: { color: 'rgba(255,255,255,0.5)', fontSize: 20 },
+  shareTxt:  { color: 'rgba(255,255,255,0.5)', fontSize: 16, fontWeight: '600' },
   tabBar:    { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 8 },
   tabItem:   { flex: 1, alignItems: 'center', gap: 3 },
-  tabLabel:  { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: '600' },
+  tabLabel:  { color: 'rgba(255,255,255,0.4)', fontSize: 12, fontWeight: '600' },
   tabLabelActive: { color: RED },
 });

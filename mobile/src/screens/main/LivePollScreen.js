@@ -1,250 +1,329 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  Animated, Dimensions, StatusBar,
+  TextInput, Dimensions, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path, Rect, Circle, G, Line } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
-const RED  = '#DC143C';
-const GOLD = '#D4A017';
+const NAVY     = '#001F3F';
+const GOLD     = '#C9A227';
+const GOLD_DRK = '#A6841E';
+const WHITE    = '#FFFFFF';
 
-const POLL_OPTIONS = [
-  { key: 'sknlp',      label: 'SKNLP',      color: RED,      icon: '✓' },
-  { key: 'opposition', label: 'Opposition',  color: '#2563EB',icon: '✓' },
-  { key: 'undecided',  label: 'Undecided',   color: GOLD,     icon: '✓' },
-  { key: 'other',      label: 'Other',       color: '#475569',icon: '✓' },
-];
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
 
-function Waveform({ active }) {
-  const bars = [3,5,9,6,13,8,11,5,9,7,4,10,7,12,8,10,5,9,6,13,8,5,10,7,11,9,6,12,8,5];
+function HamburgerIcon({ size = 22, color = WHITE }) {
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, flex: 1 }}>
-      {bars.map((h, i) => (
-        <View key={i} style={{
-          width: 3, height: active ? h * 2 : h,
-          backgroundColor: active ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
-          borderRadius: 2,
-        }} />
-      ))}
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Rect x="3" y="6"  width="18" height="2.5" rx="1.25" fill={color} />
+      <Rect x="3" y="11" width="18" height="2.5" rx="1.25" fill={color} />
+      <Rect x="3" y="16" width="18" height="2.5" rx="1.25" fill={color} />
+    </Svg>
   );
 }
 
-export default function LivePollScreen({ navigation }) {
-  const [selected,  setSelected]  = useState(null);
-  const [recording, setRecording] = useState(false);
-  const pulseAnim = useRef(new Animated.Value(1)).current;
+function CloseIcon({ size = 22, color = WHITE }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
 
-  useEffect(() => {
-    if (recording) {
-      Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulseAnim, { toValue: 1.15, duration: 500, useNativeDriver: true }),
-          Animated.timing(pulseAnim, { toValue: 1,    duration: 500, useNativeDriver: true }),
-        ])
-      ).start();
-    } else {
-      pulseAnim.setValue(1);
-    }
-  }, [recording]);
+function ShoppingCartIcon({ size = 44, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M17,18C15.89,18 15,18.89 15,20A2,2 0 0,0 17,22A2,2 0 0,0 19,20C19,18.89 18.11,18 17,18M1,2V4H3L6.6,11.59L5.25,14C5.09,14.32 5,14.65 5,15A2,2 0 0,0 7,17H19V15H7.42A0.25,0.25 0 0,1 7.17,14.75C7.17,14.7 7.18,14.66 7.2,14.63L8.1,13H15.55C16.3,13 16.96,12.59 17.3,11.97L20.88,5.5C20.95,5.34 21,5.17 21,5A1,1 0 0,0 20,4H5.21L4.27,2M7,18C5.89,18 5,18.89 5,20A2,2 0 0,0 7,22A2,2 0 0,0 9,20C9,18.89 8.11,18 7,18Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function HealthcareIcon({ size = 38, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M13,17H11V13H7V11H11V7H13V11H17V13H13V17Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function EducationIcon({ size = 38, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12,3L1,9L12,15L21,10.09V17H23V9M5,13.18V17.18L12,21L19,17.18V13.18L12,17L5,13.18Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function CrimeIcon({ size = 38, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M13.49,5.48C14.56,5.48 15.43,4.61 15.43,3.54C15.43,2.47 14.56,1.6 13.49,1.6C12.42,1.6 11.55,2.47 11.55,3.54C11.55,4.61 12.42,5.48 13.49,5.48M10.28,20.4C9.21,20.4 8.34,19.53 8.34,18.46C8.34,17.39 9.21,16.52 10.28,16.52C11.35,16.52 12.22,17.39 12.22,18.46C12.22,19.53 11.35,20.4 10.28,20.4M10.28,13.7C9.21,13.7 8.34,12.83 8.34,11.76C8.34,10.69 9.21,9.82 10.28,9.82C11.35,9.82 12.22,10.69 12.22,11.76C12.22,12.83 11.35,13.7 10.28,13.7M15.47,7.33L13.55,9.25C14.16,10.28 14.5,11.47 14.5,12.76C14.5,14.18 14.07,15.5 13.35,16.6L15.25,18.5C16.44,17.0 17.15,15.1 17.15,13.0C17.15,10.85 16.44,8.85 15.47,7.33Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function MicIcon({ size = 22, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12,14C13.66,14 15,12.66 15,11V5C15,3.34 13.66,2 12,2C10.34,2 9,3.34 9,5V11C9,12.66 10.34,14 12,14ZM17,11C17,13.76 14.76,16 12,16C9.24,16 7,13.76 7,11H5C5,14.53 7.61,17.43 11,17.92V20H9V22H15V20H13V17.92C16.39,17.43 19,14.53 19,11H17Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+// ─── Poll option card ─────────────────────────────────────────────────────────
+
+const POLL_OPTIONS = [
+  { key: 'cost',      label: 'Cost of Living', Icon: ShoppingCartIcon },
+  { key: 'health',    label: 'Healthcare',     Icon: HealthcareIcon   },
+  { key: 'education', label: 'Education',      Icon: EducationIcon    },
+  { key: 'crime',     label: 'Crime & Safety', Icon: CrimeIcon        },
+];
+
+function OptionCard({ option, selected, onPress }) {
+  return (
+    <TouchableOpacity
+      style={[st.optCard, selected && st.optCardSelected]}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
+      <option.Icon size={38} color={selected ? WHITE : NAVY} />
+      <Text style={[st.optLabel, selected && st.optLabelSelected]}>
+        {option.label}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+
+// ─── Screen ───────────────────────────────────────────────────────────────────
+
+export default function LivePollScreen({ navigation }) {
+  const [selected, setSelected]   = useState(null);
+  const [otherText, setOtherText] = useState('');
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView>
-        {/* Top bar */}
-        <View style={styles.topBar}>
-          <View style={styles.logoCol}>
-            <View style={styles.logoRow}>
-              <Text style={styles.logoEmoji}>🚀</Text>
-              <Text style={styles.logoCamp}>Campaign 365</Text>
-            </View>
-            <Text style={styles.logoSKNLP}>SKNLP</Text>
-          </View>
-          <Text style={styles.userLabel}>Sarah James — Canvasser</Text>
-        </View>
+    <View style={st.root}>
+      <StatusBar barStyle="light-content" backgroundColor={NAVY} />
 
-        {/* Offline badge */}
-        <View style={styles.offlineWrap}>
-          <View style={styles.offlineBadge}>
-            <View style={styles.offlineDot} />
-            <Text style={styles.offlineText}>Offline Mode Ready</Text>
-          </View>
-        </View>
+      {/* Header */}
+      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']}>
+        <View style={st.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={st.headerBtn}>
+            <HamburgerIcon size={22} color={WHITE} />
+          </TouchableOpacity>
 
-        {/* Title */}
-        <View style={styles.titleWrap}>
-          <Text style={styles.title}>Live Voter Poll — Basseterre Turf</Text>
-          <Text style={styles.subtitle}>Polling in your area</Text>
+          <View style={st.headerCenter}>
+            <Text style={st.headerTitle}>Quick Survey - Polling</Text>
+            <Text style={st.headerSub}>Division 12</Text>
+          </View>
+
+          <TouchableOpacity onPress={() => navigation.goBack()} style={st.headerBtn}>
+            <CloseIcon size={22} color={WHITE} />
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Poll card */}
-        <View style={styles.pollCard}>
-          <Text style={styles.pollQuestion}>Who will you support on{'\n'}Election Day?</Text>
-          <View style={styles.optionsGrid}>
-            {POLL_OPTIONS.map(opt => (
-              <TouchableOpacity
-                key={opt.key}
-                style={[styles.optionBtn, { backgroundColor: opt.color }, selected === opt.key && styles.optionBtnSelected]}
-                onPress={() => setSelected(opt.key)}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.optionIcon}>{opt.icon}</Text>
-                <Text style={styles.optionLabel}>{opt.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={st.scroll}>
 
-          {/* Dot indicators */}
-          <View style={styles.dotsRow}>
-            {[0,1,2,3,4,5].map(i => (
-              <View key={i} style={[styles.dot, i === 0 && styles.dotActive]} />
-            ))}
+        {/* Question */}
+        <Text style={st.question}>
+          What is the most important issue facing your family right now?
+        </Text>
+
+        {/* 2×2 option grid */}
+        <View style={st.grid}>
+          {POLL_OPTIONS.map(opt => (
+            <OptionCard
+              key={opt.key}
+              option={opt}
+              selected={selected === opt.key}
+              onPress={() => setSelected(opt.key)}
+            />
+          ))}
+        </View>
+
+        {/* Other input */}
+        <View style={st.otherRow}>
+          <TextInput
+            style={st.otherInput}
+            placeholder="Other (type or speak)"
+            placeholderTextColor="rgba(0,31,63,0.4)"
+            value={otherText}
+            onChangeText={setOtherText}
+          />
+          <View style={st.micWrap}>
+            <MicIcon size={22} color={NAVY} />
           </View>
         </View>
 
-        {/* STT button */}
+        {/* Progress */}
+        <Text style={st.progress}>Question 2 of 5</Text>
+
+        {/* Submit */}
         <TouchableOpacity
-          style={styles.sttBtn}
-          onPress={() => setRecording(v => !v)}
+          style={st.submitBtn}
           activeOpacity={0.85}
+          onPress={() => navigation.goBack()}
         >
-          <Text style={styles.sttBtnTxt}>{recording ? '⏹ Stop Recording' : 'Start Speech-to-Text'}</Text>
+          <Text style={st.submitBtnText}>Submit & Continue</Text>
         </TouchableOpacity>
 
-        {/* Mic + waveform */}
-        <View style={styles.micRow}>
-          <Waveform active={recording} />
-          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-            <TouchableOpacity
-              style={[styles.micBtn, recording && styles.micBtnActive]}
-              onPress={() => setRecording(v => !v)}
-            >
-              <Text style={styles.micIcon}>🎤</Text>
-            </TouchableOpacity>
-          </Animated.View>
-          <Waveform active={recording} />
+        {/* Skip / Save */}
+        <View style={st.skipRow}>
+          <TouchableOpacity activeOpacity={0.7}>
+            <Text style={st.skipText}>Skip</Text>
+          </TouchableOpacity>
+          <Text style={st.divider}>|</Text>
+          <TouchableOpacity activeOpacity={0.7}>
+            <Text style={st.skipText}>Save for Later</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Transcript */}
-        <View style={styles.transcriptBox}>
-          <Text style={styles.transcriptText}>
-            Voter: "I'm voting Labour because of the new hospital"
-          </Text>
-        </View>
-
-        {/* Bottom counter row */}
-        <View style={styles.counterRow}>
-          <Text style={styles.counterText}>12/87 voters</Text>
-          <View style={styles.micPill}>
-            <Text style={{ fontSize: 16 }}>🎤</Text>
-          </View>
-          <Text style={styles.counterText}>polled today</Text>
-        </View>
-
-        <View style={{ height: 30 }} />
+        <View style={{ height: 40 }} />
       </ScrollView>
-
-      {/* Panic button floating */}
-      <TouchableOpacity
-        style={styles.panicFloat}
-        onPress={() => navigation.navigate('Panic')}
-      >
-        <Text style={styles.panicFloatTxt}>Panic Button</Text>
-        <Text style={styles.panicFloatSub}>Emergency: Hold 3s</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#080E1C' },
-  topBar: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end',
-    paddingHorizontal: 20, paddingTop: 10, paddingBottom: 8,
+const CARD_SIZE = (width - 56) / 2;
+
+const st = StyleSheet.create({
+  root:   { flex: 1, backgroundColor: NAVY },
+  scroll: { paddingHorizontal: 20, paddingTop: 8 },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  logoCol:   { gap: 0 },
-  logoRow:   { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  logoEmoji: { fontSize: 14 },
-  logoCamp:  { color: 'rgba(255,255,255,0.7)', fontSize: 12, fontWeight: '600' },
-  logoSKNLP: { color: 'white', fontWeight: '900', fontSize: 20, letterSpacing: 1 },
-  userLabel: { color: 'rgba(255,255,255,0.65)', fontSize: 13, fontWeight: '600' },
-  offlineWrap: { paddingHorizontal: 20, marginBottom: 8 },
-  offlineBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 8,
-    paddingHorizontal: 12, paddingVertical: 6, alignSelf: 'flex-start',
+  headerBtn: {
+    width: 40, height: 40, alignItems: 'center', justifyContent: 'center',
   },
-  offlineDot:  { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22C55E' },
-  offlineText: { color: 'white', fontSize: 12, fontWeight: '600' },
-  titleWrap:   { paddingHorizontal: 20, paddingBottom: 12 },
-  title:       { color: 'white', fontSize: 22, fontWeight: '900', lineHeight: 28 },
-  subtitle:    { color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 3 },
-  pollCard: {
-    marginHorizontal: 20, backgroundColor: '#111827',
-    borderRadius: 18, padding: 20, marginBottom: 16,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+  headerCenter: { flex: 1, alignItems: 'center' },
+  headerTitle:  { color: WHITE, fontWeight: '800', fontSize: 21 },
+  headerSub:    { color: 'rgba(255,255,255,0.6)', fontSize: 15, marginTop: 2 },
+
+  // Question
+  question: {
+    color: WHITE,
+    fontWeight: '900',
+    fontSize: 28,
+    lineHeight: 38,
+    textAlign: 'center',
+    marginBottom: 24,
   },
-  pollQuestion: {
-    color: 'white', fontSize: 18, fontWeight: '800',
-    textAlign: 'center', marginBottom: 20, lineHeight: 26,
+
+  // Grid
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 14,
+    justifyContent: 'center',
+    marginBottom: 20,
   },
-  optionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  optionBtn: {
-    width: (width - 84) / 2,
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    paddingVertical: 14, paddingHorizontal: 16,
-    borderRadius: 12,
+  optCard: {
+    width: CARD_SIZE,
+    height: CARD_SIZE * 0.9,
+    backgroundColor: GOLD,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 6,
   },
-  optionBtnSelected: { borderWidth: 2.5, borderColor: 'white' },
-  optionIcon:  { color: 'white', fontWeight: '900', fontSize: 16 },
-  optionLabel: { color: 'white', fontWeight: '800', fontSize: 15 },
-  dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 16 },
-  dot:       { width: 7, height: 7, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.2)' },
-  dotActive: { backgroundColor: 'white', width: 18 },
-  sttBtn: {
-    marginHorizontal: 20, backgroundColor: RED, borderRadius: 30,
-    paddingVertical: 16, alignItems: 'center', marginBottom: 14,
-    shadowColor: RED, shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4, shadowRadius: 12, elevation: 10,
+  optCardSelected: {
+    backgroundColor: GOLD_DRK,
+    borderWidth: 3,
+    borderColor: WHITE,
   },
-  sttBtnTxt: { color: 'white', fontWeight: '900', fontSize: 16 },
-  micRow: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 20, gap: 10, marginBottom: 14,
+  optLabel: {
+    color: NAVY,
+    fontWeight: '800',
+    fontSize: 18,
+    textAlign: 'center',
+    paddingHorizontal: 4,
   },
-  micBtn: {
-    width: 52, height: 52, borderRadius: 26,
-    backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: 'rgba(255,255,255,0.15)',
+  optLabelSelected: { color: WHITE },
+
+  // Other input
+  otherRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: WHITE,
+    borderRadius: 14,
+    marginBottom: 16,
+    paddingHorizontal: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  micBtnActive: { backgroundColor: RED, borderColor: RED },
-  micIcon: { fontSize: 22 },
-  transcriptBox: {
-    marginHorizontal: 20, backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 14, padding: 16, marginBottom: 14,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+  otherInput: {
+    flex: 1,
+    color: NAVY,
+    fontSize: 18,
+    paddingVertical: 14,
+    fontWeight: '500',
   },
-  transcriptText: { color: 'white', fontSize: 14, lineHeight: 22, fontStyle: 'italic' },
-  counterRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 12, paddingVertical: 6,
+  micWrap: { padding: 6 },
+
+  // Progress
+  progress: {
+    color: GOLD,
+    fontWeight: '700',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 18,
   },
-  counterText: { color: 'rgba(255,255,255,0.6)', fontSize: 13, fontWeight: '600' },
-  micPill: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+
+  // Submit
+  submitBtn: {
+    backgroundColor: GOLD,
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+    marginBottom: 14,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.45,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  panicFloat: {
-    position: 'absolute', bottom: 20, right: 16,
-    backgroundColor: RED, borderRadius: 10,
-    paddingHorizontal: 12, paddingVertical: 8,
-    shadowColor: RED, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 10,
+  submitBtnText: { color: NAVY, fontWeight: '900', fontSize: 21 },
+
+  // Skip row
+  skipRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 16,
   },
-  panicFloatTxt: { color: 'white', fontWeight: '900', fontSize: 12 },
-  panicFloatSub: { color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 1 },
+  skipText:  { color: 'rgba(255,255,255,0.6)', fontWeight: '600', fontSize: 18 },
+  divider:   { color: 'rgba(255,255,255,0.25)', fontSize: 18 },
 });

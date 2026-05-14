@@ -4,15 +4,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // For iOS Simulator: localhost works
 // For Android Emulator: 10.0.2.2
 // For physical device: your computer's LAN IP e.g. 192.168.1.x
-export const BASE_URL = 'http://localhost:8080/api/v1';
+export const BASE_URL = 'https://campaign365-cp.skillleo.com/api/v1';
 
 const getHeaders = async () => {
   const token     = await AsyncStorage.getItem('c365_token');
   const subdomain = await AsyncStorage.getItem('c365_subdomain') || 'sknlp';
   return {
-    'Content-Type':      'application/json',
-    'Accept':            'application/json',
-    'X-Tenant-Subdomain': subdomain,
+    'Content-Type':        'application/json',
+    'Accept':              'application/json',
+    'X-Tenant-Subdomain':  subdomain,
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 };

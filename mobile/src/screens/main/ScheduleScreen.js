@@ -85,14 +85,14 @@ const s = StyleSheet.create({
     paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4,
   },
   backBtn:      { padding: 6 },
-  backArrow:    { color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  backArrow:    { color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   headerCenter: { flex: 1, alignItems: 'center' },
-  sknlpTxt:     { color: GOLD, fontWeight: '900', fontSize: 18, letterSpacing: 1 },
-  camp365:      { color: 'rgba(255,255,255,0.6)', fontSize: 14, fontWeight: '600' },
+  sknlpTxt:     { color: GOLD, fontWeight: '900', fontSize: 22, letterSpacing: 1 },
+  camp365:      { color: 'rgba(255,255,255,0.6)', fontSize: 18, fontWeight: '600' },
 
   titleWrap: { alignItems: 'center', marginTop: 8, marginBottom: 20 },
   title: {
-    color: 'white', fontSize: 34, fontWeight: '900', letterSpacing: -0.5,
+    color: 'white', fontSize: 42, fontWeight: '900', letterSpacing: -0.5,
   },
   titleUnderline: {
     marginTop: 6, height: 3, width: 60, borderRadius: 2, backgroundColor: GOLD,
@@ -103,7 +103,7 @@ const s = StyleSheet.create({
     paddingHorizontal: 12, marginBottom: 12,
   },
   dayCol:    { alignItems: 'center', gap: 6 },
-  dayLabel:  { color: 'rgba(255,255,255,0.35)', fontSize: 11, fontWeight: '700', letterSpacing: 0.5 },
+  dayLabel:  { color: 'rgba(255,255,255,0.35)', fontSize: 14, fontWeight: '700', letterSpacing: 0.5 },
   dayLabelActive: { color: GOLD },
   dateBubble: {
     width: 36, height: 36, borderRadius: 10,
@@ -113,7 +113,7 @@ const s = StyleSheet.create({
     backgroundColor: GOLD,
     shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.6, shadowRadius: 10,
   },
-  dateNum:       { color: 'rgba(255,255,255,0.5)', fontSize: 16, fontWeight: '700' },
+  dateNum:       { color: 'rgba(255,255,255,0.5)', fontSize: 20, fontWeight: '700' },
   dateNumActive: { color: '#0A0A0A', fontWeight: '900' },
 
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.07)', marginHorizontal: 20 },
@@ -129,8 +129,8 @@ const s = StyleSheet.create({
     borderColor: GOLD, borderWidth: 1.5,
   },
   taskLeft: { flex: 1 },
-  taskLabel: { color: 'white', fontWeight: '700', fontSize: 15, lineHeight: 22, marginBottom: 4 },
-  taskVoters: { color: 'rgba(255,255,255,0.45)', fontSize: 13 },
+  taskLabel: { color: 'white', fontWeight: '700', fontSize: 19, lineHeight: 28, marginBottom: 4 },
+  taskVoters: { color: 'rgba(255,255,255,0.45)', fontSize: 16 },
 
   startBtn: {
     backgroundColor: 'rgba(201,168,76,0.15)',
@@ -138,6 +138,6 @@ const s = StyleSheet.create({
     borderWidth: 1.5, borderColor: GOLD,
   },
   startBtnAccent: { backgroundColor: GOLD },
-  startTxt:       { color: GOLD, fontWeight: '800', fontSize: 13 },
+  startTxt:       { color: GOLD, fontWeight: '800', fontSize: 16 },
   startTxtAccent: { color: '#0A0A0A' },
 });

@@ -77,7 +77,7 @@ export default function ElectionNightScreen({ navigation }) {
             <Text style={s.backArrow}>‹</Text>
           </TouchableOpacity>
           <View style={s.sknlpRow}>
-            <View style={s.shieldIcon}><Text style={{ fontSize: 14 }}>⭐</Text></View>
+            <View style={s.shieldIcon}><Text style={{ fontSize: 18 }}>⭐</Text></View>
             <Text style={s.sknlpTxt}>SKNLP</Text>
           </View>
           <TouchableOpacity>
@@ -149,7 +149,7 @@ export default function ElectionNightScreen({ navigation }) {
           <View style={s.feedPlaceholder}>
             <View style={s.flagEmojis}>
               {['🎉','🇰🇳','⭐','🎊','🇰🇳'].map((e, i) => (
-                <Text key={i} style={{ fontSize: 28 }}>{e}</Text>
+                <Text key={i} style={{ fontSize: 35 }}>{e}</Text>
               ))}
             </View>
             <Text style={s.feedSub}>SKNLP Victory Celebration</Text>
@@ -167,20 +167,20 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 10,
   },
   backBtn:   { padding: 6 },
-  backArrow: { color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  backArrow: { color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   sknlpRow:  { flexDirection: 'row', alignItems: 'center', gap: 8 },
   shieldIcon: {
     width: 28, height: 28, borderRadius: 6, backgroundColor: RED,
     alignItems: 'center', justifyContent: 'center',
   },
-  sknlpTxt:  { color: 'white', fontWeight: '900', fontSize: 17, letterSpacing: 1 },
-  chevrons:  { color: 'rgba(255,255,255,0.6)', fontSize: 16, fontWeight: '700' },
+  sknlpTxt:  { color: 'white', fontWeight: '900', fontSize: 21, letterSpacing: 1 },
+  chevrons:  { color: 'rgba(255,255,255,0.6)', fontSize: 20, fontWeight: '700' },
 
   scroll: { paddingHorizontal: 16, paddingBottom: 40 },
 
   titleWrap: { paddingTop: 20, paddingBottom: 16 },
-  titleWhite: { color: 'white', fontSize: 32, fontWeight: '900', lineHeight: 36 },
-  titleRed:   { color: RED, fontSize: 32, fontWeight: '900', lineHeight: 36 },
+  titleWhite: { color: 'white', fontSize: 40, fontWeight: '900', lineHeight: 45 },
+  titleRed:   { color: RED, fontSize: 40, fontWeight: '900', lineHeight: 45 },
 
   mapSection: {
     flexDirection: 'row', gap: 6, alignItems: 'center', marginBottom: 16,
@@ -190,12 +190,12 @@ const s = StyleSheet.create({
   mapWrap:     { flex: 1 },
 
   constLabel: { gap: 3 },
-  constName:  { color: 'rgba(255,255,255,0.6)', fontSize: 8, fontWeight: '700', letterSpacing: 0.3 },
+  constName:  { color: 'rgba(255,255,255,0.6)', fontSize: 10, fontWeight: '700', letterSpacing: 0.3 },
   barTrack: {
     height: 3, backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 2, overflow: 'hidden',
   },
   barFill:   { height: '100%', backgroundColor: RED, borderRadius: 2 },
-  constPct:  { color: 'white', fontWeight: '900', fontSize: 11 },
+  constPct:  { color: 'white', fontWeight: '900', fontSize: 14 },
 
   statsRow: {
     flexDirection: 'row', backgroundColor: '#111827',
@@ -204,8 +204,8 @@ const s = StyleSheet.create({
   },
   statBox: { flex: 1, paddingVertical: 16, paddingHorizontal: 16 },
   statDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.08)', marginVertical: 12 },
-  statLabel: { color: 'rgba(255,255,255,0.55)', fontSize: 12, fontWeight: '600', marginBottom: 4 },
-  statValue: { color: 'white', fontSize: 18, fontWeight: '900' },
+  statLabel: { color: 'rgba(255,255,255,0.55)', fontSize: 15, fontWeight: '600', marginBottom: 4 },
+  statValue: { color: 'white', fontSize: 22, fontWeight: '900' },
 
   liveFeed: { backgroundColor: '#111827', borderRadius: 14, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)' },
   liveBadge: {
@@ -213,11 +213,11 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingTop: 12, paddingBottom: 8,
   },
   liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#22C55E' },
-  liveTxt: { color: 'white', fontWeight: '800', fontSize: 14 },
+  liveTxt: { color: 'white', fontWeight: '800', fontSize: 18 },
   feedPlaceholder: {
     alignItems: 'center', paddingVertical: 24, gap: 8,
     backgroundColor: 'rgba(220,20,60,0.08)',
   },
   flagEmojis: { flexDirection: 'row', gap: 8 },
-  feedSub: { color: 'rgba(255,255,255,0.5)', fontSize: 13, fontWeight: '600' },
+  feedSub: { color: 'rgba(255,255,255,0.5)', fontSize: 16, fontWeight: '600' },
 });

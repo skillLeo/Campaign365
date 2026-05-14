@@ -36,7 +36,7 @@ function WaveBar() {
 
 const BACK_BTN = ({ navigation }) => (
   <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 8, marginRight: 4 }}>
-    <Text style={{ color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 }}>‹</Text>
+    <Text style={{ color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 }}>‹</Text>
   </TouchableOpacity>
 );
 
@@ -142,13 +142,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 12,
   },
   logoRow:    { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  flagEmoji:  { fontSize: 22 },
-  logoSKNLP:  { color: 'white', fontWeight: '900', fontSize: 15, letterSpacing: 1 },
-  logoCamp:   { color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: '600', letterSpacing: 1 },
+  flagEmoji:  { fontSize: 28 },
+  logoSKNLP:  { color: 'white', fontWeight: '900', fontSize: 19, letterSpacing: 1 },
+  logoCamp:   { color: 'rgba(255,255,255,0.5)', fontSize: 14, fontWeight: '600', letterSpacing: 1 },
   menuBtn:    { padding: 4 },
-  menuIcon:   { color: 'white', fontSize: 22 },
+  menuIcon:   { color: 'white', fontSize: 28 },
   title: {
-    color: 'white', fontSize: 26, fontWeight: '900',
+    color: 'white', fontSize: 32, fontWeight: '900',
     paddingHorizontal: 20, marginBottom: 16, letterSpacing: -0.5,
   },
   tabWrap: {
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 1, paddingVertical: 10, borderRadius: 9, alignItems: 'center',
   },
   tabBtnActive: { backgroundColor: '#334155' },
-  tabTxt:       { color: 'rgba(255,255,255,0.5)', fontWeight: '600', fontSize: 14 },
+  tabTxt:       { color: 'rgba(255,255,255,0.5)', fontWeight: '600', fontSize: 18 },
   tabTxtActive: { color: 'white', fontWeight: '800' },
   card: {
     borderRadius: 16, overflow: 'hidden',
@@ -173,15 +173,15 @@ const styles = StyleSheet.create({
   cardContent: {
     flexDirection: 'row', padding: 16, gap: 12,
   },
-  cardDate:     { color: 'white', fontWeight: '700', fontSize: 14, marginBottom: 2 },
-  cardLocation: { color: '#22C55E', fontWeight: '800', fontSize: 16, marginBottom: 3 },
-  cardVoters:   { color: 'white', fontWeight: '800', fontSize: 14, marginBottom: 3 },
-  cardNotes:    { color: 'rgba(255,255,255,0.65)', fontSize: 12 },
-  cardTurf:     { color: 'rgba(255,255,255,0.4)', fontSize: 11, marginTop: 3 },
+  cardDate:     { color: 'white', fontWeight: '700', fontSize: 18, marginBottom: 2 },
+  cardLocation: { color: '#22C55E', fontWeight: '800', fontSize: 20, marginBottom: 3 },
+  cardVoters:   { color: 'white', fontWeight: '800', fontSize: 18, marginBottom: 3 },
+  cardNotes:    { color: 'rgba(255,255,255,0.65)', fontSize: 15 },
+  cardTurf:     { color: 'rgba(255,255,255,0.4)', fontSize: 14, marginTop: 3 },
   cardRight:    { alignItems: 'center', justifyContent: 'center', gap: 12 },
   audioBtn:     { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(0,0,0,0.3)', alignItems: 'center', justifyContent: 'center' },
-  audioIcon:    { fontSize: 18 },
+  audioIcon:    { fontSize: 22 },
   checkCircle:  { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
   checkCircleSynced: { backgroundColor: RED },
-  checkIcon:    { color: 'white', fontWeight: '900', fontSize: 18 },
+  checkIcon:    { color: 'white', fontWeight: '900', fontSize: 22 },
 });
