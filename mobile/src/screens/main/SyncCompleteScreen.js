@@ -121,27 +121,27 @@ const s = StyleSheet.create({
     shadowColor: '#22C55E', shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.55, shadowRadius: 20,
   },
-  checkMark: { color: 'white', fontSize: 52, fontWeight: '900' },
+  checkMark: { color: 'white', fontSize: 65, fontWeight: '900' },
 
   syncTitle: {
-    color: 'white', fontSize: 28, fontWeight: '900', marginBottom: 8,
+    color: 'white', fontSize: 35, fontWeight: '900', marginBottom: 8,
     letterSpacing: -0.3,
   },
   countNum: {
-    color: 'white', fontSize: 64, fontWeight: '900', lineHeight: 68, letterSpacing: -2,
+    color: 'white', fontSize: 80, fontWeight: '900', lineHeight: 85, letterSpacing: -2,
   },
-  countLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 22, fontWeight: '700', marginBottom: 8 },
-  safeMsg:   { color: 'rgba(255,255,255,0.45)', fontSize: 14, marginBottom: 28 },
+  countLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 28, fontWeight: '700', marginBottom: 8 },
+  safeMsg:   { color: 'rgba(255,255,255,0.45)', fontSize: 18, marginBottom: 28 },
 
   shareBtn: {
     backgroundColor: BLUE, borderRadius: 14, paddingVertical: 17,
     alignItems: 'center', width: width - 56, marginBottom: 10,
     shadowColor: BLUE, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
   },
-  shareTxt:  { color: 'white', fontWeight: '800', fontSize: 16 },
+  shareTxt:  { color: 'white', fontWeight: '800', fontSize: 20 },
   shareNote: {
-    color: 'rgba(255,255,255,0.4)', fontSize: 12, textAlign: 'center',
-    lineHeight: 18, marginBottom: 20, paddingHorizontal: 10,
+    color: 'rgba(255,255,255,0.4)', fontSize: 15, textAlign: 'center',
+    lineHeight: 22, marginBottom: 20, paddingHorizontal: 10,
   },
 
   celebRow: { width: width - 56, marginBottom: 20 },
@@ -157,7 +157,7 @@ const s = StyleSheet.create({
     alignItems: 'center', width: width - 56,
     shadowColor: BLUE, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
   },
-  homeTxt: { color: 'white', fontWeight: '800', fontSize: 16 },
+  homeTxt: { color: 'white', fontWeight: '800', fontSize: 20 },
 
   panicFab: {
     position: 'absolute', bottom: 36, right: 20,
@@ -166,6 +166,6 @@ const s = StyleSheet.create({
     alignItems: 'center',
     shadowColor: RED, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 10,
   },
-  panicIcon: { fontSize: 18 },
-  panicTxt:  { color: 'white', fontWeight: '900', fontSize: 10, marginTop: 2 },
+  panicIcon: { fontSize: 22 },
+  panicTxt:  { color: 'white', fontWeight: '900', fontSize: 12, marginTop: 2 },
 });

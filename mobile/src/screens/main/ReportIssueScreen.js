@@ -70,7 +70,7 @@ export default function ReportIssueScreen({ navigation }) {
             <View style={s.tipsHeader}>
               <Text style={s.tipsTitleTxt}>Safety Tips</Text>
               <TouchableOpacity onPress={() => setShowTips(false)}>
-                <Text style={{ color: '#999', fontSize: 16 }}>✕</Text>
+                <Text style={{ color: '#999', fontSize: 20 }}>✕</Text>
               </TouchableOpacity>
             </View>
             {SAFETY_TIPS.map((tip, i) => (
@@ -82,7 +82,7 @@ export default function ReportIssueScreen({ navigation }) {
         {/* Photo + GPS row */}
         <View style={s.photoRow}>
           <View style={s.photoBox}>
-            <Text style={{ fontSize: 32 }}>🖼</Text>
+            <Text style={{ fontSize: 40 }}>🖼</Text>
             <Text style={s.photoLabel}>GPS 📷</Text>
           </View>
           <View style={s.locationBox}>
@@ -121,7 +121,7 @@ export default function ReportIssueScreen({ navigation }) {
         style={s.panicFab}
         onPress={() => navigation.navigate('Panic')}
       >
-        <Text style={{ fontSize: 22 }}>🆘</Text>
+        <Text style={{ fontSize: 28 }}>🆘</Text>
       </TouchableOpacity>
     </View>
   );
@@ -135,16 +135,16 @@ const s = StyleSheet.create({
     backgroundColor: 'white',
   },
   backBtn:   { padding: 6 },
-  backArrow: { color: '#333', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  backArrow: { color: '#333', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   logoRow:   { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  sknlpTxt:  { color: RED, fontWeight: '900', fontSize: 18, letterSpacing: 1 },
-  camp365:   { color: '#333', fontWeight: '700', fontSize: 14 },
-  menuIcon:  { color: '#333', fontSize: 22 },
+  sknlpTxt:  { color: RED, fontWeight: '900', fontSize: 22, letterSpacing: 1 },
+  camp365:   { color: '#333', fontWeight: '700', fontSize: 18 },
+  menuIcon:  { color: '#333', fontSize: 28 },
 
   redBanner: {
     backgroundColor: RED, paddingVertical: 14, paddingHorizontal: 20,
   },
-  bannerTxt: { color: 'white', fontWeight: '800', fontSize: 17 },
+  bannerTxt: { color: 'white', fontWeight: '800', fontSize: 21 },
 
   scroll: { padding: 16, paddingBottom: 100 },
 
@@ -158,8 +158,8 @@ const s = StyleSheet.create({
     shadowOpacity: 0.06, shadowRadius: 6,
   },
   issueBtnActive:  { backgroundColor: RED, borderColor: RED },
-  issueIcon:       { fontSize: 26 },
-  issueLabel:      { color: '#333', fontWeight: '700', fontSize: 13, textAlign: 'center' },
+  issueIcon:       { fontSize: 32 },
+  issueLabel:      { color: '#333', fontWeight: '700', fontSize: 16, textAlign: 'center' },
   issueLabelActive:{ color: 'white' },
 
   tipsCard: {
@@ -168,8 +168,8 @@ const s = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 6,
   },
   tipsHeader:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  tipsTitleTxt:{ color: '#111', fontWeight: '800', fontSize: 15 },
-  tipItem:     { color: '#444', fontSize: 14, lineHeight: 24, fontWeight: '500' },
+  tipsTitleTxt:{ color: '#111', fontWeight: '800', fontSize: 19 },
+  tipItem:     { color: '#444', fontSize: 18, lineHeight: 30, fontWeight: '500' },
 
   photoRow: { flexDirection: 'row', gap: 10, marginBottom: 14 },
   photoBox: {
@@ -177,29 +177,29 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', paddingVertical: 20,
     borderWidth: 1, borderColor: '#E5E7EB', gap: 4,
   },
-  photoLabel:   { color: '#666', fontSize: 12, fontWeight: '600' },
+  photoLabel:   { color: '#666', fontSize: 15, fontWeight: '600' },
   locationBox: {
     flex: 1, backgroundColor: 'white', borderRadius: 12,
     justifyContent: 'center', paddingHorizontal: 14,
     borderWidth: 1, borderColor: '#E5E7EB',
   },
-  locationPre: { color: '#999', fontSize: 12, marginBottom: 4 },
-  locationVal: { color: '#111', fontWeight: '700', fontSize: 14 },
+  locationPre: { color: '#999', fontSize: 15, marginBottom: 4 },
+  locationVal: { color: '#111', fontWeight: '700', fontSize: 18 },
 
   notesWrap: {
     backgroundColor: 'white', borderRadius: 12, marginBottom: 16,
     borderWidth: 1, borderColor: '#E5E7EB',
     paddingHorizontal: 14, paddingVertical: 12,
   },
-  notesInput: { color: '#333', fontSize: 13, lineHeight: 20, minHeight: 60 },
+  notesInput: { color: '#333', fontSize: 16, lineHeight: 25, minHeight: 60 },
 
   submitBtn: {
     backgroundColor: RED, borderRadius: 14, paddingVertical: 18,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     shadowColor: RED, shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 12,
   },
-  submitIcon: { fontSize: 18 },
-  submitTxt:  { color: 'white', fontWeight: '900', fontSize: 16 },
+  submitIcon: { fontSize: 22 },
+  submitTxt:  { color: 'white', fontWeight: '900', fontSize: 20 },
 
   panicFab: {
     position: 'absolute', bottom: 32, right: 20,

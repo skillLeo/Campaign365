@@ -97,13 +97,13 @@ export default function RecruitVolunteerScreen({ navigation }) {
           <View style={s.successBox}>
             {success ? (
               <>
-                <Text style={{ fontSize: 48 }}>✅</Text>
+                <Text style={{ fontSize: 60 }}>✅</Text>
                 <Text style={s.successMsg}>Volunteer successfully added{'\n'}to the Red Wave team!</Text>
               </>
             ) : (
               <>
                 <View style={s.checkCircle}>
-                  <Text style={{ fontSize: 32 }}>✓</Text>
+                  <Text style={{ fontSize: 40 }}>✓</Text>
                 </View>
                 <Text style={s.successMsg}>You successfully Volunteer!{'\n'}Happy to join the Red Wave team!</Text>
               </>
@@ -120,7 +120,7 @@ export default function RecruitVolunteerScreen({ navigation }) {
         onPress={() => navigation.navigate('Panic')}
       >
         <View style={s.panicInner}>
-          <Text style={{ fontSize: 18 }}>⏻</Text>
+          <Text style={{ fontSize: 22 }}>⏻</Text>
           <Text style={s.panicTxt}>Panic{'\n'}Button</Text>
         </View>
       </TouchableOpacity>
@@ -135,20 +135,20 @@ const s = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 10, backgroundColor: 'white',
   },
   backBtn:    { padding: 6 },
-  backArrow:  { color: '#333', fontSize: 28, fontWeight: '300', lineHeight: 28 },
+  backArrow:  { color: '#333', fontSize: 35, fontWeight: '300', lineHeight: 35 },
   logoRow:    { flexDirection: 'row', alignItems: 'center', gap: 6 },
   logoCircle: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#FFE5E5', alignItems: 'center', justifyContent: 'center' },
-  logoIcon:   { fontSize: 14 },
-  sknlpTxt:   { color: '#DC143C', fontWeight: '900', fontSize: 18, letterSpacing: 1 },
-  camp365:    { color: '#333', fontWeight: '600', fontSize: 13 },
+  logoIcon:   { fontSize: 18 },
+  sknlpTxt:   { color: '#DC143C', fontWeight: '900', fontSize: 22, letterSpacing: 1 },
+  camp365:    { color: '#333', fontWeight: '600', fontSize: 16 },
 
   scroll: { padding: 20, paddingBottom: 100 },
 
   title: {
-    color: '#111', fontSize: 28, fontWeight: '900', letterSpacing: -0.5, marginBottom: 8,
+    color: '#111', fontSize: 35, fontWeight: '900', letterSpacing: -0.5, marginBottom: 8,
   },
   subtitle: {
-    color: '#555', fontSize: 14, lineHeight: 22, marginBottom: 20,
+    color: '#555', fontSize: 18, lineHeight: 28, marginBottom: 20,
   },
 
   formCard: {
@@ -157,11 +157,11 @@ const s = StyleSheet.create({
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.07, shadowRadius: 8,
   },
-  sectionLabel: { color: '#111', fontWeight: '800', fontSize: 16, marginBottom: 16 },
+  sectionLabel: { color: '#111', fontWeight: '800', fontSize: 20, marginBottom: 16 },
 
   formGrid: { flexDirection: 'row', gap: 20, marginBottom: 16 },
   formCol:  { flex: 1, gap: 12 },
-  colLabel: { color: '#111', fontWeight: '700', fontSize: 13, marginBottom: 4 },
+  colLabel: { color: '#111', fontWeight: '700', fontSize: 16, marginBottom: 4 },
 
   radioRow:  { flexDirection: 'row', alignItems: 'center', gap: 10 },
   radioOuter: {
@@ -171,13 +171,13 @@ const s = StyleSheet.create({
   },
   radioOuterActive: { borderColor: '#DC143C' },
   radioInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#DC143C' },
-  radioLabel: { color: '#333', fontSize: 14, fontWeight: '500' },
+  radioLabel: { color: '#333', fontSize: 18, fontWeight: '500' },
 
-  autoFillNote: { color: '#999', fontSize: 12, marginBottom: 8 },
+  autoFillNote: { color: '#999', fontSize: 15, marginBottom: 8 },
   infoInput: {
     borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 10,
     paddingHorizontal: 14, paddingVertical: 12,
-    color: '#333', fontSize: 14, marginBottom: 16,
+    color: '#333', fontSize: 18, marginBottom: 16,
   },
 
   signBtn: {
@@ -186,20 +186,20 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', gap: 8,
     shadowColor: '#DC143C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 10,
   },
-  signIcon: { color: 'white', fontSize: 18 },
-  signTxt:  { color: 'white', fontWeight: '900', fontSize: 16 },
+  signIcon: { color: 'white', fontSize: 22 },
+  signTxt:  { color: 'white', fontWeight: '900', fontSize: 20 },
 
   successPreview: { backgroundColor: 'white', borderRadius: 16, padding: 20,
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6,
   },
-  successTitle: { color: '#111', fontWeight: '800', fontSize: 16, marginBottom: 16, textAlign: 'center' },
+  successTitle: { color: '#111', fontWeight: '800', fontSize: 20, marginBottom: 16, textAlign: 'center' },
   successBox:   { alignItems: 'center', gap: 12, paddingVertical: 16 },
   checkCircle: {
     width: 64, height: 64, borderRadius: 32,
     backgroundColor: '#DCFCE7', borderWidth: 3, borderColor: '#22C55E',
     alignItems: 'center', justifyContent: 'center',
   },
-  successMsg: { color: '#555', fontSize: 13, textAlign: 'center', lineHeight: 20 },
+  successMsg: { color: '#555', fontSize: 16, textAlign: 'center', lineHeight: 25 },
 
   panicFab: {
     position: 'absolute', bottom: 32, right: 16,
@@ -208,5 +208,5 @@ const s = StyleSheet.create({
     shadowColor: '#DC143C', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.5, shadowRadius: 10,
   },
   panicInner: { alignItems: 'center', gap: 4 },
-  panicTxt:   { color: 'white', fontWeight: '900', fontSize: 11, textAlign: 'center' },
+  panicTxt:   { color: 'white', fontWeight: '900', fontSize: 14, textAlign: 'center' },
 });

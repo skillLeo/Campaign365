@@ -1,246 +1,308 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  TextInput, KeyboardAvoidingView, Platform, StatusBar,
+  StatusBar, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Svg, { Path, Rect, Circle, G, Ellipse } from 'react-native-svg';
 
-const RED = '#DC143C';
-const GREEN = '#22C55E';
+const { width } = Dimensions.get('window');
+const NAVY     = '#001F3F';
+const GOLD     = '#C9A227';
+const WHITE    = '#FFFFFF';
+const LIGHT_BG = '#F4F5F7';
+const GREEN    = '#22C55E';
+const RED      = '#EF4444';
 
-const MESSAGES = [
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
+
+function BackArrow({ size = 24, color = WHITE }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M20,11H7.83L13.42,5.41L12,4L4,12L12,20L13.41,18.59L7.83,13H20V11Z" fill={color} />
+    </Svg>
+  );
+}
+
+function RefreshIcon({ size = 22, color = WHITE }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M17.65,6.35C16.2,4.9 14.21,4 12,4C7.58,4 4.01,7.58 4.01,12C4.01,16.42 7.58,20 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18C8.69,18 6,15.31 6,12C6,8.69 8.69,6 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function PersonIcon({ size = 30, color = WHITE }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx="12" cy="8" r="4" fill={color} />
+      <Path d="M4,20 C4,15.58 7.58,12 12,12 C16.42,12 20,15.58 20,20Z" fill={color} />
+    </Svg>
+  );
+}
+
+function UKFlagMini({ size = 22 }) {
+  const h = size * 0.62;
+  return (
+    <Svg width={size} height={h} viewBox="0 0 44 28">
+      <Rect width="44" height="28" fill="#012169" />
+      <Path d="M0,0 L44,28 M44,0 L0,28" stroke="#fff" strokeWidth="5" />
+      <Path d="M0,0 L44,28 M44,0 L0,28" stroke="#C8102E" strokeWidth="3" />
+      <Path d="M22,0 V28 M0,14 H44" stroke="#fff" strokeWidth="9" />
+      <Path d="M22,0 V28 M0,14 H44" stroke="#C8102E" strokeWidth="5.5" />
+    </Svg>
+  );
+}
+
+function RunnerIcon({ size = 28, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx="14.5" cy="3.5" r="2.5" fill={color} />
+      <Path
+        d="M20.5,9.5L17,9L14.5,7L11,8.5L8,12H6V14H9L12,11L12.5,14L9,17V22H11V18L14,15L14.5,18L17.5,22H19.5L16,16.5L14.5,12L17,9.5L20.5,11V9.5Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function PlusIcon({ size = 18, color = NAVY }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" fill={color} />
+    </Svg>
+  );
+}
+
+// ─── Team member data ─────────────────────────────────────────────────────────
+
+const TEAM_MEMBERS = [
   {
-    id: 1, from: 'St. Kitts Nevis Labour', role: 'SKNLP',
-    text: 'Turf updates for Zone A — please confirm your door counts by 5 PM today.',
-    time: 'Pinned Day 10:30 AM', type: 'received', pinned: true,
+    id: 1,
+    avatar: 'flag', // renders UK flag
+    name: 'Cluster Manager - Sarah Khan',
+    status: 'Online',
+    statusColor: GREEN,
+    detail: '2.3km away',
+    online: true,
   },
   {
-    id: 2, from: 'St. Kitts Nevis Labour', role: 'SKNLP',
-    text: 'Turf updates — all teams report to Basseterre central by noon.',
-    time: 'Pinned Day 10:30 AM', type: 'received', pinned: true,
+    id: 2,
+    avatar: 'runner',
+    name: 'Runner - Michael Brown',
+    status: 'Online',
+    statusColor: GREEN,
+    detail: 'Delivering materials',
+    online: true,
   },
   {
-    id: 3, from: 'me',
-    text: 'Turf Zone A update confirmed — 45 doors knocked!',
-    time: 'Yesterday, 3:15 PM', type: 'sent',
+    id: 3,
+    avatar: 'person',
+    name: 'Canvasser - Priya Patel',
+    status: 'Online',
+    statusColor: GREEN,
+    detail: 'Polling Div. 12',
+    online: true,
   },
   {
-    id: 4, from: 'Cluster Manager', role: '6, N2',
-    avatar: '🗺',
-    text: '',
-    time: 'Yesterday, 4:35 PM', type: 'header',
+    id: 4,
+    avatar: 'person',
+    name: 'Canvasser - Jamal Wright',
+    status: 'Offline',
+    statusColor: RED,
+    detail: 'Last active 18 mins ago',
+    online: false,
   },
   {
-    id: 5, from: 'Cluster Manager', role: 'SKNLP',
-    text: 'Great work team! Keep it up for the final push.',
-    time: 'Yesterday, 4:35 PM', type: 'received',
-  },
-  {
-    id: 6, from: 'Herler Party', role: 'SKNLP',
-    text: 'On my way to Sandy Point now.',
-    time: 'Yesterday, 4:40 PM', type: 'received', online: true,
+    id: 5,
+    avatar: 'person',
+    name: 'Canvasser - Lisa Thompson',
+    status: 'Online',
+    statusColor: GREEN,
+    detail: 'Polling Div. 7',
+    online: true,
   },
 ];
 
-export default function TeamChatScreen({ navigation }) {
-  const [message, setMessage] = useState('');
-  const scrollRef = useRef(null);
-
+function AvatarCircle({ type }) {
+  const size = 48;
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <SafeAreaView style={{ backgroundColor: '#111827' }}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={styles.backArrow}>‹</Text>
-          </TouchableOpacity>
-          <View style={styles.headerCenter}>
-            <Text style={styles.headerTitle}>Team Chat — Basseterre Cluster</Text>
-          </View>
-          <TouchableOpacity style={styles.moreBtn}>
-            <Text style={styles.moreDots}>···</Text>
-          </TouchableOpacity>
+    <View style={avSt.wrap}>
+      {type === 'flag' ? (
+        <View style={[avSt.circle, { backgroundColor: '#012169', overflow: 'hidden' }]}>
+          <UKFlagMini size={48} />
         </View>
-      </SafeAreaView>
-
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={0}
-      >
-        <ScrollView
-          ref={scrollRef}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.msgList}
-          onContentSizeChange={() => scrollRef.current?.scrollToEnd({ animated: true })}
-        >
-          {MESSAGES.map((msg) => {
-            if (msg.type === 'header') {
-              return (
-                <View key={msg.id} style={styles.clusterHeader}>
-                  <View style={styles.clusterAvatar}>
-                    <Text style={{ fontSize: 18 }}>{msg.avatar}</Text>
-                  </View>
-                  <View>
-                    <View style={styles.clusterRow}>
-                      <Text style={styles.clusterName}>{msg.from}</Text>
-                      <View style={styles.clusterBadge}><Text style={styles.clusterBadgeTxt}>{msg.role}</Text></View>
-                    </View>
-                  </View>
-                </View>
-              );
-            }
-
-            if (msg.type === 'sent') {
-              return (
-                <View key={msg.id} style={styles.sentWrap}>
-                  {msg.time && <Text style={styles.timeLabel}>{msg.time}</Text>}
-                  <View style={styles.sentBubble}>
-                    <Text style={styles.sentTxt}>{msg.text}</Text>
-                    <Text style={styles.sentCheck}>✓</Text>
-                  </View>
-                </View>
-              );
-            }
-
-            return (
-              <View key={msg.id} style={styles.receivedWrap}>
-                {msg.time && <Text style={styles.timeLabel}>{msg.time}</Text>}
-                <View style={styles.receivedRow}>
-                  <View style={styles.senderAvatar}>
-                    <Text style={styles.senderAvatarTxt}>{msg.from[0]}</Text>
-                    {msg.online && <View style={styles.onlineDot} />}
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <View style={styles.senderMeta}>
-                      <Text style={styles.senderName}>{msg.from}</Text>
-                      {msg.role && <Text style={styles.senderRole}>{msg.role}</Text>}
-                    </View>
-                    <View style={styles.receivedBubble}>
-                      <Text style={styles.receivedTxt}>{msg.text}</Text>
-                      {msg.pinned && <Text style={styles.bubbleCheck}>✓</Text>}
-                    </View>
-                  </View>
-                </View>
-              </View>
-            );
-          })}
-          <View style={{ height: 20 }} />
-        </ScrollView>
-
-        {/* Input bar */}
-        <View style={styles.inputBar}>
-          <TextInput
-            style={styles.input}
-            placeholder="Message ···"
-            placeholderTextColor="rgba(255,255,255,0.3)"
-            value={message}
-            onChangeText={setMessage}
-            multiline
-          />
-          <TouchableOpacity style={styles.micBtn}>
-            <Text style={{ fontSize: 20 }}>🎤</Text>
-          </TouchableOpacity>
+      ) : type === 'runner' ? (
+        <View style={[avSt.circle, { backgroundColor: NAVY }]}>
+          <RunnerIcon size={26} color={GOLD} />
         </View>
-
-        {/* Bottom tabs */}
-        <SafeAreaView style={{ backgroundColor: '#0F172A' }}>
-          <View style={styles.tabBar}>
-            {[
-              { icon: '🎤', label: 'Safety'  },
-              { icon: '🗺️', label: 'Canvass' },
-              { icon: '💬', label: 'Chat',   active: true },
-              { icon: '📊', label: 'Track'   },
-              { icon: '⚙️', label: 'Settings' },
-            ].map((t, i) => (
-              <TouchableOpacity key={i} style={styles.tabItem}>
-                <Text style={{ fontSize: 20 }}>{t.icon}</Text>
-                <Text style={[styles.tabLabel, t.active && styles.tabLabelActive]}>{t.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
+      ) : (
+        <View style={[avSt.circle, { backgroundColor: NAVY }]}>
+          <PersonIcon size={28} color={GOLD} />
+        </View>
+      )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#080E1C' },
+const avSt = StyleSheet.create({
+  wrap:   { position: 'relative' },
+  circle: {
+    width: 48, height: 48, borderRadius: 24,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: GOLD,
+    overflow: 'hidden',
+  },
+});
+
+// ─── TeamChatScreen ───────────────────────────────────────────────────────────
+
+export default function TeamChatScreen({ navigation }) {
+  return (
+    <View style={st.root}>
+      <StatusBar barStyle="light-content" backgroundColor={NAVY} />
+
+      {/* Header */}
+      <SafeAreaView style={{ backgroundColor: NAVY }} edges={['top']}>
+        <View style={st.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={st.headerBtn}>
+            <BackArrow size={24} color={WHITE} />
+          </TouchableOpacity>
+
+          <Text style={st.headerTitle}>My Team</Text>
+
+          <TouchableOpacity style={st.headerBtn}>
+            <RefreshIcon size={22} color={WHITE} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={st.scroll}>
+
+        <Text style={st.sectionHeading}>Live Team Members</Text>
+
+        {TEAM_MEMBERS.map(member => (
+          <View key={member.id} style={st.card}>
+            {/* Avatar */}
+            <AvatarCircle type={member.avatar} />
+
+            {/* Status dot overlay */}
+            <View style={[
+              st.statusDot,
+              { backgroundColor: member.online ? GREEN : RED },
+            ]} />
+
+            {/* Info */}
+            <View style={st.cardInfo}>
+              <Text style={st.cardName}>{member.name}</Text>
+              <View style={st.cardStatusRow}>
+                <View style={[st.statusBadge, { backgroundColor: member.online ? '#DCFCE7' : '#FEE2E2' }]}>
+                  <Text style={[st.statusBadgeText, { color: member.online ? '#15803D' : '#DC2626' }]}>
+                    {member.status}
+                  </Text>
+                </View>
+                <Text style={st.cardDetail}>{member.detail}</Text>
+              </View>
+            </View>
+
+            {/* Chevron */}
+            <Text style={st.chevron}>{'›'}</Text>
+          </View>
+        ))}
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
+      {/* Floating invite button */}
+      <TouchableOpacity style={st.fab} activeOpacity={0.85}>
+        <PlusIcon size={18} color={NAVY} />
+        <Text style={st.fabText}>Invite New Canvasser</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const st = StyleSheet.create({
+  root:   { flex: 1, backgroundColor: NAVY },
+  scroll: { paddingHorizontal: 20, paddingTop: 8 },
+
+  // Header
   header: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 16, paddingVertical: 12, gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
-  backBtn:      { width: 32, alignItems: 'center' },
-  backArrow:    { color: 'white', fontSize: 28, fontWeight: '300' },
-  headerCenter: { flex: 1 },
-  headerTitle:  { color: 'white', fontWeight: '800', fontSize: 15 },
-  moreBtn:      { width: 32, alignItems: 'center' },
-  moreDots:     { color: 'white', fontSize: 18, letterSpacing: 2 },
-  msgList: { padding: 16, gap: 4 },
-  timeLabel: {
-    color: 'rgba(255,255,255,0.3)', fontSize: 11,
-    textAlign: 'center', marginVertical: 8,
+  headerBtn:   { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { flex: 1, color: WHITE, fontWeight: '800', fontSize: 22, textAlign: 'center' },
+
+  // Section heading
+  sectionHeading: {
+    color: WHITE,
+    fontWeight: '900',
+    fontSize: 28,
+    marginBottom: 16,
+    letterSpacing: -0.3,
   },
-  sentWrap: { alignItems: 'flex-end', marginBottom: 8 },
-  sentBubble: {
-    backgroundColor: GREEN, borderRadius: 18, borderBottomRightRadius: 4,
-    paddingHorizontal: 14, paddingVertical: 10, maxWidth: '75%',
-    flexDirection: 'row', alignItems: 'flex-end', gap: 6,
-  },
-  sentTxt:   { color: 'white', fontSize: 14, flex: 1, lineHeight: 20 },
-  sentCheck: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
-  receivedWrap: { marginBottom: 8 },
-  receivedRow:  { flexDirection: 'row', gap: 10, alignItems: 'flex-start' },
-  senderAvatar: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: '#334155', alignItems: 'center', justifyContent: 'center',
+
+  // Card
+  card: {
+    backgroundColor: WHITE,
+    borderRadius: 16,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
     position: 'relative',
   },
-  senderAvatarTxt: { color: 'white', fontWeight: '800', fontSize: 14 },
-  onlineDot: {
-    position: 'absolute', bottom: 0, right: 0,
-    width: 10, height: 10, borderRadius: 5, backgroundColor: GREEN,
-    borderWidth: 2, borderColor: '#080E1C',
+  statusDot: {
+    position: 'absolute',
+    left: 48,
+    top: 12,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: WHITE,
+    zIndex: 2,
   },
-  senderMeta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  senderName: { color: 'white', fontWeight: '700', fontSize: 13 },
-  senderRole: { color: 'rgba(255,255,255,0.4)', fontSize: 11 },
-  receivedBubble: {
-    backgroundColor: '#1E293B', borderRadius: 18, borderBottomLeftRadius: 4,
-    paddingHorizontal: 14, paddingVertical: 10, maxWidth: '85%',
-    flexDirection: 'row', alignItems: 'flex-end', gap: 6,
+  cardInfo: { flex: 1, marginLeft: 12 },
+  cardName: {
+    color: NAVY, fontWeight: '800', fontSize: 18, marginBottom: 6,
   },
-  receivedTxt:  { color: 'white', fontSize: 14, flex: 1, lineHeight: 20 },
-  bubbleCheck:  { color: 'rgba(255,255,255,0.4)', fontSize: 12 },
-  clusterHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 8 },
-  clusterAvatar: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: '#1E3A6A', alignItems: 'center', justifyContent: 'center',
+  cardStatusRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  statusBadge:   {
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10,
   },
-  clusterRow:    { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  clusterName:   { color: 'white', fontWeight: '700', fontSize: 14 },
-  clusterBadge:  { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
-  clusterBadgeTxt: { color: 'rgba(255,255,255,0.6)', fontSize: 11 },
-  inputBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    paddingHorizontal: 16, paddingVertical: 10,
-    backgroundColor: '#111827', borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)',
+  statusBadgeText: { fontSize: 14, fontWeight: '700' },
+  cardDetail:      { color: '#666', fontSize: 15, fontWeight: '500', flex: 1 },
+  chevron:         { color: GOLD, fontSize: 28, fontWeight: '900', marginLeft: 6 },
+
+  // FAB
+  fab: {
+    position: 'absolute',
+    bottom: 28,
+    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: GOLD,
+    borderRadius: 30,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 10,
   },
-  input: {
-    flex: 1, backgroundColor: '#1E293B', borderRadius: 24,
-    paddingHorizontal: 16, paddingVertical: 10,
-    color: 'white', fontSize: 14, maxHeight: 100,
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
-  },
-  micBtn: {
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: '#1E293B', alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-  },
-  tabBar: { flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 8 },
-  tabItem:      { flex: 1, alignItems: 'center', gap: 3 },
-  tabLabel:     { color: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: '600' },
-  tabLabelActive: { color: RED },
+  fabText: { color: NAVY, fontWeight: '800', fontSize: 19 },
 });

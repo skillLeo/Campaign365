@@ -95,7 +95,7 @@ export default function CampaignMaterialsScreen({ navigation }) {
             onChangeText={setDate}
           />
           <TouchableOpacity style={styles.calendarBtn}>
-            <Text style={{ fontSize: 20 }}>📅</Text>
+            <Text style={{ fontSize: 25 }}>📅</Text>
           </TouchableOpacity>
         </View>
 
@@ -134,18 +134,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 12,
   },
   backBtn:    { width: 32, alignItems: 'center' },
-  backArrow:  { color: 'white', fontSize: 28, fontWeight: '300' },
+  backArrow:  { color: 'white', fontSize: 35, fontWeight: '300' },
   logoRow:    { flexDirection: 'row', alignItems: 'center', gap: 8 },
   logoCircle: { width: 32, height: 32, borderRadius: 8, backgroundColor: RED, alignItems: 'center', justifyContent: 'center' },
-  logoTxt:    { color: 'white', fontWeight: '900', fontSize: 10 },
-  logoSKNLP:  { color: 'white', fontWeight: '900', fontSize: 13 },
-  logoCamp:   { color: 'rgba(255,255,255,0.6)', fontSize: 9 },
+  logoTxt:    { color: 'white', fontWeight: '900', fontSize: 12 },
+  logoSKNLP:  { color: 'white', fontWeight: '900', fontSize: 16 },
+  logoCamp:   { color: 'rgba(255,255,255,0.6)', fontSize: 11 },
   scroll: { padding: 20, paddingBottom: 40 },
   title: {
-    fontSize: 30, fontWeight: '900', color: '#111',
-    marginBottom: 24, lineHeight: 36, letterSpacing: -0.5,
+    fontSize: 38, fontWeight: '900', color: '#111',
+    marginBottom: 24, lineHeight: 45, letterSpacing: -0.5,
   },
-  label: { color: '#111', fontWeight: '700', fontSize: 15, marginBottom: 10 },
+  label: { color: '#111', fontWeight: '700', fontSize: 19, marginBottom: 10 },
   pillGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   pill: {
     paddingHorizontal: 20, paddingVertical: 11,
@@ -155,12 +155,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.07, shadowRadius: 4,
   },
   pillActive:    { backgroundColor: '#111', borderColor: '#111' },
-  pillTxt:       { color: '#111', fontWeight: '600', fontSize: 14 },
+  pillTxt:       { color: '#111', fontWeight: '600', fontSize: 18 },
   pillTxtActive: { color: 'white' },
   input: {
     backgroundColor: 'white', borderRadius: 12,
     paddingHorizontal: 16, paddingVertical: 15,
-    fontSize: 15, color: '#111', marginBottom: 14,
+    fontSize: 19, color: '#111', marginBottom: 14,
     borderWidth: 1, borderColor: '#e5e7eb',
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05, shadowRadius: 3,
@@ -177,17 +177,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16, alignItems: 'center', marginBottom: 14,
     shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 8,
   },
-  uploadTxt: { color: 'white', fontWeight: '800', fontSize: 15 },
+  uploadTxt: { color: 'white', fontWeight: '800', fontSize: 19 },
   submitBtn: {
     backgroundColor: RED, borderRadius: 12,
     paddingVertical: 16, alignItems: 'center',
     shadowColor: RED, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.35, shadowRadius: 10,
   },
-  submitTxt: { color: 'white', fontWeight: '900', fontSize: 15 },
+  submitTxt: { color: 'white', fontWeight: '900', fontSize: 19 },
   footer: {
     backgroundColor: '#111', paddingVertical: 16,
     alignItems: 'center', gap: 3,
   },
-  footerBold: { color: 'white', fontWeight: '800', fontSize: 14 },
-  footerSub:  { color: 'rgba(255,255,255,0.55)', fontSize: 12 },
+  footerBold: { color: 'white', fontWeight: '800', fontSize: 18 },
+  footerSub:  { color: 'rgba(255,255,255,0.55)', fontSize: 15 },
 });

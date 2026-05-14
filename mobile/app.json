@@ -11,6 +11,12 @@
     },
     "android": {
       "package": "app.campaign365.mobile"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "452e96c7-d276-4088-9efe-06239069753a"
+      }
+    },
+    "owner": "a4ammar"
   }
 }

@@ -92,7 +92,7 @@ export default function AIInsightsScreen({ navigation }) {
         {/* Back + Tab bar */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 8, paddingTop: 4 }}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 8 }}>
-            <Text style={{ color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 }}>‹</Text>
+            <Text style={{ color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 }}>‹</Text>
           </TouchableOpacity>
           <View style={[styles.topTabs, { flex: 1 }]}>
             {['SKNLP', 'Campaign 365', 'AI Assistant'].map(t => (
@@ -129,7 +129,7 @@ export default function AIInsightsScreen({ navigation }) {
               <View style={styles.insightRow}>
                 <Text style={styles.insightTitle}>{ins.title}</Text>
                 <View style={styles.insightAvatar}>
-                  <Text style={{ fontSize: 16 }}>{ins.icon}</Text>
+                  <Text style={{ fontSize: 20 }}>{ins.icon}</Text>
                 </View>
               </View>
             )}
@@ -172,12 +172,12 @@ const styles = StyleSheet.create({
   topTabActive: {
     borderBottomWidth: 2, borderBottomColor: RED,
   },
-  topTabTxt:       { color: 'rgba(255,255,255,0.45)', fontWeight: '600', fontSize: 13 },
+  topTabTxt:       { color: 'rgba(255,255,255,0.45)', fontWeight: '600', fontSize: 16 },
   topTabTxtActive: { color: 'white', fontWeight: '800' },
   scroll: { paddingHorizontal: 24, paddingBottom: 120 },
   title: {
-    color: 'white', fontSize: 36, fontWeight: '900',
-    lineHeight: 42, letterSpacing: -0.5,
+    color: 'white', fontSize: 45, fontWeight: '900',
+    lineHeight: 52, letterSpacing: -0.5,
     marginTop: 16, marginBottom: 24,
   },
   insightCard: {
@@ -189,10 +189,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12,
   },
   insightPrefix: {
-    color: GOLD, fontWeight: '700', fontSize: 14, marginBottom: 4,
+    color: GOLD, fontWeight: '700', fontSize: 18, marginBottom: 4,
   },
   insightTitle: {
-    color: 'white', fontSize: 16, fontWeight: '700', lineHeight: 24, flex: 1,
+    color: 'white', fontSize: 20, fontWeight: '700', lineHeight: 30, flex: 1,
   },
   insightAvatar: {
     width: 36, height: 36, borderRadius: 18,
@@ -214,6 +214,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5, shadowRadius: 16, elevation: 12,
   },
   askBtnListening: { backgroundColor: '#a00020' },
-  askMic: { fontSize: 20 },
-  askTxt: { color: 'white', fontWeight: '900', fontSize: 18, letterSpacing: 0.5 },
+  askMic: { fontSize: 25 },
+  askTxt: { color: 'white', fontWeight: '900', fontSize: 22, letterSpacing: 0.5 },
 });

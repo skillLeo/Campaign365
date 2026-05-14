@@ -33,7 +33,7 @@ export default function VoterProfileScreen({ route, navigation }) {
       <SafeAreaView style={{ backgroundColor: '#0F172A' }}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 8, marginRight: 4 }}>
-            <Text style={{ color: 'white', fontSize: 28, fontWeight: '300', lineHeight: 28 }}>‹</Text>
+            <Text style={{ color: 'white', fontSize: 35, fontWeight: '300', lineHeight: 35 }}>‹</Text>
           </TouchableOpacity>
           <View style={styles.headerLeft}>
             <View style={styles.sknlpBadge}>
@@ -43,7 +43,7 @@ export default function VoterProfileScreen({ route, navigation }) {
             <Text style={styles.headerName}>{name}</Text>
           </View>
           <TouchableOpacity style={styles.calendarBtn}>
-            <Text style={{ fontSize: 20 }}>📅</Text>
+            <Text style={{ fontSize: 25 }}>📅</Text>
           </TouchableOpacity>
         </View>
         <Text style={styles.headerSub}>Campaign 365</Text>
@@ -77,7 +77,7 @@ export default function VoterProfileScreen({ route, navigation }) {
           <View style={[styles.card, styles.cardRed]}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>Support Level</Text>
-              <Text style={{ fontSize: 20 }}>👥</Text>
+              <Text style={{ fontSize: 25 }}>👥</Text>
             </View>
             <Text style={styles.supportJourney}>Undecided  ›  Leaning SKNLP</Text>
             {/* Progress bar */}
@@ -132,11 +132,11 @@ const styles = StyleSheet.create({
   },
   headerLeft:   { flexDirection: 'row', alignItems: 'center', gap: 10 },
   sknlpBadge:   { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: RED, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
-  sknlpBadgeFlag: { fontSize: 14 },
-  sknlpBadgeTxt:  { color: 'white', fontWeight: '900', fontSize: 12 },
-  headerName:   { color: 'white', fontWeight: '800', fontSize: 16 },
+  sknlpBadgeFlag: { fontSize: 18 },
+  sknlpBadgeTxt:  { color: 'white', fontWeight: '900', fontSize: 15 },
+  headerName:   { color: 'white', fontWeight: '800', fontSize: 20 },
   calendarBtn:  { padding: 6, backgroundColor: '#1E293B', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  headerSub:    { color: 'rgba(255,255,255,0.4)', fontSize: 11, paddingHorizontal: 20, paddingBottom: 10 },
+  headerSub:    { color: 'rgba(255,255,255,0.4)', fontSize: 14, paddingHorizontal: 20, paddingBottom: 10 },
   avatarSection: { alignItems: 'center', paddingVertical: 24 },
   avatarCircle: {
     width: 100, height: 100, borderRadius: 50,
@@ -146,16 +146,16 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     shadowColor: RED, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 12,
   },
-  avatarInitials: { color: 'white', fontWeight: '900', fontSize: 32 },
-  voterName:  { color: 'white', fontSize: 24, fontWeight: '900', marginBottom: 4 },
-  voterAddr:  { color: 'rgba(255,255,255,0.5)', fontSize: 13 },
+  avatarInitials: { color: 'white', fontWeight: '900', fontSize: 40 },
+  voterName:  { color: 'white', fontSize: 30, fontWeight: '900', marginBottom: 4 },
+  voterAddr:  { color: 'rgba(255,255,255,0.5)', fontSize: 16 },
   tabBar: {
     flexDirection: 'row', marginHorizontal: 20,
     backgroundColor: '#111827', borderRadius: 12, padding: 4, marginBottom: 16,
   },
   tabBtn: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
   tabBtnActive: { backgroundColor: 'white' },
-  tabTxt:       { color: 'rgba(255,255,255,0.5)', fontWeight: '600', fontSize: 13 },
+  tabTxt:       { color: 'rgba(255,255,255,0.5)', fontWeight: '600', fontSize: 16 },
   tabTxtActive: { color: '#111', fontWeight: '800' },
   content:  { paddingHorizontal: 20, gap: 12 },
   card: {
@@ -164,20 +164,20 @@ const styles = StyleSheet.create({
   },
   cardRed: { borderColor: RED, borderWidth: 1.5 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  cardTitle:     { color: 'white', fontWeight: '800', fontSize: 16 },
-  supportJourney: { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginBottom: 10 },
+  cardTitle:     { color: 'white', fontWeight: '800', fontSize: 20 },
+  supportJourney: { color: 'rgba(255,255,255,0.7)', fontSize: 16, marginBottom: 10 },
   progressBg:  { height: 6, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 3, marginBottom: 10, overflow: 'hidden' },
   progressFill: { height: '100%', width: '75%', backgroundColor: '#22C55E', borderRadius: 3 },
-  supportNote: { color: 'rgba(255,255,255,0.5)', fontSize: 12 },
-  familyLine:  { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 6 },
-  transcriptTime: { color: 'rgba(255,255,255,0.4)', fontSize: 12 },
-  transcriptText: { color: 'rgba(255,255,255,0.6)', fontSize: 13, marginTop: 8, fontStyle: 'italic' },
+  supportNote: { color: 'rgba(255,255,255,0.5)', fontSize: 15 },
+  familyLine:  { color: 'rgba(255,255,255,0.7)', fontSize: 16, marginTop: 6 },
+  transcriptTime: { color: 'rgba(255,255,255,0.4)', fontSize: 15 },
+  transcriptText: { color: 'rgba(255,255,255,0.6)', fontSize: 16, marginTop: 8, fontStyle: 'italic' },
   bottomBar: {
     flexDirection: 'row', backgroundColor: '#111827',
     borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.08)',
     paddingVertical: 12, paddingHorizontal: 8,
   },
   actionBtn:   { flex: 1, alignItems: 'center', gap: 4 },
-  actionIcon:  { fontSize: 20 },
-  actionLabel: { color: 'rgba(255,255,255,0.65)', fontSize: 10, fontWeight: '600', textAlign: 'center' },
+  actionIcon:  { fontSize: 25 },
+  actionLabel: { color: 'rgba(255,255,255,0.65)', fontSize: 12, fontWeight: '600', textAlign: 'center' },
 });

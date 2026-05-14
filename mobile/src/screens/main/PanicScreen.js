@@ -4,248 +4,343 @@ import {
   Dimensions, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Path, Circle, Rect, Line, G } from 'react-native-svg';
+import Svg, { Path, Circle, Line, G } from 'react-native-svg';
 import { trackingAPI } from '../../services/api';
 
 const { width, height } = Dimensions.get('window');
-const RED  = '#DC143C';
-const GOLD = '#C8860B';
 
-function IslandMap() {
-  const mw = width - 48;
-  const mh = 160;
+const NAVY = '#0A2540';
+const GOLD = '#C9A227';
+
+// ─── Back arrow ───────────────────────────────────────────────────────────────
+
+function BackArrow() {
   return (
-    <Svg width={mw} height={mh} viewBox={`0 0 ${mw} ${mh}`}>
-      <Rect width={mw} height={mh} rx={12} fill="#1a0505" />
-      {/* grid */}
-      {[32,64,96,128].map(y => (
-        <Line key={y} x1={0} y1={y} x2={mw} y2={y} stroke="rgba(255,0,0,0.07)" strokeWidth={1} />
-      ))}
-      {[50,100,150,200,250,300].map(x => (
-        <Line key={x} x1={x} y1={0} x2={x} y2={mh} stroke="rgba(255,0,0,0.07)" strokeWidth={1} />
-      ))}
-
-      {/* St Kitts island shape */}
-      <Path
-        d={`M${mw*0.08},${mh*0.55} L${mw*0.14},${mh*0.38} L${mw*0.22},${mh*0.28} L${mw*0.34},${mh*0.22} L${mw*0.46},${mh*0.20} L${mw*0.54},${mh*0.26} L${mw*0.58},${mh*0.38} L${mw*0.56},${mh*0.52} L${mw*0.50},${mh*0.62} L${mw*0.42},${mh*0.70} L${mw*0.30},${mh*0.72} L${mw*0.18},${mh*0.68} Z`}
-        fill="rgba(180,20,20,0.45)" stroke={RED} strokeWidth={1.5}
-      />
-
-      {/* Nevis island */}
-      <Path
-        d={`M${mw*0.70},${mh*0.45} L${mw*0.75},${mh*0.36} L${mw*0.83},${mh*0.38} L${mw*0.87},${mh*0.50} L${mw*0.83},${mh*0.62} L${mw*0.73},${mh*0.63} Z`}
-        fill="rgba(180,20,20,0.35)" stroke={RED} strokeWidth={1.5}
-      />
-
-      {/* Red pins on St Kitts */}
-      {[
-        { x: mw*0.28, y: mh*0.38 },
-        { x: mw*0.40, y: mh*0.32 },
-        { x: mw*0.34, y: mh*0.52 },
-        { x: mw*0.78, y: mh*0.50 },
-      ].map((p, i) => (
-        <G key={i}>
-          <Circle cx={p.x} cy={p.y} r={i === 3 ? 9 : 11} fill={RED} opacity={0.9} />
-          <Circle cx={p.x} cy={p.y} r={i === 3 ? 3.5 : 4.5} fill="white" />
-        </G>
-      ))}
+    <Svg width={28} height={28} viewBox="0 0 24 24">
+      <Path d="M20,11H7.83l5.59-5.59L12,4l-8,8l8,8l1.41-1.41L7.83,13H20V11Z" fill="white" />
     </Svg>
   );
 }
 
+// ─── External link icon ───────────────────────────────────────────────────────
+
+function ExternalLinkIcon() {
+  return (
+    <Svg width={25} height={25} viewBox="0 0 24 24">
+      <Path
+        d="M19,19H5V5h7V3H5C3.89,3 3,3.9 3,5V19c0,1.1 0.89,2 2,2h14c1.1,0 2-0.9 2-2v-7h-2V19Z"
+        fill="white"
+      />
+      <Path d="M14,3v2h3.59l-9.83,9.83l1.41,1.41L19,6.41V10h2V3H14Z" fill="white" />
+    </Svg>
+  );
+}
+
+// ─── Siren / alarm SVG icon ───────────────────────────────────────────────────
+
+function SirenIcon({ size = 52 }) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 52 52">
+      {/* Bell body */}
+      <Path
+        d="M26,6 C18.27,6 12,12.27 12,20 L12,34 L8,38 L8,40 L44,40 L44,38 L40,34 L40,20 C40,12.27 33.73,6 26,6 Z"
+        fill="white"
+      />
+      {/* Clapper */}
+      <Path d="M22,40 C22,42.21 23.79,44 26,44 C28.21,44 30,42.21 30,40 Z" fill="white" />
+      {/* Left ray */}
+      <Line x1={8} y1={16} x2={3} y2={11} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+      <Line x1={6} y1={22} x2={0} y2={20} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+      {/* Right ray */}
+      <Line x1={44} y1={16} x2={49} y2={11} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+      <Line x1={46} y1={22} x2={52} y2={20} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+      {/* Top ray */}
+      <Line x1={26} y1={2} x2={26} y2={-3} stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+// ─── Panic button with concentric glow rings ──────────────────────────────────
+
+function PanicButtonCore({ pulseAnim, onPress }) {
+  return (
+    <TouchableOpacity onPress={onPress} activeOpacity={0.85}>
+      <Animated.View style={[styles.panicOuter, { transform: [{ scale: pulseAnim }] }]}>
+        {/* Concentric glow rings */}
+        <View style={[styles.glowRing, { width: 280, height: 280, borderRadius: 140, backgroundColor: 'rgba(255,69,0,0.08)' }]} />
+        <View style={[styles.glowRing, { width: 248, height: 248, borderRadius: 124, backgroundColor: 'rgba(255,69,0,0.14)' }]} />
+        <View style={[styles.glowRing, { width: 216, height: 216, borderRadius: 108, backgroundColor: 'rgba(255,69,0,0.22)' }]} />
+        <View style={[styles.glowRing, { width: 184, height: 184, borderRadius: 92, backgroundColor: 'rgba(255,69,0,0.33)' }]} />
+        {/* Solid inner button */}
+        <View style={styles.panicInner}>
+          <SirenIcon size={52} />
+          <Text style={styles.panicLabel}>PANIC</Text>
+        </View>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+
+// ─── PanicScreen ──────────────────────────────────────────────────────────────
+
 export default function PanicScreen({ navigation }) {
-  const [countdown, setCountdown] = useState(10);
-  const [cancelled, setCancelled] = useState(false);
-  const [alertSent, setAlertSent] = useState(false);
-  const pulseAnim   = useRef(new Animated.Value(1)).current;
-  const glowAnim    = useRef(new Animated.Value(0)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
+  const [countdown, setCountdown] = useState(60);
+  const [alertFired, setAlertFired] = useState(false);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    // Pulsing scale animation
     Animated.loop(
       Animated.sequence([
-        Animated.timing(glowAnim, { toValue: 1, duration: 700, useNativeDriver: false }),
-        Animated.timing(glowAnim, { toValue: 0, duration: 700, useNativeDriver: false }),
+        Animated.timing(pulseAnim, { toValue: 1.05, duration: 750, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1.0,  duration: 750, useNativeDriver: true }),
       ])
     ).start();
 
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, { toValue: 1.06, duration: 600, useNativeDriver: true }),
-        Animated.timing(pulseAnim, { toValue: 0.97, duration: 600, useNativeDriver: true }),
-      ])
-    ).start();
-
-    Animated.timing(progressAnim, { toValue: 1, duration: 10000, useNativeDriver: false }).start();
-
+    // Countdown
     const interval = setInterval(() => {
       setCountdown(v => {
         if (v <= 1) {
           clearInterval(interval);
-          // Auto-trigger panic when countdown hits 0
-          trackingAPI.panic(17.3026, -62.7177).then(() => setAlertSent(true)).catch(() => setAlertSent(true));
+          if (!alertFired) {
+            setAlertFired(true);
+            trackingAPI.panic(17.3026, -62.7177)
+              .then(() => console.log('[PanicScreen] Alert fired.'))
+              .catch(() => console.log('[PanicScreen] Alert fired (offline).'));
+          }
           return 0;
         }
         return v - 1;
       });
     }, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
-  const bgColor = glowAnim.interpolate({
-    inputRange:  [0, 1],
-    outputRange: ['rgba(55,0,0,1)', 'rgba(90,5,5,1)'],
-  });
-
   return (
-    <Animated.View style={[styles.container, { backgroundColor: bgColor }]}>
-      <StatusBar barStyle="light-content" />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={NAVY} />
 
-      {/* Horizontal grid lines */}
-      {Array.from({ length: 12 }).map((_, i) => (
-        <View key={i} style={[styles.gridLine, { top: i * (height / 12) }]} />
-      ))}
-
-      <SafeAreaView style={styles.safeArea}>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
 
         {/* Top bar */}
         <View style={styles.topBar}>
-          <Text style={styles.topName}>John Doe</Text>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.menuBtn}>
-            <Text style={styles.menuIcon}>✕</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <BackArrow />
+          </TouchableOpacity>
+
+          <Text style={styles.topTitle}>Campaign 365</Text>
+
+          <TouchableOpacity style={styles.extLinkBtn}>
+            <ExternalLinkIcon />
           </TouchableOpacity>
         </View>
 
-        {/* Shield + pins */}
-        <View style={styles.shieldWrap}>
-          <Text style={styles.shieldEmoji}>🛡</Text>
-          <View style={styles.pinsRow}>
-            {['📍','📍','📍'].map((p, i) => (
-              <Text key={i} style={[styles.pinEmoji, { marginTop: i === 1 ? -10 : 0 }]}>{p}</Text>
-            ))}
+        {/* Color chip pills */}
+        <View style={styles.chipRow}>
+          <View style={styles.chipNavy}>
+            <Text style={styles.chipNavyTxt}>#0A2540</Text>
+          </View>
+          <View style={styles.chipGold}>
+            <Text style={styles.chipGoldTxt}>#C9A227</Text>
           </View>
         </View>
 
-        {/* PANIC TEXT */}
-        <Animated.Text style={[styles.panicText, { transform: [{ scale: pulseAnim }] }]}>
-          PANIC{'\n'}BUTTON{'\n'}ACTIVATED
-        </Animated.Text>
-
-        <Text style={styles.location}>Basseterre, St. Kitts</Text>
-        <View style={styles.liveGpsRow}>
-          <View style={styles.gpsDot} />
-          <Text style={styles.liveGpsTxt}>Live GPS</Text>
+        {/* ── Center panic button ── */}
+        <View style={styles.centerArea}>
+          <PanicButtonCore pulseAnim={pulseAnim} onPress={() => {}} />
         </View>
 
-        {/* Alert card */}
-        <View style={styles.alertCard}>
-          {/* Countdown row */}
-          <View style={styles.alertTopRow}>
-            <Text style={styles.alertMsg}>Alert sent to HQ &amp; Emergency{'\n'}Contacts in</Text>
-            <Text style={styles.countdown}>{countdown}s</Text>
-          </View>
+        {/* Status text */}
+        <Text style={styles.alertTitle}>Emergency Alert Activated</Text>
+        <Text style={styles.alertSub}>
+          {'Live Location Shared with:\nCampaign Manager, Cluster Manager,\nEmergency Contact'}
+        </Text>
 
-          {/* Progress bar */}
-          <View style={styles.progressBar}>
-            <Animated.View style={[styles.progressFill, {
-              width: progressAnim.interpolate({ inputRange: [0, 1], outputRange: ['100%', '0%'] }),
-            }]} />
-          </View>
+        {/* Countdown */}
+        <Text style={styles.countdownNum}>{countdown}</Text>
+        <Text style={styles.countdownSub}>seconds until full alert</Text>
 
-          {/* Island map */}
-          <View style={styles.mapWrap}>
-            <IslandMap />
-          </View>
-        </View>
-
-        {/* Buttons */}
+        {/* Action buttons */}
         <View style={styles.btnGroup}>
           <TouchableOpacity
             style={styles.cancelBtn}
-            onPress={() => { setCancelled(true); navigation.goBack(); }}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.85}
           >
-            <Text style={styles.cancelTxt}>False Alarm — Cancel</Text>
+            <Text style={styles.cancelTxt}>False Alarm - Cancel</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.callBtn}>
-            <Text style={styles.callTxt}>Call Authorities</Text>
+
+          <TouchableOpacity style={styles.outlineBtn} activeOpacity={0.8}>
+            <Text style={styles.outlineTxt}>🎤  Add Voice Note</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.outlineBtn} activeOpacity={0.8}>
+            <Text style={styles.outlineTxt}>Share Live Location Now</Text>
           </TouchableOpacity>
         </View>
 
       </SafeAreaView>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container:  { flex: 1 },
-  gridLine: {
-    position: 'absolute', left: 0, right: 0, height: 1,
-    backgroundColor: 'rgba(255,0,0,0.07)',
+  container: {
+    flex: 1,
+    backgroundColor: NAVY,
   },
-  safeArea: { flex: 1, paddingHorizontal: 24 },
+  safeArea: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
 
+  // Top bar
   topBar: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingTop: 6, paddingBottom: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingTop: 6,
+    paddingBottom: 10,
   },
-  topName:  { color: 'rgba(255,255,255,0.85)', fontSize: 16, fontWeight: '700' },
-  menuBtn:  { padding: 6 },
-  menuIcon: { color: 'rgba(255,255,255,0.7)', fontSize: 20, fontWeight: '600' },
+  backBtn: { padding: 4 },
+  topTitle: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 20,
+  },
+  extLinkBtn: { padding: 4 },
 
-  shieldWrap: { alignItems: 'center', marginTop: 4, marginBottom: 2 },
-  shieldEmoji: { fontSize: 44 },
-  pinsRow:  { flexDirection: 'row', gap: 10, marginTop: -4 },
-  pinEmoji: { fontSize: 18 },
+  // Chip pills
+  chipRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  chipNavy: {
+    backgroundColor: '#142e50',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.18)',
+  },
+  chipNavyTxt: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  chipGold: {
+    backgroundColor: GOLD,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  chipGoldTxt: {
+    color: NAVY,
+    fontSize: 14,
+    fontWeight: '700',
+  },
 
-  panicText: {
-    color: RED, fontSize: 58, fontWeight: '900', textAlign: 'center',
-    lineHeight: 60, letterSpacing: 3,
-    textShadowColor: RED, textShadowRadius: 24, textShadowOffset: { width: 0, height: 0 },
-    marginBottom: 10,
+  // Panic button area
+  centerArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
   },
-  location: {
-    color: 'white', fontSize: 17, fontWeight: '700', textAlign: 'center',
+  panicOuter: {
+    width: 280,
+    height: 280,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
   },
-  liveGpsRow: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    justifyContent: 'center', marginTop: 4, marginBottom: 12,
+  glowRing: {
+    position: 'absolute',
   },
-  gpsDot:    { width: 8, height: 8, borderRadius: 4, backgroundColor: '#22C55E' },
-  liveGpsTxt: { color: 'rgba(255,255,255,0.75)', fontSize: 13, fontWeight: '600' },
+  panicInner: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: '#FF4500',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#FF4500',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.7,
+    shadowRadius: 24,
+    elevation: 12,
+  },
+  panicLabel: {
+    color: 'white',
+    fontWeight: '900',
+    fontSize: 28,
+    letterSpacing: 2,
+  },
 
-  alertCard: {
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: 'rgba(220,20,60,0.25)',
-    marginBottom: 16, gap: 12,
+  // Status text
+  alertTitle: {
+    color: 'white',
+    fontWeight: '800',
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 8,
   },
-  alertTopRow: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+  alertSub: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 18,
+    textAlign: 'center',
+    lineHeight: 28,
+    marginBottom: 12,
   },
-  alertMsg: {
-    color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: '600', lineHeight: 20, flex: 1,
+  countdownNum: {
+    color: 'white',
+    fontWeight: '900',
+    fontSize: 90,
+    textAlign: 'center',
+    lineHeight: 95,
   },
-  countdown: {
-    color: 'white', fontSize: 36, fontWeight: '900', marginLeft: 12,
+  countdownSub: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  progressBar: {
-    height: 6, backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 3, overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%', backgroundColor: RED, borderRadius: 3,
-  },
-  mapWrap: { borderRadius: 12, overflow: 'hidden' },
 
-  btnGroup:  { gap: 12 },
+  // Buttons
+  btnGroup: {
+    gap: 12,
+    paddingBottom: 8,
+  },
   cancelBtn: {
-    backgroundColor: RED, borderRadius: 14, paddingVertical: 17, alignItems: 'center',
-    shadowColor: RED, shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.55, shadowRadius: 14,
+    backgroundColor: GOLD,
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+    shadowColor: GOLD,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  cancelTxt: { color: 'white', fontWeight: '900', fontSize: 16 },
-  callBtn: {
-    backgroundColor: GOLD, borderRadius: 14, paddingVertical: 17, alignItems: 'center',
-    shadowColor: GOLD, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 10,
+  cancelTxt: {
+    color: NAVY,
+    fontWeight: '900',
+    fontSize: 20,
   },
-  callTxt: { color: 'white', fontWeight: '900', fontSize: 16 },
+  outlineBtn: {
+    borderRadius: 14,
+    paddingVertical: 17,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'transparent',
+  },
+  outlineTxt: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 19,
+  },
 });
