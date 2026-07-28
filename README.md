@@ -1,58 +1,163 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Campaign 365
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**White-label, multi-tenant SaaS platform for political campaign management.**
 
-## About Laravel
+Campaign 365 lets a platform owner onboard multiple political parties/campaigns onto a single system, each with fully isolated data and its own branded portal (colors, logo, domain). Each campaign runs voter targeting, canvassing, GOTV (get-out-the-vote) operations, fundraising, and AI-assisted voter outreach — all from one dashboard, backed by a dedicated mobile app for field teams.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## What it does
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**For the platform owner (Super Admin)**
+- Onboard and manage tenants (campaigns/parties), subscription tiers, and feature flags
+- White-label branding studio — set each tenant's colors, logo, and domain without touching code
+- Platform-wide billing (Stripe), analytics, audit logs, and system health monitoring
 
-## Learning Laravel
+**For each campaign (Tenant Portal)**
+- **Voter management** — import voter rolls (Excel), segment voters, track contact history
+- **Canvassing & field operations** — build walk lists, assign canvassers, record door-knocks, offline sync
+- **Live field tracking** — real-time GPS location of canvassers/runners and one-tap panic-button alerts
+- **GOTV command center** — live turnout tracking and election-day coordination
+- **Communications hub** — bulk SMS, email, and WhatsApp campaigns (queued for scale)
+- **AI-powered outreach** — GPT-4o generates personalized voter messages and analyzes sentiment from voter feedback/notes, plus voice-note transcription
+- **Fundraising** — donation tracking, donor management, campaign goal progress
+- **Events & scheduling**, **polling/surveys**, **compliance & data export**, **team & role management**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Mobile app** — a dedicated app for canvassers, runners, and outdoor agents to work their assignments and log activity from the field.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Tech stack
 
-## Agentic Development
+| Layer | Stack |
+|---|---|
+| **Backend API** | Laravel 13 (PHP 8.3), Sanctum auth, multi-tenancy via `stancl/tenancy` |
+| **Web frontend** | Next.js 16, React 19, TypeScript, Tailwind CSS, Recharts, Mapbox GL |
+| **Mobile app** | React Native (Expo), React Navigation |
+| **Real-time** | Pusher (live GPS positions, panic alerts) |
+| **AI** | OpenAI GPT-4o (message generation, sentiment analysis, transcription) |
+| **Comms** | Twilio (SMS/WhatsApp), Mailgun/SMTP (email) |
+| **Payments** | Stripe (subscription billing) |
+| **Storage & files** | AWS S3, `barryvdh/laravel-dompdf` (PDF reports), `maatwebsite/excel` (import/export) |
+| **Auth/permissions** | Laravel Sanctum, `spatie/laravel-permission`, `spatie/laravel-activitylog` |
+| **Infra** | Docker (PHP-FPM + Nginx + Supervisor), Railway (API), Vercel (web), EAS (mobile builds) |
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
 
-```bash
-composer require laravel/boost --dev
+## Architecture
 
-php artisan boost:install
+```
+┌─────────────────────┐     ┌──────────────────────┐     ┌────────────────────┐
+│   Web Dashboard      │     │   Mobile App          │     │   Super Admin       │
+│   Next.js / React     │     │   Expo / React Native │     │   Console (Next.js) │
+└──────────┬───────────┘     └──────────┬────────────┘     └──────────┬─────────┘
+           │                             │                              │
+           └─────────────┬───────────────┴──────────────┬───────────────┘
+                          │      REST API (Sanctum)      │
+                 ┌────────▼────────────────────────────────▼────────┐
+                 │              Laravel 13 API                       │
+                 │  Multi-tenant (stancl/tenancy) · Queues · Events  │
+                 └───────┬──────────────┬──────────────┬────────────┘
+                         │              │              │
+                  ┌──────▼────┐  ┌──────▼──────┐ ┌─────▼──────┐
+                  │  MySQL /   │  │  Pusher      │ │  OpenAI /   │
+                  │  Database  │  │  (realtime)  │ │  Twilio /   │
+                  │  per tenant│  │              │ │  Stripe/S3  │
+                  └────────────┘  └──────────────┘ └─────────────┘
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Each tenant (campaign) is fully data-isolated at the database level. Branding (colors/logo) is resolved per-tenant at request time and applied dynamically on the frontend — no per-client code branches.
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Project structure
 
-## Code of Conduct
+```
+Campaign365/
+├── app/                    # Laravel application
+│   ├── Http/Controllers/   # API controllers (Voter, Field, GOTV, Fundraising, AI, SuperAdmin, ...)
+│   ├── Models/              # Eloquent models (Tenant, Voter, Campaign, Donation, Runner, ...)
+│   ├── Services/            # OpenAIService, TwilioService, GPSTrackingService, PanicButtonService, ...
+│   ├── Jobs/                 # Queued jobs (bulk SMS/email/WhatsApp, voter import, compliance reports)
+│   └── Events/               # Broadcast events (GPS updates, panic alerts)
+├── routes/
+│   ├── api.php               # Tenant-facing API
+│   └── tenant.php            # Tenant identification routes
+├── database/migrations/      # Schema (25 migrations)
+├── frontend/                  # Next.js web app (Super Admin + Tenant portals)
+│   ├── app/
+│   │   ├── super/             # Super Admin portal
+│   │   └── (tenant)/          # Tenant portal (dynamic branding)
+│   ├── components/            # Shared UI, layout, and chart components
+│   └── lib/                    # auth.ts, tenantTheme.ts, api client
+├── mobile/                     # Expo/React Native field app
+│   └── src/
+│       ├── screens/            # Auth + main field screens
+│       ├── navigation/
+│       └── store/               # Zustand auth store
+├── docker/                      # Nginx, Supervisor, entrypoint for containerized deploy
+├── Dockerfile
+└── railway.json                 # Railway deployment config
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## Getting started
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Backend (Laravel API)
 
-## License
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+composer run dev   # runs server + queue worker + log tail + Vite, concurrently
+```
+
+### Web frontend
+
+```bash
+cd frontend
+npm install
+npm run dev         # http://localhost:3000
+```
+
+### Mobile app
+
+```bash
+cd mobile
+npm install
+npm start            # Expo dev server — scan QR with Expo Go, or run --ios / --android
+```
+
+### Environment variables
+
+Key integrations configured via `.env` (see `.env.example`):
+
+- `DB_*` — database connection
+- `AWS_*` — S3 file storage
+- `MAIL_*` — transactional email
+- Additional keys required at runtime: Stripe, Twilio, OpenAI, and Pusher credentials (see `config/services.php`, `config/openai.php`)
+
+---
+
+## Deployment
+
+- **API** — Dockerized (PHP-FPM + Nginx + Supervisor), deployed to Railway (`railway.json`, `Dockerfile`)
+- **Web frontend** — deployed to Vercel (`frontend/vercel.json`), or exported statically into the Laravel `public/` directory
+- **Mobile** — built and distributed via EAS (`mobile/eas.json`)
+
+---
+
+## Portals at a glance
+
+| | Super Admin | Tenant (Campaign) Portal |
+|---|---|---|
+| **Used by** | Platform owner | Each political party/campaign |
+| **Theme** | Fixed (navy sidebar, royal blue accents) | Dynamic per-tenant brand colors |
+| **Manages** | All tenants, billing, subscriptions, compliance, platform health | Voters, canvassing, GOTV, fundraising, communications, team |
+
+---
+
+*Campaign 365 — built for running data-driven, field-first political campaigns.*
