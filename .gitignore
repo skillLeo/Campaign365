@@ -39,3 +39,7 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+.claude/
+CLAUDE.md
+frontend/CLAUDE.md
+frontend/AGENTS.md
